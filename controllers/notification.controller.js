@@ -1,5 +1,6 @@
-exports.getNotifications = (req, res) => {
+const Notification = require('../models/notification');
 
-        res.render('../views/notifications', { title: 'Notifications' });
-
+exports.getNotifications = async (req, res) => {
+    const notifications = await Notification.fetchAll();
+    res.render('../views/notifications', { title: 'Notifications', notifications });
 };
