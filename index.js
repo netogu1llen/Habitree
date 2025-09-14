@@ -30,10 +30,8 @@ app.get('/missions', (req, res) => {
 });
 
 // Ruta raíz
-app.get('/', (req, res) => {
-  res.send('Welcome to Habitree API');
-});
-
+const dashboardRoutes = require('./routes/dashboard.route');
+app.use('/', dashboardRoutes);
 // Puerto
 const PORT = 4002;
 app.listen(PORT, () => {
