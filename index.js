@@ -55,7 +55,7 @@ app.get('/leagues', (req, res) => {
   res.send('Leagues route');
 });
 
-const missionsRoutes = require('./routes/missions.routes');
+const missionsRoutes = require('./routes/Missions/missions.routes');
 app.use('/missions', missionsRoutes);
  
 

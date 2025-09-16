@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const MissionController = require("../controllers/Missions.controller")
+const MissionController = require("../../controllers/Missions/Missions.controller")
 
 
 

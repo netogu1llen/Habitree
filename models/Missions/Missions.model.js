@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-undef
-const db = require('../util/database');
+const db = require('../../util/database');
 
 // eslint-disable-next-line no-undef
 module.exports = class notification {

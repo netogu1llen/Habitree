@@ -1,4 +1,4 @@
-const Mission = require('../models/Missions.model');
+const Mission = require('../../models/Missions/Missions.model');
 
 exports.getMissions = async (req, res) => {
     const missions = await Mission.fetchAll();
