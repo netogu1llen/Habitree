@@ -88,41 +88,44 @@
 
     <div class="modal" id="modal">
     <div class="modal-inner">
+    <nav>            
+         <button id="closeModal" class="fa fa-times"></button>
+    </nav>
         <h1 class ="modal-title">Add Mission</h1>
          <form action="/missions" method="POST">
-            <section>
-                <div style="float:left;margin-right:20px;">
+            
+            <section class="inputs-row">
+                <div class="input-container">
                     <label for="id">ID</label>
-                    <input type="text" id="id" name="id" placeholder="ID" required>
+                    <input class="smallInput" type="text" id="id" name="id" placeholder="ID" required>
                 </div>
-                
-                <div style="float:left;">
+                <div class="input-container">
                     <label for="status">Status</label>
-                    <input type="text" id="status" name="status" placeholder="Available" required>
+                    <input class="smallInput" type="text" id="status" name="status" placeholder="Available" required>
                 </div>
+
+            </section>
+
+            <section class="inputs-row">
                 
-                <br style="clear:both;" />
+                <div class="input-container">
+                    <label for="type">Type</label>
+                    <input class="smallInput" type="text" id="type" name="type" placeholder="Water" required>
+                </div>
+                <div class="input-container">
+                    <label for="reward">Reward</label>
+                    <input class="smallInput" type="text" id="reward" name="reward" placeholder="Select" required>
+                </div>
+
             </section>
             
             <section>
                 <label for="description">Description</label>
-                <input type="text" id="description" name="description" placeholder="Description" required>
-                
-                <div style="float:left;margin-right:20px;">
-                    <label for="type">Type</label>
-                    <input type="text" id="type" name="type" placeholder="Water" required>
-                </div>
-                
-                <div style="float:left;">
-                    <label for="reward">Reward</label>
-                    <input type="text" id="reward" name="reward" placeholder="Select" required>
-                </div>
-                
+                <input class = "description" type="text" id="description" name="description" placeholder="Description" required>
                 <br style="clear:both;" />
             </section>
             
-            <button type="submit" class="submit">Submit</button>
-            <button id="closeModal">Close</button>
+            <button type="submit" class="submit-btn">Submit</button>
 
         </form>
                 
