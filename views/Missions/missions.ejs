@@ -93,50 +93,54 @@
     </nav>
         <h1 class ="modal-title">Add Mission</h1>
          <form action="/missions" method="POST">
-            
-            <section class="inputs-row">
-                <div class="input-container">
-                    <label for="id">ID</label>
-                    <input class="smallInput" type="text" id="id" name="id" placeholder="ID" required>
-                </div>
-            <div class="input-container">
-            <label for="status">Status</label>
-            <select id="status" name="status" required>
-                <option value=1>Available</option>
-                <option value=0>Unavailable</option>
-            </select>
-            </div>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-            </section>
-
-            <section class="inputs-row">
                 
-                <div class="input-container">
-                    <label for="type">Type</label>
-                    <input class="smallInput" type="text" id="type" name="type" placeholder="Water" required>
-                </div>
-                <div class="input-container">
-                    <label for="experience">Experience</label>
-                    <input class="smallInput" type="text" id="reward" name="reward" placeholder="Select" required>
+                <section class="inputs-row">
+                    
+                    <div class="input-container">
+                        <label for="id">ID</label>
+                        <input class="smallInput" type="number" id="id" name="IDMission" placeholder="ID" required>
+                    </div>
+
+                    <div class="input-container">
+                    <label for="status">Status</label>
+                    <select id="status" name="available" required>
+                        <option value=1>Available</option>
+                        <option value=0>Unavailable</option>
+                </select>
                 </div>
 
-                <div class="input-container">
-                    <label for="responseVerification">Response Verification</label>
-                    <select id="responseVerification" name="responseVerification" required>
-                        <option value=1>Yes</option>
-                        <option value=0>No</option>
-                    </select>
-                </div>
+                </section>
 
-            </section>
-            
-            <section>
-                <label for="description">Description</label>
-                <input class = "description" type="text" id="description" name="description" placeholder="Description" required>
-                <br style="clear:both;" />
-            </section>
-            
-            <button type="submit" class="submit-btn">Add</button>
+                <section class="inputs-row">
+                    
+                    <div class="input-container">
+                        <label for="type">Type</label>
+                        <input class="smallInput" type="text" id="type" name="category" placeholder="Water" required>
+                    </div>
+                    <div class="input-container">
+                        <label for="experience">Experience</label>
+                        <input class="smallInput" type="number" id="experience" name="experience" placeholder="100" required>
+                    </div>
+
+                    <div class="input-container">
+                        <label for="responseVerification">Response Verification</label>
+                        <select id="responseVerification" name="responseVerification" required>
+                            <option value=1>Yes</option>
+                            <option value=0>No</option>
+                        </select>
+                    </div>
+
+                </section>
+                
+                <section>
+                    <label for="description">Description</label>
+                    <input class = "description" type="text" id="description" name="description" placeholder="Description" required>
+                    <br style="clear:both;" />
+                </section>
+                
+                <button type="submit" class="submit-btn">Add</button>
 
         </form>
                 

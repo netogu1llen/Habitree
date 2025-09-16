@@ -56,7 +56,7 @@ app.get('/leagues', (req, res) => {
 });
 
 const missionsRoutes = require('./routes/Missions/missions.routes');
-app.use('/missions', missionsRoutes);
+app.use(missionsRoutes);
  
 
 // Ruta raíz
