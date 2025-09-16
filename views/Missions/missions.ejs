@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href ="/css/missions/missions.css">
-    <title>Notifications</title>
+    <title>Missions</title>
 </head>
 
 
@@ -99,10 +99,13 @@
                     <label for="id">ID</label>
                     <input class="smallInput" type="text" id="id" name="id" placeholder="ID" required>
                 </div>
-                <div class="input-container">
-                    <label for="status">Status</label>
-                    <input class="smallInput" type="text" id="status" name="status" placeholder="Available" required>
-                </div>
+            <div class="input-container">
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+                <option value=1>Available</option>
+                <option value=0>Unavailable</option>
+            </select>
+            </div>
 
             </section>
 
@@ -115,6 +118,14 @@
                 <div class="input-container">
                     <label for="experience">Experience</label>
                     <input class="smallInput" type="text" id="reward" name="reward" placeholder="Select" required>
+                </div>
+
+                <div class="input-container">
+                    <label for="responseVerification">Response Verification</label>
+                    <select id="responseVerification" name="responseVerification" required>
+                        <option value=1>Yes</option>
+                        <option value=0>No</option>
+                    </select>
                 </div>
 
             </section>

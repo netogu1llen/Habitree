@@ -436,6 +436,27 @@ input.description{
     padding: 20px ;
 }
 
+input, select {
+    align-items: center;
+    padding: 12px 30px;
+    border: 2px solid #e1e8ed;
+    border-radius: 20px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background-color: #f8f9fa;
+    margin-bottom: 15px;
+    width: 100%;  /* para que se comporte igual que input.smallInput */
+    box-sizing: border-box;
+    box-shadow: 10px 5px 5px rgb(153, 152, 152);
+
+}
+
+select:focus {
+    outline: none;
+    border-color: #353535;
+    background-color: white;
+}
+
 input:focus {
     outline: none;
     border-color: #353535;
