@@ -402,6 +402,9 @@ input {
     transition: border-color 0.3s ease;
     background-color: #f8f9fa;
     margin-bottom: 15px;
+    border: none;
+    box-shadow: 10px 5px 5px rgb(153, 152, 152);
+
 }
 
 .inputs-row {
@@ -451,9 +454,12 @@ input:focus {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 20px;
+    box-shadow: 10px 5px 5px rgb(153, 152, 152);
+
 }
 
 .submit-btn:hover {
     background-color: #3f9342;
+
 }
 
