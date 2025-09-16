@@ -90,27 +90,43 @@
     <div class="modal-inner">
         <h1 class ="modal-title">Add Mission</h1>
          <form action="/missions" method="POST">
-                <div class="form-group">
+            <section>
+                <div style="float:left;margin-right:20px;">
                     <label for="id">ID</label>
-                    <input type="id" id="id" name="id" placeholder="id" required>
+                    <input type="text" id="id" name="id" placeholder="ID" required>
+                </div>
+                
+                <div style="float:left;">
                     <label for="status">Status</label>
-                    <input type="status" id="status" name="status" placeholder="Available" required>
+                    <input type="text" id="status" name="status" placeholder="Available" required>
                 </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input type="description" id="description" name="description" placeholder="Description" required>
-                </div>
-
-                <div class="form-group">
+                
+                <br style="clear:both;" />
+            </section>
+            
+            <section>
+                <label for="description">Description</label>
+                <input type="text" id="description" name="description" placeholder="Description" required>
+                
+                <div style="float:left;margin-right:20px;">
                     <label for="type">Type</label>
-                    <input type="type" id="type" name="type" placeholder="Water" required>
-                    <label for="reward">Reward</label>
-                    <input type="reward" id="reward" name="reward" placeholder="Select" required>
+                    <input type="text" id="type" name="type" placeholder="Water" required>
                 </div>
                 
+                <div style="float:left;">
+                    <label for="reward">Reward</label>
+                    <input type="text" id="reward" name="reward" placeholder="Select" required>
+                </div>
                 
-        <button type="submit" class="submit">Submit</button>
-        <button id="closeModal">Close</button>
+                <br style="clear:both;" />
+            </section>
+            
+            <button type="submit" class="submit">Submit</button>
+            <button id="closeModal">Close</button>
+
+        </form>
+                
+                
     </div>
     </div>
     <script src ="/js/missions/missions.js"></script>
