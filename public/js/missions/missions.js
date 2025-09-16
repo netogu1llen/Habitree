@@ -5,12 +5,10 @@ const closeBtn = document.getElementById("closeModal");
 const modal = document.getElementById("modal");
 
 openBtn.addEventListener("click", () => {
-    console.log("Opening modal"); // Para debug
     modal.classList.add("open");
 });
 
 closeBtn.addEventListener("click", () => {
-    console.log("Closing modal"); // Para debug
     modal.classList.remove("open");
 });
 

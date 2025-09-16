@@ -338,13 +338,19 @@ cursor: pointer;
 }
 
 .modal-inner {
-    background-color: white;
+    background-color: #f4f7f2;
     padding: 30px;
-    border-radius: 8px;
+    border-radius: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    width: 400px;
+    width: 654px;
+    height: 600px;
     max-width: 90%;
     position: relative;
+}
+
+.modal-title{
+    font-size: 48px;
+    text-align: center;
 }
 
 .container__button {
@@ -362,7 +368,7 @@ cursor: pointer;
 }
 
 #closeModal {
-    background-color: #f44336;
+    background-color: #4CAF50;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -370,3 +376,4 @@ cursor: pointer;
     cursor: pointer;
     margin-top: 20px;
 }
+
