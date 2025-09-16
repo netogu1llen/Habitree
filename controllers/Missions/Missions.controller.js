@@ -19,7 +19,7 @@ exports.postMissions = async(req,res,next) => {
     ); 
     addMissions.save()
         .then(() => {
-            res.redirect('/');
+            res.redirect('/missions');
     })
     .catch(err => console.log(err));
 }
