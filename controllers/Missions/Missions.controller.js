@@ -23,3 +23,41 @@ exports.postMissions = async(req,res,next) => {
     })
     .catch(err => console.log(err));
 }
+
+/**
+ * Devuelve los datos de una misión por ID (para edición).
+ */
+exports.getMissionById = async (req, res) => {
+    try {
+        const mission = await Mission.fetchById(req.params.id);
+        if (mission[0].length === 0) {
+            return res.status(404).json({ error: 'Mission not found' });
+        }
+        res.json(mission[0][0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Error fetching mission' });
+    }
+};
+
+/**
+ * Edita una misión existente.
+ */
+exports.editMission = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const data = {
+            responseVerification: req.body.responseVerification,
+            category: req.body.category,
+            description: req.body.description,
+            available: req.body.available,
+            experience: req.body.experience
+        };
+        const result = await Mission.update(id, data);
+        if (result[0].affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'Mission not found' });
+        }
+        res.json({ success: true, message: 'Mission updated successfully' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Error updating mission' });
+    }
+};

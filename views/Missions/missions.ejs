@@ -91,16 +91,18 @@
     <nav>            
          <button id="closeModal" class="fa fa-times"></button>
     </nav>
-        <h1 class ="modal-title">Add Mission</h1>
-         <form action="/missions" method="POST">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <h1 class ="modal-title">Add Mission</h1>
+     <form action="/missions" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div id="form-message" style="display:none;"></div>
 
                 
                 <section class="inputs-row">
                     
                     <div class="input-container">
                         <label for="id">ID</label>
-                        <input class="smallInput" type="number" id="id" name="IDMission" placeholder="ID" required>
+                        <input class="smallInput" type="number" id="id" name="IDMission" placeholder="ID" required readonly>
+                        <span id="id-readonly-msg" style="display:none;color:#888;font-size:0.9em;">Este campo no se puede modificar.</span>
                     </div>
 
                     <div class="input-container">
@@ -141,6 +143,7 @@
                 </section>
                 
                 <button type="submit" class="submit-btn">Add</button>
+                <button type="submit" class="submit-btn" id="edit-btn" style="display:none;">Edit</button>
 
         </form>
                 
