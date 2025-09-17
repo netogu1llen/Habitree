@@ -62,8 +62,10 @@ app.use('/missions', missionsRoutes);
 // Ruta raíz
 const dashboardRoutes = require('./routes/dashboard.route');
 app.use('/', dashboardRoutes);
-// Puerto
+// Puerto levantado
 const PORT = 4002;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
