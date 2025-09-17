@@ -28,6 +28,10 @@ module.exports = class notification {
         return db.execute('SELECT * FROM notification');
     }
 
+    static fetchById(id) {
+        return db.execute('SELECT * FROM notification WHERE IDNotification = ?',[id]);
+    }
+
     static async deleteA(idDepartamento) {
         await db.execute(`DELETE FROM PerteneceDepa WHERE idDepartamento = ?`, [idDepartamento]);
         await db.execute(`DELETE FROM Departamentos WHERE idDepartamento = ?`, [idDepartamento]);

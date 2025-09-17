@@ -1,0 +1,19 @@
+<div class="modal" id="modal-edicion">
+  <h2 id="modal-title">Editar Notificación</h2>
+  <form id="form-notification" data-id="<%= id %>">
+    <label for="descripcion-input">Descripción:</label>
+    <input type="text" id="descripcion-input" value="<%= description %>" />
+
+    <label for="categoria-input">Categoría:</label>
+    <input type="text" id="categoria-input" value="<%= category %>" />
+
+    <label for="activo-input">Activo:</label>
+    <select id="activo-input">
+      <option value="Sí" <%= isActive === 'Sí' ? 'selected' : '' %>>Sí</option>
+      <option value="No" <%= isActive === 'No' ? 'selected' : '' %>>No</option>
+    </select>
+
+    <button id="guardar-btn" type="button">Guardar</button>
+    <button type="button" class="close-modal">Cancelar</button>
+  </form>
+</div>

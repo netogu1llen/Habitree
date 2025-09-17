@@ -1,0 +1,288 @@
+
+        @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;700&display=swap');
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            min-width: 100vw;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Instrument Sans', sans-serif;
+            background-color: #f4f7f2;
+        }
+
+        .content {
+            width: 100vw;
+            min-height: 100vh;
+            max-width: 100vw;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .navbar {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 20px;
+            min-height: 100vh;
+            flex-basis: 15%;
+            flex-shrink: 0;
+            flex-grow: 0;
+            align-items: flex-start;
+            border-right: 2px solid #d9d9d9;
+            box-sizing: border-box;
+        }
+
+        .Dashboard_content {
+            flex-basis: 70%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar li {
+            list-style: none;
+        }
+
+        .header--Logo {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            color: #0b2f1f;
+            font-size: 24px;
+            gap: 10px;
+        }
+
+        .title {
+            color: #0b2f1f;
+            font-size: 32px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navbar-item {
+            color: black;
+            font-size: 16px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .content--navbar {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+            align-items: flex-start;
+            padding-left: 50px;
+        }
+
+        .navbar__logout {
+            margin-top: 120px;
+            width: 100%;
+            align-items: flex-start;
+            padding-left: 50px;
+        }
+
+        .Dashboard__title {
+            margin-top: 10px;
+            font-size: 32px;
+            padding: 20px;
+            width: 100%;
+            color: #0b2f1f;
+        }
+
+        .Dashboard__title-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .Dashboard__gridContent {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px;
+            height: 70%;
+            justify-items: center;
+            align-items: center;
+        }
+
+        .Dashboard__gridItem {
+            border: 2px solid #0b2f1f;
+            border-radius: 16px;
+            padding: 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .Dashboard__gridItem:hover {
+            border: 2px solid #2DA460;
+            cursor: pointer;
+        }
+
+        .Dashboard__gridItemIcon__text {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #626262;
+            margin-bottom: 50px;
+        }
+
+        .Dashboard__gridItemIcon {
+            background-color: #2ecc702a;
+            border-radius: 8px;
+            padding: 12px;
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        i {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .navbar--icon {
+            margin-right: 8px;
+            font-size: 18px;
+            color: #0b2f1f;
+        }
+
+        .Dashboard__gridItemIcon__icon {
+            color: #2DA460;
+            font-size: 24px;
+            margin-top: 12px;
+        }
+
+        .table-container {
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 2px solid #0B2F1F;
+            margin: 24px 32px;
+            padding: 16px;
+        }
+
+        .table-container table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .table-container th,
+        .table-container td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+        }
+
+        .table-container .actions {
+            text-align: center;
+        }
+
+        .table__button {
+            font-size: 12px;
+            border-radius: 10px;
+            background: linear-gradient(to right, #2DA460, #2D9459);
+            color: white;
+            padding: 6px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .header__button {
+            font-size: 16px;
+            border-radius: 10px;
+            background: linear-gradient(to right, #2DA460, #2D9459);
+            color: white;
+            padding: 6px 30px;
+            border: none;
+            cursor: pointer;
+            margin-right: 32px;
+        }
+
+        /* BACKDROP Y MODAL */
+        #backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+        #backdrop.active {
+            display: block;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            z-index: 999;
+            display: none;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal h2 {
+            margin-bottom: 16px;
+        }
+
+        .modal form label {
+            display: block;
+            margin-top: 12px;
+        }
+
+        .modal form input,
+        .modal form select {
+            width: 100%;
+            padding: 6px 8px;
+            margin-top: 4px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .modal form button {
+            margin-top: 16px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .modal form #guardar-btn {
+            background-color: #2DA460;
+            color: white;
+            margin-right: 8px;
+        }
+
+        .modal form .close-modal {
+            background-color: #ccc;
+        }
