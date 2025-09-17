@@ -63,8 +63,8 @@ if (deleteBtn) {
         
         // Creamos el mensaje de confirmación de forma dinámica
         const confirmationMessage = (actionText === 'deactivate')
-            ? "Are you sure yo want to deactivate this notification?"
-            : "Are you sure yo want to activate this notification?";
+            ? "Are you sure you want to deactivate this notification?"
+            : "Are you sure you want to activate this notification?";
 
         // Mostramos el mensaje de confirmación
         if (confirm(confirmationMessage)) {
@@ -92,6 +92,6 @@ if (deleteBtn) {
         })
         .catch(err => {
             console.error(err);
-            alert("Hubo un error al cargar la notificación. Por favor, inténtelo de nuevo.");
+            alert("There was an error loading the notification. Please try again.");
         });
 });
