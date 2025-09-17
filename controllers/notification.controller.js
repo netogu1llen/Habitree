@@ -33,19 +33,26 @@ exports.getNotificationEditor = async (req, res) => {
 };
 
 
-exports.postDelete = (req,res)=>{
-    const { id } = req.body;
+exports.postDelete = (req, res) => {
+    const { id, currentState } = req.body;
+    
+    // Si el estado actual es 'deactivate' (es decir, está activo), lo cambia a 0.
+    // Si el estado actual es 'activate' (es decir, está inactivo), lo cambia a 1.
+    const newIsActive = currentState === 'deactivate' ? 0 : 1;
+
     try {
-        Notification.delete(id)
-        res.redirect('/notifications')
+        // Llama a la función del modelo con el nuevo valor numérico
+        Notification.updateIsActive(id, newIsActive);
         
-        console.log("Success delete")
+        res.redirect('/notifications');
+        
+        console.log(`Success: Notificación ${id} actualizada a isActive = ${newIsActive}`);
     }
     catch (error) {
         console.error(error);
-        res.status(500).send("Error al eliminar la notificación");
+        res.status(500).send("Error al actualizar la notificación");
     }
-}
+};
 
 exports.postUpdate = (req,res)=>{
     const { id, description, category } = req.body;

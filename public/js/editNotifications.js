@@ -54,19 +54,37 @@ document.addEventListener("click", (event) => {
                     }
                 };
                 
-                // --- Aquí añadimos la lógica para el botón de 'Delete' ---
-                const deleteBtn = document.getElementById("delete-btn");
-                if (deleteBtn) {
-                    deleteBtn.addEventListener("click", () => {
-                        if (confirm("¿Estás seguro de que deseas eliminar esta notificación?")) {
-                            // Encuentra el formulario de eliminación oculto y lo envía
-                            const deleteForm = document.getElementById("form-delete-notification");
-                            if (deleteForm) {
-                                deleteForm.submit();
-                            }
-                        }
-                    });
-                }
+            
+            const deleteBtn = document.getElementById("delete-btn");
+if (deleteBtn) {
+    deleteBtn.addEventListener("click", () => {
+        // Obtenemos el texto del botón para determinar la acción
+        const actionText = deleteBtn.textContent.trim().toLowerCase();
+        
+        // Creamos el mensaje de confirmación de forma dinámica
+        const confirmationMessage = (actionText === 'deactivate')
+            ? "Are you sure yo want to deactivate this notification?"
+            : "Are you sure yo want to activate this notification?";
+
+        // Mostramos el mensaje de confirmación
+        if (confirm(confirmationMessage)) {
+            const deleteForm = document.getElementById("form-delete-notification");
+            if (deleteForm) {
+                // Obtenemos el estado actual del botón para saber si es 'Activate' o 'Deactivate'
+                const currentState = actionText;
+                
+                // Creamos un campo oculto para enviar el estado actual
+                const stateInput = document.createElement('input');
+                stateInput.type = 'hidden';
+                stateInput.name = 'currentState';
+                stateInput.value = currentState;
+                deleteForm.appendChild(stateInput);
+                
+                deleteForm.submit();
+            }
+        }
+    });
+}
                 
             } else {
                 console.error("Error: Modal o backdrop no encontrados.");

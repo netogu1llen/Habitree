@@ -1,17 +1,17 @@
 <div class="modal">
-    <h2 id="modal-title">Editar Notificación</h2>
+    <h2 id="modal-title">Edit Notification</h2>
 
     <form id="form-edit-notification" action="/notifications/update" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
         <input type="hidden" name="id" value="<%= id %>" />
 
-        <label for="descripcion-input">Descripción:</label>
+        <label for="descripcion-input">Description:</label>
         <div class="input-container">
             <input type="text" id="descripcion-input" name="description" value="<%= description %>" />
         </div>
 
-        <label for="category-input">Categoría:</label>
+        <label for="category-input">Category:</label>
         <div class="input-container">
             <input type="text" id="category-input" name="category" value="<%= category %>" />
         </div>

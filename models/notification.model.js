@@ -28,11 +28,11 @@ module.exports = class notification {
         return db.execute('SELECT * FROM notification');
     }
 
-    static delete(id) {
+    static updateIsActive(id,newIsActive) {
         return db.execute(`UPDATE notification
-             SET isActive = 0
+             SET isActive = ?
              WHERE idNotification = ?`
-            ,[id]);
+            ,[newIsActive,id]);
     }
 
     static update(description,category,id) {
