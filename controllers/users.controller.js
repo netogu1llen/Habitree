@@ -16,7 +16,7 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.postUsers = async (req, res) => {
-    console.log("Datos recibidos en POST /users:", request.body);
+    console.log("Datos recibidos en POST /users:", req.body);
 
     try {
         // Generar contraseña aleatoria o usar la del body
@@ -33,9 +33,9 @@ exports.postUsers = async (req, res) => {
             dateOfBirth: req.body.dateOfBirth,
         });
 
-        res.status(500).send("Usuario creado con éxito");
+        res.redirect('/users');
     } catch (err) {
         console.error(err);
-        res.status(500).send("Error al crear usuario");
+        res.status(500).send("Error creating user");
     }
 };
