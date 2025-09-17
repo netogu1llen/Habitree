@@ -28,6 +28,20 @@ module.exports = class notification {
         return db.execute('SELECT * FROM notification');
     }
 
+    static delete(id) {
+        return db.execute(`UPDATE notification
+             SET isActive = 0
+             WHERE idNotification = ?`
+            ,[id]);
+    }
+
+    static update(description,category,id) {
+        return db.execute(`UPDATE notification
+             SET description = ?, category = ?
+             WHERE idNotification = ?`
+            ,[description,category,id]);
+    }
+
     static fetchById(id) {
         return db.execute('SELECT * FROM notification WHERE IDNotification = ?',[id]);
     }

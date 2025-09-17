@@ -1,19 +1,36 @@
-<div class="modal" id="modal-edicion">
-  <h2 id="modal-title">Editar Notificación</h2>
-  <form id="form-notification" data-id="<%= id %>">
-    <label for="descripcion-input">Descripción:</label>
-    <input type="text" id="descripcion-input" value="<%= description %>" />
+<div class="modal">
+    <h2 id="modal-title">Editar Notificación</h2>
 
-    <label for="categoria-input">Categoría:</label>
-    <input type="text" id="categoria-input" value="<%= category %>" />
+    <form id="form-edit-notification" action="/notifications/update" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
-    <label for="activo-input">Activo:</label>
-    <select id="activo-input">
-      <option value="Sí" <%= isActive === 'Sí' ? 'selected' : '' %>>Sí</option>
-      <option value="No" <%= isActive === 'No' ? 'selected' : '' %>>No</option>
-    </select>
+        <input type="hidden" name="id" value="<%= id %>" />
 
-    <button id="guardar-btn" type="button">Guardar</button>
-    <button type="button" class="close-modal">Cancelar</button>
-  </form>
+        <label for="descripcion-input">Descripción:</label>
+        <div class="input-container">
+            <input type="text" id="descripcion-input" name="description" value="<%= description %>" />
+        </div>
+
+        <label for="category-input">Categoría:</label>
+        <div class="input-container">
+            <input type="text" id="category-input" name="category" value="<%= category %>" />
+        </div>
+        
+        <div class="button-container">
+            <button id="guardar-btn" type="submit">Edit</button>
+
+            <% if (isActive === 'Sí') { %>
+                <button id="delete-btn" type="button" class="close-modal">Deactivate</button>
+            <% } else { %>
+                <button id="delete-btn" type="button" class="close-modal">Activate</button>
+            <% } %>
+
+        </div>
+    </form>
+
+    <form id="form-delete-notification" action="/notifications/delete" method="POST" style="display: none;">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        
+        <input type="hidden" name="id" value="<%= id %>" />
+    </form>
 </div>
