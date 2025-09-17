@@ -8,3 +8,17 @@ exports.getUsers = async (req, res) => {
         csrfToken: req.csrfToken()
     });
 };
+
+exports.postUser = (req, res) => {
+    console.log("Datos recibidos en POST /users:", request.body);
+
+    const user = new Usuario(
+        req.body.name = my_name,
+        req.body.name = my_email,
+        req.body.namepassword = my_password,
+        req.body.namegender = my_gender,
+        req.body.dateOfBirth = my_dateOfBirth
+    )
+    
+    
+}
