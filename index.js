@@ -45,6 +45,9 @@ app.get('/shop', (req, res) => {
   res.send();
 });
 
+const userRoutes = require('./routes/users.routes');
+app.use('/users', userRoutes);
+
 const loginRoutes = require('./routes/login.routes');
 app.use('/login', loginRoutes);
 
