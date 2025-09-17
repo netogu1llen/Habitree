@@ -1,6 +1,12 @@
 const csrf = require("csurf");
 const bcrypt = require("bcryptjs");
-const User = require("../models/user.model");
+const crypto = require("crypto");
+const Usuario = require("../models/user.model");
+
+// Función para generar una contraseña aleatoria segura
+function generateRandomPassword(length = 12) {
+    return crypto.randomBytes(length).toString("base64url").slice(0, length);      
+}
 
 exports.getUsers = async (req, res) => {
     res.render('../views/users', { 
@@ -9,16 +15,27 @@ exports.getUsers = async (req, res) => {
     });
 };
 
-exports.postUser = (req, res) => {
+exports.postUsers = async (req, res) => {
     console.log("Datos recibidos en POST /users:", request.body);
 
-    const user = new Usuario(
-        req.body.name = my_name,
-        req.body.name = my_email,
-        req.body.namepassword = my_password,
-        req.body.namegender = my_gender,
-        req.body.dateOfBirth = my_dateOfBirth
-    )
-    
-    
-}
+    try {
+        // Generar contraseña aleatoria o usar la del body
+        const passwordPlano = generateRandomPassword(12);
+        // Hashear
+        const hashedPassword = await bcrypt.hash(passwordPlano, 12);
+
+        // Crear usuario en la BD
+        await Usuario.save({
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword,
+            gender: req.body.gender,
+            dateOfBirth: req.body.dateOfBirth,
+        });
+
+        res.status(500).send("Usuario creado con éxito");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error al crear usuario");
+    }
+};

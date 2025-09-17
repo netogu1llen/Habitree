@@ -23,7 +23,7 @@
     static async save(data) {
         try {
             const [result] = await db.execute(
-                "INSERT INTO user (name, email, gender, dateOfBirth, coins, password, deleted, IDRol) VALUES (?,?,?,?,?,?,?)",
+                "INSERT INTO user (name, email, gender, dateOfBirth, coins, password, deleted, IDRol) VALUES (?,?,?,?,?,?,?,?)",
                 [data.name, data.email, data.gender, data.dateOfBirth, 0, data.password, 0, 1]
             );
 
