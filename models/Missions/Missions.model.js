@@ -26,9 +26,49 @@ module.exports = class Mission{
         );
     }
 
-    //Este método servirá para devolver los objetos del almacenamiento persistente.
+
+    /**
+     * Devuelve todas las misiones.
+     * @returns {Promise}
+     */
     static fetchAll() {
         return db.execute('SELECT * FROM mission');
+    }
+
+    /**
+     * Devuelve una misión por su ID.
+     * @param {number} id
+     * @returns {Promise}
+     */
+    static fetchById(id) {
+        return db.execute('SELECT * FROM mission WHERE IDMission = ?', [id]);
+    }
+
+    /**
+     * Actualiza una misión existente.
+     * @param {number} id
+     * @param {object} data
+     * @returns {Promise}
+     */
+    static update(id, data) {
+        return db.execute(
+            'UPDATE mission SET responseVerification=?, category=?, description=?, available=?, experience=? WHERE IDMission=?',
+            [
+                data.responseVerification,
+                data.category,
+                data.description,
+                data.available,
+                data.experience,
+                id
+            ]
+        );
+    }
+
+    /**
+     * Elimina una misión por su ID.
+     */
+    static deleteMissionById(id) {
+    return db.execute('DELETE FROM mission WHERE IDMission = ?', [id]);
     }
 
 
