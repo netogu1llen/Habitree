@@ -28,6 +28,24 @@ module.exports = class notification {
         return db.execute('SELECT * FROM notification');
     }
 
+    static updateIsActive(id,newIsActive) {
+        return db.execute(`UPDATE notification
+             SET isActive = ?
+             WHERE idNotification = ?`
+            ,[newIsActive,id]);
+    }
+
+    static update(description,category,id) {
+        return db.execute(`UPDATE notification
+             SET description = ?, category = ?
+             WHERE idNotification = ?`
+            ,[description,category,id]);
+    }
+
+    static fetchById(id) {
+        return db.execute('SELECT * FROM notification WHERE IDNotification = ?',[id]);
+    }
+
     static async deleteA(idDepartamento) {
         await db.execute(`DELETE FROM PerteneceDepa WHERE idDepartamento = ?`, [idDepartamento]);
         await db.execute(`DELETE FROM Departamentos WHERE idDepartamento = ?`, [idDepartamento]);
