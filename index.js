@@ -3,6 +3,7 @@
 
 const express = require('express');
 const app = express();
+require('dotenv').config();
 
 // Configuración del motor de vistas EJS
 const path = require('path');
