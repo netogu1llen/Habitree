@@ -484,3 +484,28 @@ input:focus {
 
 }
 
+
+
+
+
+
+/* Botón Add */
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    box-shadow: 10px 5px 5px rgb(153, 152, 152);
+}
+
+/* Botón Add hover */
+.submit-btn:hover {
+    background-color: #3f9342;
+}

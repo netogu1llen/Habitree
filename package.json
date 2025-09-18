@@ -4,6 +4,7 @@
   "description": "App para Habitree",
   "main": "index.js",
   "scripts": {
+    "start": "npx nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -29,4 +30,3 @@
     "mysql2": "^3.14.5",
     "nodemailer": "^7.0.6"
   }
-}

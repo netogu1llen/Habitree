@@ -30,7 +30,7 @@ app.use(cookieParser());
 const csrf = require('csurf');
 const csrfProtection = csrf({
     cookie: true,
-    ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
+    ignoreMethods: ['GET', 'HEAD', 'OPTIONS', 'DELETE'], //  aquí agrego DELETE ñuxxo
     ignore: (req) => {
         // Ignorar rutas de API y webhooks
         return req.path.startsWith('/api/') || 
@@ -52,7 +52,7 @@ app.use('/users', userRoutes);
 const loginRoutes = require('./routes/login.routes');
 app.use('/login', loginRoutes);
 
-const notificationsRoutes = require('./routes/notifications.routes');
+const notificationsRoutes = require('./routes/notifications/notifications.routes');
 app.use('/notifications', notificationsRoutes);
 
 app.get('/leagues', (req, res) => {
