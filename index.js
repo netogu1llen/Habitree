@@ -3,6 +3,7 @@
 
 const express = require('express');
 const app = express();
+require('dotenv').config();
 
 // Configuración del motor de vistas EJS
 const path = require('path');
@@ -44,6 +45,9 @@ app.use(csrfProtection);
 app.get('/shop', (req, res) => {
   res.send();
 });
+
+const userRoutes = require('./routes/users.routes');
+app.use('/users', userRoutes);
 
 const loginRoutes = require('./routes/login.routes');
 app.use('/login', loginRoutes);
