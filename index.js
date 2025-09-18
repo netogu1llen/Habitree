@@ -29,7 +29,7 @@ app.use(cookieParser());
 const csrf = require('csurf');
 const csrfProtection = csrf({
     cookie: true,
-    ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
+    ignoreMethods: ['GET', 'HEAD', 'OPTIONS', 'DELETE'], //  aquí agrego DELETE ñuxxo
     ignore: (req) => {
         // Ignorar rutas de API y webhooks
         return req.path.startsWith('/api/') || 

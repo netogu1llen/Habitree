@@ -17,7 +17,8 @@ openBtn.addEventListener("click", () => {
     currentMissionId = null;
     form.IDMission.removeAttribute("readonly");
     document.getElementById("id-readonly-msg").style.display = "none";
-    document.getElementById("delete-btn").style.display = "none"; // <-- Agrega esta línea
+    document.getElementById("delete-btn").style.display = "none";
+    document.getElementById("add-edit-btn").textContent = "Add";
 });
 
 closeBtn.addEventListener("click", () => {
@@ -54,8 +55,8 @@ document.querySelectorAll(".table__button").forEach(btn => {
                 currentMissionId = mission.IDMission;
                 form.IDMission.setAttribute("readonly", true);
                 document.getElementById("id-readonly-msg").style.display = "inline";
-                document.getElementById("delete-btn").style.display = "inline-block"; // <-- Agrega esta línea
-
+                document.getElementById("delete-btn").style.display = "inline-block";
+                document.getElementById("add-edit-btn").textContent = "Edit";
             })
             .catch(() => {
                 showMessage("Error loading mission data", true);
@@ -104,6 +105,7 @@ form.addEventListener("submit", function(e) {
             showMessage("Error updating mission", true);
         });
     }
+    // Si no está en modo edición, el submit normal agrega misión
 });
 
 // Manejar eliminación de misión
@@ -118,11 +120,11 @@ document.getElementById('delete-btn').addEventListener('click', function() {
         })
         .then(res => res.json())
         .then(data => {
-            alert(data.message || 'Misión eliminada');
-            window.location.reload();
+            showMessage(data.message || 'Misión eliminada');
+            setTimeout(() => { window.location.reload(); }, 1200);
         })
         .catch(err => {
-            alert('Error eliminando misión');
+            showMessage('Error eliminando misión', true);
             console.error(err);
         });
     }
