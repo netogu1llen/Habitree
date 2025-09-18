@@ -48,7 +48,7 @@ app.get('/shop', (req, res) => {
 const loginRoutes = require('./routes/login.routes');
 app.use('/login', loginRoutes);
 
-const notificationsRoutes = require('./routes/notifications.routes');
+const notificationsRoutes = require('./routes/notifications/notifications.routes');
 app.use('/notifications', notificationsRoutes);
 
 app.get('/leagues', (req, res) => {
