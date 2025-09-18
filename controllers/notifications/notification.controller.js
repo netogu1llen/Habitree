@@ -1,8 +1,8 @@
-const Notification = require('../models/notification.model');
+const Notification = require('../../models/notifications/notification.model');
 
 exports.getNotifications = async (req, res) => {
     const notifications = await Notification.fetchAll();
-    res.render('notifications', { title: 'Notifications', notifications });
+    res.render('notifications/notifications', { title: 'Notifications', notifications });
 };
 
 
@@ -19,7 +19,7 @@ exports.getNotificationEditor = async (req, res) => {
         const notification = rows[0]; // Los datos de la BD.
 
         // Aquí estás pasando los datos. ¿Por qué el error?
-        res.render('editNotifications', {
+        res.render('notifications/editNotifications', {
             id: notification.IDNotification, // ¿Es este el ID que quieres mostrar en el form?
             description: notification.description,
             category: notification.category,
