@@ -62,9 +62,11 @@ app.get('/leagues', (req, res) => {
 const missionsRoutes = require('./routes/Missions/missions.routes');
 app.use(missionsRoutes);
  
+const quizzesRoutes = require ('./routes/quizzes/quizzes.routes');
+app.use(quizzesRoutes);
 
 // Ruta raíz
-const dashboardRoutes = require('./routes/dashboard.route');
+const dashboardRoutes = require ('./routes/dashboard.route');
 app.use('/', dashboardRoutes);
 // Puerto
 const PORT = 4002;
