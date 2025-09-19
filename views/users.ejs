@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href ="/css/users.css">
+    <title>Users</title>
+</head>
+
+
+<body>
+    <div class="content">
+        <nav class="navbar">
+        <ul>
+           <div class="header--Logo">
+                <i class="fa-solid fa-hand-holding-droplet"></i>
+                <li><a href="#" class="title">HabiTree</a></li>
+           </div>
+
+           <div class="content--navbar">
+               <li class="navbar-item" ><i class="fa-solid fa-user-group navbar--icon"></i>Leagues</li>
+               <li class="navbar-item" ><i class="fa-solid fa-circle-question navbar--icon"></i>Quizzes</li>
+               <li class="navbar-item" ><i class="fa-solid fa-bell navbar--icon"></i>Notifications</li>
+               <li class="navbar-item" ><i class="fa-solid fa-cart-shopping navbar--icon"></i>Store</li>
+               <li class="navbar-item" ><i class="fa-solid fa-box-archive navbar--icon"></i>Rewards</li>
+               <li class="navbar-item" ><i class="fa-solid fa-bullseye navbar--icon"></i>Missions </li>
+               <li class="navbar-item" ><i class="fa-solid fa-user navbar--icon"></i>User </li>
+           </div>
+
+           <div class="navbar__logout">
+               <li class="navbar-item"><i class="fa-solid fa-right-from-bracket navbar--icon"></i>Logout</li>
+           </div>
+        
+        </ul>
+    </nav>
+
+    <div class="Dashboard_content">
+        <div class = "Dashboard__title-container">
+            <h1 class="Dashboard__title">Users</h1>
+        <div class="container__button">
+            <button id= "openModal" class="instrument-sans-bold header__button">Add</button>
+        </div>
+    </div>
+
+
+<%# POP UP PARA AGREGAR USER%>
+
+    <div class="modal" id="modal">
+        <div class="modal-inner">
+            <nav>            
+                <button id="closeModal" class="fa fa-times"></button>
+            </nav>
+                <h1 class ="modal-title">Add User</h1>
+                <form action="/users" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                    <section>
+                        <label for="name">Name</label>
+                        <input class = "description" type="text" id="name" name="name" placeholder="Name" required>
+                        <br style="clear:both;" />
+                    </section>
+                    
+                    <section>
+                        <label for="name">Email</label>
+                        <input class = "description" type="email" id="email" name="email" placeholder="Email" required>
+                        <br style="clear:both;" />
+                    </section>  
+
+
+                    <section class="inputs-row">
+                            
+                        <div class="input-container">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender" required>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="input-container">
+                            <label for="dateOfBirth" class="label">Date of Birth</label>
+                            <input
+                            class="text-modal"
+                            min="1900-01-01"
+                            max="2010-12-31"
+                            type="date"
+                            placeholder="dd/mm/yy"
+                            id="dateOfBirth"
+                            name="dateOfBirth"
+                            required
+                            oninvalid="this.setCustomValidity('Please select a date')" 
+                            onchange="this.setCustomValidity('')"
+                            style="width: auto;"
+                            />
+                        </div>
+
+                    </section>
+
+                    
+                    <button type="submit" class="submit-btn">Add</button>
+            </form>  
+        </div>
+    </div>
+    <script src ="/js/users.js"></script>
+</body>
+</html>
