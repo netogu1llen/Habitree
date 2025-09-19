@@ -2,8 +2,7 @@ const db = require('../../util/database');
 
 module.exports = class Quiz {
 
-    constructor(IDQuiz, responseVerification, category, description, dateOfCreation, available, experience) {
-        this.IDQuiz = IDQuiz;
+    constructor(responseVerification, category, description, dateOfCreation, available, experience) {
         this.responseVerification = responseVerification;
         this.category = category;
         this.description = description;
@@ -14,8 +13,8 @@ module.exports = class Quiz {
 
     save() {
         return db.execute(
-            'INSERT INTO quiz (IDQuiz, responseVerification, category, description, dateOfCreation, available, experience) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [this.IDQuiz, this.responseVerification, this.category, this.description, this.dateOfCreation, this.available, this.experience]
+            'INSERT INTO quiz (responseVerification, category, description, dateOfCreation, available, experience) VALUES (?, ?, ?, ?, ?, ?)',
+            [this.responseVerification, this.category, this.description, this.dateOfCreation, this.available, this.experience]
         );
     }
 

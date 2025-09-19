@@ -258,6 +258,171 @@ i{
     padding: 8px 16px;
     cursor: pointer;
 }
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.button-group button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+#add-edit-btn {
+    background-color: #2DA460;
+    color: white;
+}
+
+.modal.open {
+    display: block;
+}
+
+.form-message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    display: none;
+}
+
+.form-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.form-message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.form-control {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.questions-section {
+    margin-top: 20px;
+}
+
+.question-container {
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.question-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.question-type {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.options-container {
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+.option-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.remove-option {
+    background-color: transparent;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+}
+
+.submit-btn {
+    background-color: #2DA460;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
 </style>
 <body>
     <div class="content">
@@ -324,40 +489,96 @@ i{
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
+                    <th>Description</th>
                     <th>Category</th>
-                    <th>Level</th>
-                    <th>Reward</th>
+                    <th>Available</th>
+                    <th>Experience</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Climate change</td>
-                    <td>Nature</td>
-                    <td>24</td>
-                    <td>980</td>
-                    <td><button class="manage-button">Manage</button></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Water 101</td>
-                    <td>Water</td>
-                    <td>24</td>
-                    <td>980</td>
-                    <td><button class="manage-button">Manage</button></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Composting</td>
-                    <td>Waste</td>
-                    <td>24</td>
-                    <td>980</td>
-                    <td><button class="manage-button">Manage</button></td>
-                </tr>
+                <% if (quizzes && quizzes.length > 0) { %>
+                    <% quizzes.forEach(function(quiz) { %>
+                        <tr>
+                            <td><%= quiz.IDQuiz %></td>
+                            <td><%= quiz.description %></td>
+                            <td><%= quiz.category %></td>
+                            <td><%= quiz.available ? 'Yes' : 'No' %></td>
+                            <td><%= quiz.experience %></td>
+                            <td><button class="manage-button">Manage</button></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" style="text-align:center;">No quizzes available</td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     </div>
+    
+    
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="closeModal" class="close">&times;</button>
+                <h2 class="modal-title">Add New Quiz</h2>
+            </div>
+            <form method="POST" action="/quizzes">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for=" "name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Climate Change" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <input type="text" id="category" name="category" placeholder="Active" class="form-control">
+                    </div>
+                </div>
+
+                
+                    <label>Questions</label>
+                    <div class="question-container">
+                        <div class="question-input-group">
+                            <input type="text" placeholder="What is the climate change?" class="form-control">
+                            <select class="question-type">
+                                <option>Multiple Choice</option>
+                                <option>True/False</option>
+                                <option>Open Answer</option>
+                            </select>
+                        </div>
+                        <div class="options-container">
+                            <div class="option-input-group">
+                                <input type="radio" name="correct_answer">
+                                <input type="text" placeholder="Option 1" class="form-control">
+                                <button type="button" class="remove-option">×</button>
+                            </div>
+                            <div class="option-input-group">
+                                <input type="radio" name="correct_answer">
+                                <input type="text" placeholder="Option 2" class="form-control">
+                                <button type="button" class="remove-option">×</button>
+                            </div>
+                            <div class="option-input-group">
+                                <input type="radio" name="correct_answer">
+                                <input type="text" placeholder="Add an option or 'Others'" class="form-control">
+                                <button type="button" class="remove-option">×</button>
+                            </div>
+                        </div>
+                    </div>
+              
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="experience">Reward</label>
+                        <input type="number" id="experience" name="experience" placeholder="XP" class="form-control">
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/js/quizzes/quizzes.js"></script>
 </body>
-</html>
