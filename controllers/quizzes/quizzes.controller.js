@@ -3,9 +3,13 @@ const Quiz = require('../../models/quizzes/quizzes.model');
 exports.getQuizzes = async (req, res) => {
     try {
         const [quizzes] = await Quiz.fetchAll();
+        // Eliminar duplicados usando Set y map
+        const uniqueQuizzes = Array.from(new Set(quizzes.map(q => q.IDQuiz)))
+            .map(id => quizzes.find(q => q.IDQuiz === id));
+            
         res.render('quizzes/quizzes.ejs', { 
             title: 'Quizzes',
-            quizzes: quizzes,
+            quizzes: uniqueQuizzes,
             csrfToken: req.csrfToken()
         });
     } catch (error) {

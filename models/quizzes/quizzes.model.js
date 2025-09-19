@@ -19,7 +19,7 @@ module.exports = class Quiz {
     }
 
     static fetchAll() {
-        return db.execute('SELECT * FROM quiz');
+        return db.execute('SELECT DISTINCT * FROM quiz ORDER BY IDQuiz');
     }
 }
 

@@ -280,19 +280,11 @@ form.addEventListener("submit", function(e) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'CSRF-Token': csrfToken
+            'CSRF-Token': formData.get('_csrf')
         },
         body: JSON.stringify(data)
     })
     .then(res => res.json())
-    .then(result => {
-        if (result.success) {
-            showMessage("Quiz created successfully");
-            setTimeout(() => { window.location.reload(); }, 1200);
-        } else {
-            showMessage(result.message || "Error creating quiz", true);
-        }
-    })
     .catch(error => {
         showMessage("Error creating quiz", true);
         console.error(error);
