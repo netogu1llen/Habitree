@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <title>Quizzes</title>
@@ -546,6 +547,7 @@ textarea.form-control {
                 <h2 class="modal-title">Add New Quiz</h2>
             </div>
             <form method="POST" action="/quizzes">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="form-row">
                     <div class="form-group">
                         <label for=" "name">Name</label>
@@ -555,12 +557,17 @@ textarea.form-control {
                         <label for="category">Category</label>
                         <input type="text" id="category" name="category" placeholder="Active" class="form-control" required>
                     </div>
+
                 </div>
 
-                
-                    <label>Questions</label>
-                    <div class="question-container">
-                        <div class="question-input-group">
+                <label for="description">Description</label>
+                <div class="form-group">
+                    <input id="description" name="description" placeholder="A quiz about climate change." class="form-control" required></textarea>
+                </div>
+
+                <label>Questions</label>
+                <div class="question-container">
+                    <div class="question-input-group">
                             <input type="text" placeholder="What is the climate change?" class="form-control" required>
                             <select class="question-type">
                                 <option>Multiple Choice</option>

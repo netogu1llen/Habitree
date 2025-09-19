@@ -3,11 +3,11 @@ const db = require('../../util/database');
 module.exports = class Quiz {
 
     constructor(responseVerification, category, description, dateOfCreation, available, experience) {
-        this.responseVerification = responseVerification;
+        this.responseVerification = responseVerification || 1; // Valor por defecto 1
         this.category = category;
         this.description = description;
         this.dateOfCreation = dateOfCreation;
-        this.available = available;
+        this.available = available || 1; // Valor por defecto 1
         this.experience = experience;
     }
 

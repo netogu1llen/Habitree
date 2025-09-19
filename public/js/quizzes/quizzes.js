@@ -3,6 +3,7 @@ const closeBtn = document.getElementById("closeModal");
 const modal = document.getElementById("modal");
 const form = modal.querySelector("form");
 const modalTitle = modal.querySelector(".modal-title");
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 // Modal control
 openBtn.addEventListener("click", () => {
@@ -265,3 +266,35 @@ function setupRemoveOptionListeners(container) {
         });
     });
 }
+
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = {
+        category: formData.get('category'),
+        description: formData.get('description'),
+        experience: formData.get('experience')
+    };
+    
+    fetch('/quizzes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            showMessage("Quiz created successfully");
+            setTimeout(() => { window.location.reload(); }, 1200);
+        } else {
+            showMessage(result.message || "Error creating quiz", true);
+        }
+    })
+    .catch(error => {
+        showMessage("Error creating quiz", true);
+        console.error(error);
+    });
+});

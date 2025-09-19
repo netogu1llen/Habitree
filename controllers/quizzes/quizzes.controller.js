@@ -20,11 +20,11 @@ exports.postAddQuiz = async (req, res) => {
         const dateOfCreation = new Date().toISOString().slice(0, 10);
         
         const quiz = new Quiz(
-            0, // responseVerification default
+            1, // responseVerification default a 1 en lugar de 0
             category,
             description,
             dateOfCreation,
-            0, // available default
+            1, // available default a 1 en lugar de 0
             experience
         );
         
@@ -34,7 +34,7 @@ exports.postAddQuiz = async (req, res) => {
             message: 'Quiz created successfully' 
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error in postAddQuiz:', error);
         res.status(500).json({ 
             success: false, 
             message: 'Error creating quiz' 

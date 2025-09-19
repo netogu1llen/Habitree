@@ -30,13 +30,12 @@ app.use(cookieParser());
 const csrf = require('csurf');
 const csrfProtection = csrf({
     cookie: true,
-    ignoreMethods: ['GET', 'HEAD', 'OPTIONS', 'DELETE'], //  aquí agrego DELETE ñuxxo
-    ignore: (req) => {
-        // Ignorar rutas de API y webhooks
-        return req.path.startsWith('/api/') || 
-               req.path.includes('/webhook') ||
-               req.path.includes('/agendar-one-to-one');
-    }
+    ignoreMethods: ['GET', 'HEAD', 'OPTIONS'], // No incluir DELETE aquí si necesitas protección CSRF para eliminación
+});
+
+app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken ? req.csrfToken() : '';
+    next();
 });
 
 app.use(csrfProtection);
