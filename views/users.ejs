@@ -38,19 +38,59 @@
     <div class="Dashboard_content">
         <div class = "Dashboard__title-container">
             <h1 class="Dashboard__title">Users</h1>
-        <div class="container__button">
-            <button id= "openModal" class="instrument-sans-bold header__button">Add</button>
+            <div class="container__button">
+                <button id= "openModal" class="instrument-sans-bold header__button">Add</button>
+            </div>
         </div>
-    </div>
+        <!-- Campo de búsqueda -->
+        <div class="search-container" style="width: 30%; margin-left: 3vh; display: inline-flex;">
+            <input type="text" id="searchInput" placeholder="Buscar por nombre o ID..." />
+        </div>
 
+        <!-- Tabla de usuarios registrados -->
+        <div class="table-container">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Gender</th>
+                        <th>Date of Birth</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <% if (usuarios && usuarios.length > 0) { %>
+                        <% usuarios.forEach(function(usuario) { %>
+                            <tr class="user-row"
+                                data-id="<%= usuario.IDUser %>"
+                                data-name="<%= usuario.name %>"
+                                data-email="<%= usuario.email %>"
+                                data-gender="<%= usuario.gender %>"
+                                data-dateofbirth="<%= usuario.dateOfBirth ? usuario.dateOfBirth.toISOString ? usuario.dateOfBirth.toISOString().slice(0,10) : usuario.dateOfBirth : '' %>"
+                            >
+                                <td><%= usuario.IDUser %></td>
+                                <td><%= usuario.name %></td>
+                                <td><%= usuario.email %></td>
+                                <td><%= usuario.gender %></td>
+                                <td><%= usuario.dateOfBirth ? usuario.dateOfBirth.toISOString ? usuario.dateOfBirth.toISOString().slice(0,10) : usuario.dateOfBirth : '' %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr class="no-users-row"><td colspan="5">No hay usuarios registrados.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <!-- Mensaje de usuario no encontrado -->
+            <div id="noUserFoundMsg" style="display:none; color:red; margin-top:10px;">Usuario no encontrado.</div>
+        </div>
 
-<%# POP UP PARA AGREGAR USER%>
-
-    <div class="modal" id="modal">
-        <div class="modal-inner">
-            <nav>            
-                <button id="closeModal" class="fa fa-times"></button>
-            </nav>
+        <%# POP UP PARA AGREGAR USER%>
+        <div class="modal" id="modal">
+            <div class="modal-inner">
+                <nav>            
+                    <button id="closeModal" class="fa fa-times"></button>
+                </nav>
                 <h1 class ="modal-title">Add User</h1>
                 <form action="/users" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -60,16 +100,13 @@
                         <input class = "description" type="text" id="name" name="name" placeholder="Name" required>
                         <br style="clear:both;" />
                     </section>
-                    
                     <section>
                         <label for="name">Email</label>
                         <input class = "description" type="email" id="email" name="email" placeholder="Email" required>
                         <br style="clear:both;" />
                     </section>  
 
-
                     <section class="inputs-row">
-                            
                         <div class="input-container">
                             <label for="gender">Gender</label>
                             <select id="gender" name="gender" required>
@@ -78,31 +115,28 @@
                                 <option value="other">Other</option>
                             </select>
                         </div>
-
                         <div class="input-container">
                             <label for="dateOfBirth" class="label">Date of Birth</label>
                             <input
-                            class="text-modal"
-                            min="1900-01-01"
-                            max="2010-12-31"
-                            type="date"
-                            placeholder="dd/mm/yy"
-                            id="dateOfBirth"
-                            name="dateOfBirth"
-                            required
-                            oninvalid="this.setCustomValidity('Please select a date')" 
-                            onchange="this.setCustomValidity('')"
-                            style="width: auto;"
+                                class="text-modal"
+                                min="1900-01-01"
+                                max="2010-12-31"
+                                type="date"
+                                placeholder="dd/mm/yy"
+                                id="dateOfBirth"
+                                name="dateOfBirth"
+                                required
+                                oninvalid="this.setCustomValidity('Please select a date')" 
+                                onchange="this.setCustomValidity('')"
+                                style="width: auto;"
                             />
                         </div>
-
                     </section>
-
-                    
                     <button type="submit" class="submit-btn">Add</button>
-            </form>  
+                </form>  
+            </div>
         </div>
+        <script src ="/js/users.js"></script>
     </div>
-    <script src ="/js/users.js"></script>
 </body>
 </html>

@@ -19,10 +19,17 @@ function generateRandomPassword(length = 12) {
 }
 
 exports.getUsers = async (req, res) => {
-    res.render('../views/users', { 
-        title: 'Users',  
-        csrfToken: req.csrfToken()
-    });
+    try {
+        const usuarios = await Usuario.fetchAll();
+        res.render('../views/users', {
+            title: 'Users',
+            usuarios,
+            csrfToken: req.csrfToken()
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error al obtener usuarios");
+    }
 };
 
 exports.postUsers = async (req, res) => {

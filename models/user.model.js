@@ -39,6 +39,16 @@
             throw err;
         }
     }
+
+    // Método para obtener todos los usuarios
+    static async fetchAll() {
+        try {
+            const [rows] = await db.execute("SELECT IDUser, name, email, gender, dateOfBirth FROM user WHERE deleted = 0");
+            return rows;
+        } catch (err) {
+            throw err;
+        }
+    }
    
     static fetchOne(email) {
         return db.execute("SELECT * FROM user WHERE email=?", [
