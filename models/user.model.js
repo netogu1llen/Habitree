@@ -50,10 +50,18 @@
         }
     }
    
-    static fetchOne(email) {
-        return db.execute("SELECT * FROM user WHERE email=?", [
-            email,
-        ]);
+
+    // Obtener usuario por ID
+    static fetchById(id) {
+        return db.execute("SELECT IDUser, name, email, gender, dateOfBirth FROM user WHERE IDUser=? AND deleted=0", [id]);
+    }
+
+    // Actualizar usuario existente
+    static async update(id, data) {
+        return db.execute(
+            "UPDATE user SET name=?, email=?, gender=?, dateOfBirth=? WHERE IDUser=?",
+            [data.name, data.email, data.gender, data.dateOfBirth, id]
+        );
     }
 
     static async getRolByUserId(idUsuario) {

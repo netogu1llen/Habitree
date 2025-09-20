@@ -57,6 +57,7 @@
                         <th>Email</th>
                         <th>Gender</th>
                         <th>Date of Birth</th>
+                        <th class="actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="usersTableBody">
@@ -74,6 +75,7 @@
                                 <td><%= usuario.email %></td>
                                 <td><%= usuario.gender %></td>
                                 <td><%= usuario.dateOfBirth ? usuario.dateOfBirth.toISOString ? usuario.dateOfBirth.toISOString().slice(0,10) : usuario.dateOfBirth : '' %></td>
+                                <td class="actions"><button class="table__button manage-user-btn">Manage</button></td>
                             </tr>
                         <% }); %>
                     <% } else { %>
@@ -94,6 +96,7 @@
                 <h1 class ="modal-title">Add User</h1>
                 <form action="/users" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div id="form-message" style="display:none;"></div>
 
                     <section>
                         <label for="name">Name</label>
@@ -133,6 +136,7 @@
                         </div>
                     </section>
                     <button type="submit" class="submit-btn">Add</button>
+                    <button type="submit" class="submit-btn" id="edit-btn" style="display:none;">Edit</button>
                 </form>  
             </div>
         </div>
