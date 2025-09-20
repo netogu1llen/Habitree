@@ -5,6 +5,9 @@ exports.getNotifications = async (req, res) => {
     res.render('notifications/notifications', { title: 'Notifications', notifications });
 };
 
+exports.getAddNotification = (req, res) => {
+    res.render('notifications/addNotifications', { csrfToken: req.csrfToken() });
+}
 
 exports.getNotificationEditor = async (req, res) => {
     const { id } = req.params; // Este 'id' es el de la URL, el que se usa para buscar en la BD.

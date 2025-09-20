@@ -6,6 +6,8 @@ const notificationController = require("../../controllers/notifications/notifica
 
 router.get("/", notificationController.getNotifications)
 
+router.get("/add-modal", notificationController.getAddNotification);
+
 router.get("/edit/:id", notificationController.getNotificationEditor);
 
 router.post("/delete", notificationController.postDelete);
