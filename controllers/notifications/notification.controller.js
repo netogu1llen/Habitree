@@ -6,6 +6,8 @@ exports.getNotifications = async (req, res) => {
 };
 
 exports.getAddNotification = (req, res) => {
+    // Renderizado del formulario de Add Notification
+    // Guarda el token generado en la variable csrfToken y se lo pasa a la vista
     res.render('notifications/addNotifications', { csrfToken: req.csrfToken() });
 }
 
@@ -38,8 +40,11 @@ exports.getNotificationEditor = async (req, res) => {
 exports.postAddNotification = async (req, res) => {
     const { description, category } = req.body;
     try {
+        // Llama a la función Add del model para añadir notificación
         await Notification.add(description, category);
+        // Redirige a la lista de notificaciones
         res.redirect('/notifications');
+    // Si hay un error se muestra en la consola y se envía un error 500
     } catch (error) {
         console.error(error);
         res.status(500).send("Error al agregar la notificación");

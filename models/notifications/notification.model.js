@@ -21,6 +21,7 @@ module.exports = class notification {
         return db.execute('SELECT * FROM notification');
     }
 
+    //Funcion para añadir una nueva notificación tomando la descripción y categoria del formulario
     static add(description, category) {
         return db.execute(`INSERT INTO notification 
             (dateCreated, description, category, isActive)
