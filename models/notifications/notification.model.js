@@ -21,6 +21,13 @@ module.exports = class notification {
         return db.execute('SELECT * FROM notification');
     }
 
+    static add(description, category) {
+        return db.execute(`INSERT INTO notification 
+            (dateCreated, description, category, isActive)
+            VALUES (NOW(), ?,?, 1)`, 
+            [description, category]);
+    }
+
     static updateIsActive(id,newIsActive) {
         return db.execute(`UPDATE notification
              SET isActive = ?
