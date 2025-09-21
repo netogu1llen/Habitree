@@ -35,6 +35,16 @@ exports.getNotificationEditor = async (req, res) => {
     }
 };
 
+exports.postAddNotification = async (req, res) => {
+    const { description, category } = req.body;
+    try {
+        await Notification.add(description, category);
+        res.redirect('/notifications');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error al agregar la notificación");
+    }
+};
 
 exports.postDelete = (req, res) => {
     const { id, currentState } = req.body;

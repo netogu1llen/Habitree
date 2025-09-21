@@ -10,6 +10,8 @@ router.get("/add-modal", notificationController.getAddNotification);
 
 router.get("/edit/:id", notificationController.getNotificationEditor);
 
+router.post("/add", notificationController.postAddNotification);
+
 router.post("/delete", notificationController.postDelete);
 
 router.post("/update", notificationController.postUpdate);
