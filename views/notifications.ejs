@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <title>Notifications</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;700&display=swap');
+
+
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            min-width: 100vw;
+        }
+
+
+        .content{
+            display: flex;
+            flex-direction: row;
+        }
+
+
+
+
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: 'Instrument Sans', sans-serif;
+            background-color: #f4f7f2;
+        }
+
+
+        .content{
+            width: 100vw;
+            min-height: 100vh;
+            max-width: 100vw;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: row;
+        }
+        .navbar {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 20px;
+            min-height: 100vh;
+            flex-basis: 15%;
+            flex-shrink: 0;
+            flex-grow: 0;
+            align-items: flex-start;
+            border-right: 2px solid #d9d9d9;
+            box-sizing: border-box;
+        }
+        .Dashboard_content {
+            flex-basis: 70%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar li {
+            list-style: none;
+        }
+
+
+
+        .header--Logo {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            color: #0b2f1f;
+            font-size: 24px;
+            gap: 10px;
+        
+        }
+
+
+        .title {
+            color: #0b2f1f;
+            font-size: 32px;
+            text-decoration: none;
+            font-weight: bold;
+            
+        }
+
+
+
+        .navbar-item{
+            color: black;
+            font-size: 16px;
+            text-decoration: none;
+            font-weight:500;
+            cursor: pointer;
+        }
+
+
+        .content--navbar {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+            align-items: flex-start;
+            padding-left: 50px;
+        }
+
+        .navbar__logout{
+            margin-top: 120px;
+            width: 100%;
+            align-items: flex-start;
+            padding-left: 30px;
+            padding-left: 50px;
+        }
+
+
+        .Dashboard__title{
+
+            margin-top: 10px;
+            font-size: 32px;
+            padding: 20px;
+            width: 100%;
+            color: #0b2f1f;
+        }
+
+
+        .Dashboard__gridContent{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px;
+            min-height: 0;
+            height: 70%;
+            justify-items: center;
+            align-items: center;
+        }
+
+        .Dashboard__gridItem{
+            border: 2px solid #0b2f1f;
+            border-radius: 16px;
+            padding: 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .Dashboard__gridItem:hover {
+            border: 2px solid #2DA460;
+            cursor: pointer;
+        }
+
+        .Dashboard__gridItemIcon__text{
+            margin-top: 8px;
+            font-size: 14px;
+            color: #626262;
+            margin-bottom: 50px;
+
+        
+        }
+
+        .Dashboard__gridItemIcon{
+            background-color: #2ecc702a;
+            border-radius: 8px;
+            padding: 12px;
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+            
+        i{
+
+            font-size: 32px;
+            margin-bottom: 10px;
+        
+        }
+
+        .navbar--icon {
+            margin-right: 8px;
+            font-size: 18px;
+            color:#0b2f1f ;
+        }
+
+        .Dashboard__gridItemIcon__icon{
+            color: #2DA460;
+            font-size: 24px;
+            margin-top: 12px;
+        }
+
+        .table__button {
+    font-size: 12px;
+    border-radius: 10px;
+    background: linear-gradient(to right, #2DA460, #2D9459);
+    color: white;
+    padding: 6px 20px;
+    border: none;
+    cursor: pointer;
+}  
+            .table-container {
+        border-radius: 8px;
+        overflow-x: auto;
+        border: 2px solid #0B2F1F;
+        margin: 24px 32px 24px 32px;
+        box-sizing: border-box;
+        padding: 16px;
+    }
+    
+
+        .table-container table {
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0;
+    table-layout: fixed;
+}
+
+.table-container th,
+.table-container td {
+    padding: 12px 16px;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 12px;
+}
+
+.table-container .actions {
+    text-align: center;
+}
+
+.header__button {
+    font-size: 16px;
+    border-radius: 10px;
+    background: linear-gradient(to right, #2DA460, #2D9459);
+    color: white;
+    padding: 6px 30px;
+    border: none;
+    cursor: pointer;
+}
+
+.Dashboard__title-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+}
+
+
+.header__button{
+    margin-right: 32px;
+}
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <nav class="navbar">
+        <ul>
+           <div class="header--Logo">
+                <i class="fa-solid fa-hand-holding-droplet"></i>
+                <li><a href="#" class="title">HabiTree</a></li>
+           </div>
+
+           <div class="content--navbar">
+               <li class="navbar-item" ><i class="fa-solid fa-user-group navbar--icon"></i>Leagues</li>
+               <li class="navbar-item" ><i class="fa-solid fa-circle-question navbar--icon"></i>Quizzes</li>
+               <li class="navbar-item" ><i class="fa-solid fa-bell navbar--icon"></i>Notifications</li>
+               <li class="navbar-item" ><i class="fa-solid fa-cart-shopping navbar--icon"></i>Store</li>
+               <li class="navbar-item" ><i class="fa-solid fa-box-archive navbar--icon"></i>Rewards</li>
+               <li class="navbar-item" ><i class="fa-solid fa-bullseye navbar--icon"></i>Missions </li>
+               <li class="navbar-item" ><i class="fa-solid fa-user navbar--icon"></i>User </li>
+           </div>
+
+           <div class="navbar__logout">
+               <li class="navbar-item"><i class="fa-solid fa-right-from-bracket navbar--icon"></i>Logout</li>
+           </div>
+        
+        </ul>
+    </nav>
+
+    <div class="Dashboard_content">
+        <div class = "Dashboard__title-container">
+            <h1 class="Dashboard__title">Notifications </h1>
+            <div class="container__button"><button class="instrument-sans-bold header__button">Add</button>
+        </div>
+    </div>
+
+<div class="table-container instrument-sans-regular">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Active</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                                <% if (notifications && notifications[0] && notifications[0][0] && notifications[0][0].IDNotification) { %>
+                                    <% notifications[0].forEach(function(notification) { %>
+                                        <tr>
+                                            <td><%= notification.IDNotification %></td>
+                                            <td><%= notification.dateCreated %></td>
+                                            <td><%= notification.description %></td>
+                                            <td><%= notification.category %></td>
+                                            <td><%= notification.isActive ? 'Sí' : 'No' %></td>
+                                            <td class="actions"><button class="table__button">Manage</button></td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" style="text-align:center;">No notifications available</td>
+                                    </tr>
+                                <% } %>
+            </tbody>
+        </table>
+    </div>
+    </div>
+        
+    </div>
+    </div> 
+        
+</body>
+</html>
