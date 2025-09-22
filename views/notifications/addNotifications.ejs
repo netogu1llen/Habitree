@@ -1,0 +1,21 @@
+<div class="modal">
+    <h2 id="modal-title">Add Notification</h2>
+    <form id="form-add-notification" action="/notifications/add" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <label for="descripcion-input">Description:</label> 
+        <div class="input-container">
+            <input type="text" id="descripcion-input" name="description" required />
+        </div>
+
+        <label for="category-input">Category:</label>
+        <div class="input-container">
+            <input type="text" id="category-input" name="category" required />
+        </div>
+
+        <div class="button-container">
+            <button id="guardar-btn" type="submit">Add</button>
+            <button id="close-btn" type="button" class="close-modal">Cancel</button>
+        </div>
+    </form>
+</div>
