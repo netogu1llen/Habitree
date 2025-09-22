@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href ="/css/users.css">
     <title>Users</title>
@@ -11,29 +12,7 @@
 
 <body>
     <div class="content">
-        <nav class="navbar">
-        <ul>
-           <div class="header--Logo">
-                <i class="fa-solid fa-hand-holding-droplet"></i>
-                <li><a href="#" class="title">HabiTree</a></li>
-           </div>
-
-           <div class="content--navbar">
-               <li class="navbar-item" ><i class="fa-solid fa-user-group navbar--icon"></i>Leagues</li>
-               <li class="navbar-item" ><i class="fa-solid fa-circle-question navbar--icon"></i>Quizzes</li>
-               <li class="navbar-item" ><i class="fa-solid fa-bell navbar--icon"></i>Notifications</li>
-               <li class="navbar-item" ><i class="fa-solid fa-cart-shopping navbar--icon"></i>Store</li>
-               <li class="navbar-item" ><i class="fa-solid fa-box-archive navbar--icon"></i>Rewards</li>
-               <li class="navbar-item" ><i class="fa-solid fa-bullseye navbar--icon"></i>Missions </li>
-               <li class="navbar-item" ><i class="fa-solid fa-user navbar--icon"></i>User </li>
-           </div>
-
-           <div class="navbar__logout">
-               <li class="navbar-item"><i class="fa-solid fa-right-from-bracket navbar--icon"></i>Logout</li>
-           </div>
-        
-        </ul>
-    </nav>
+        <%- include('partials/navbar') %>
 
     <div class="Dashboard_content">
         <div class = "Dashboard__title-container">
