@@ -52,7 +52,7 @@ exports.postLogin = async (req, res) => {
         });
 
     } catch (error) {
-        req.session.failed = "Incorrect email or password";
+        req.session.failed = "Error en la base de datos";
         console.error(error);
         res.redirect("/login");
     }
