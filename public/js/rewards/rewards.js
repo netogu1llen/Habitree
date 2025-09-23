@@ -10,17 +10,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // 👉 Abrir modal
+  //  Abrir modal
   addBtn.addEventListener("click", () => {
     modal.style.display = "flex"; // el modal se muestra en flex
   });
 
-  // 👉 Cerrar modal con la X
+  //  Cerrar modal con la X
   closeBtn.addEventListener("click", () => {
     modal.style.display = "none";
   });
 
-  // 👉 Cerrar modal si se hace clic en el fondo oscuro
+  //  Cerrar modal si se hace clic en el fondo oscuro
   modal.addEventListener("click", (e) => {
     if (e.target === modal) {
       modal.style.display = "none";
