@@ -27,6 +27,11 @@ app.use(session({
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const usersRoutesApi = require("./api-habi3/src/routes/users.routes");
+const missionsRoutesApi = require("./api-habi3/src/routes/mission.routes");
+app.use("/api/users", usersRoutesApi);
+app.use("/api/missions", missionsRoutesApi);
+
 const csrf = require('csurf');
 const csrfProtection = csrf({
     cookie: true,
