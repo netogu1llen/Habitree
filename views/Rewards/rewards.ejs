@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rewards | HabiTree</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/rewards/rewards.css">
+</head>
+<body>
+  <div class="content">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <ul>
+        <div class="header--Logo">
+          <i class="fa-solid fa-hand-holding-droplet"></i>
+          <li><a href="#" class="title">HabiTree</a></li>
+        </div>
+
+        <div class="content--navbar">
+          <li class="navbar-item"><i class="fa-solid fa-user-group navbar--icon"></i>Leagues</li>
+          <li class="navbar-item"><i class="fa-solid fa-circle-question navbar--icon"></i>Quizzes</li>
+          <li class="navbar-item"><i class="fa-solid fa-bell navbar--icon"></i>Notifications</li>
+          <li class="navbar-item"><i class="fa-solid fa-cart-shopping navbar--icon"></i>Store</li>
+          <div class="navbar-item__selected">
+            <li class="navbar-item__selected"><i class="fa-solid fa-box-archive navbar--icon"></i>Rewards</li>
+          </div>
+          <li class="navbar-item"><i class="fa-solid fa-bullseye navbar--icon"></i>Missions</li>
+          <li class="navbar-item"><i class="fa-solid fa-user navbar--icon"></i>User</li>
+        </div>
+
+        <div class="navbar__logout">
+          <li class="navbar-item"><i class="fa-solid fa-right-from-bracket navbar--icon"></i>Logout</li>
+        </div>
+      </ul>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="Dashboard_content">
+      <div class="Dashboard-navbar">
+        <h1 class="Dashboard__title">Rewards</h1>
+        <div class="Dashboard__add">
+          <button id="addRewardBtn" class="Dashboard__addButton">
+            <i class="fa-solid fa-plus"></i> Add 
+          </button>
+        </div>
+      </div>
+
+      <div class="Item_content">
+        <div class="Grid_Items" id="rewardsGrid">
+          <!-- Items de recompensa renderizados dinámicamente por rewards.js -->
+          <div class="Card__Item">
+            <img class="Card__Item--image" src="/images/coffe.png" alt="Reward item">
+            <h2 class="Card__Item--title">Coffee</h2>
+            <p class="Card__Item--description">Item description goes here.</p>
+            <div class="Item_Quantity">
+              <p class="Card__Item--price">50 pts</p>
+              <button class="Card__Item--buyButton"><i class="fa-solid fa-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal dinámico -->
+  <div id="modal-root"></div>
+  <div id="backdrop" class="backdrop"></div>
+
+  <script>
+    window.csrfToken = "<%= csrfToken %>";
+  </script>
+  <script src="/rewards/rewards.js" defer></script>
+</body>
+</html>
