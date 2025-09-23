@@ -365,12 +365,30 @@ i{
     transition: all 0.3s ease;
 }
 
-
-
-
-
 .navbar-item__selected .navbar--icon{
     color: white;
     margin: 0;
     
+}
+
+.modal {
+    display: none;         /* oculto por defecto */
+    position: fixed;       /* siempre sobre todo */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* fondo oscuro semitransparente */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-inner {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
 }

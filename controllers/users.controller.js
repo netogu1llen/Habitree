@@ -18,11 +18,52 @@ function generateRandomPassword(length = 12) {
     return crypto.randomBytes(length).toString("base64url").slice(0, length);      
 }
 
+
 exports.getUsers = async (req, res) => {
-    res.render('../views/users', { 
-        title: 'Users',  
-        csrfToken: req.csrfToken()
-    });
+    try {
+        const usuarios = await Usuario.fetchAll();
+        res.render('../views/users', {
+            title: 'Users',
+            usuarios,
+            csrfToken: req.csrfToken()
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error al obtener usuarios");
+    }
+};
+
+// Obtener usuario por ID (para edición)
+exports.getUserById = async (req, res) => {
+    try {
+        const [rows] = await Usuario.fetchById(req.params.id);
+        if (!rows || rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Error fetching user' });
+    }
+};
+
+// Editar usuario existente
+exports.editUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const data = {
+            name: req.body.name,
+            email: req.body.email,
+            gender: req.body.gender,
+            dateOfBirth: req.body.dateOfBirth
+        };
+        const result = await Usuario.update(id, data);
+        if (result[0].affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.json({ success: true, message: 'User updated successfully' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Error updating user' });
+    }
 };
 
 exports.postUsers = async (req, res) => {

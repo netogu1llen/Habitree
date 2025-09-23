@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rewards | HabiTree</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="/css/rewards/rewards.css">
 </head>
 <body>
@@ -12,26 +12,22 @@
     <!-- Navbar -->
     <nav class="navbar">
       <ul>
-        <div class="header--Logo">
+        <li class="header--Logo">
           <i class="fa-solid fa-hand-holding-droplet"></i>
-          <li><a href="#" class="title">HabiTree</a></li>
-        </div>
+          <a href="#" class="title">HabiTree</a>
+        </li>
 
-        <div class="content--navbar">
-          <li class="navbar-item"><i class="fa-solid fa-user-group navbar--icon"></i>Leagues</li>
-          <li class="navbar-item"><i class="fa-solid fa-circle-question navbar--icon"></i>Quizzes</li>
-          <li class="navbar-item"><i class="fa-solid fa-bell navbar--icon"></i>Notifications</li>
-          <li class="navbar-item"><i class="fa-solid fa-cart-shopping navbar--icon"></i>Store</li>
-          <div class="navbar-item__selected">
-            <li class="navbar-item__selected"><i class="fa-solid fa-box-archive navbar--icon"></i>Rewards</li>
-          </div>
-          <li class="navbar-item"><i class="fa-solid fa-bullseye navbar--icon"></i>Missions</li>
-          <li class="navbar-item"><i class="fa-solid fa-user navbar--icon"></i>User</li>
-        </div>
+        <li class="navbar-item"><i class="fa-solid fa-user-group navbar--icon"></i>Leagues</li>
+        <li class="navbar-item"><i class="fa-solid fa-circle-question navbar--icon"></i>Quizzes</li>
+        <li class="navbar-item"><i class="fa-solid fa-bell navbar--icon"></i>Notifications</li>
+        <li class="navbar-item"><i class="fa-solid fa-cart-shopping navbar--icon"></i>Store</li>
+        <li class="navbar-item navbar-item__selected"><i class="fa-solid fa-box-archive navbar--icon"></i>Rewards</li>
+        <li class="navbar-item"><i class="fa-solid fa-bullseye navbar--icon"></i>Missions</li>
+        <li class="navbar-item"><i class="fa-solid fa-user navbar--icon"></i>User</li>
 
-        <div class="navbar__logout">
-          <li class="navbar-item"><i class="fa-solid fa-right-from-bracket navbar--icon"></i>Logout</li>
-        </div>
+        <li class="navbar-item navbar__logout">
+          <i class="fa-solid fa-right-from-bracket navbar--icon"></i>Logout
+        </li>
       </ul>
     </nav>
 
@@ -41,35 +37,79 @@
         <h1 class="Dashboard__title">Rewards</h1>
         <div class="Dashboard__add">
           <button id="addRewardBtn" class="Dashboard__addButton">
-            <i class="fa-solid fa-plus"></i> Add 
+            <i class="fa-solid fa-plus"></i> Add
           </button>
         </div>
       </div>
 
       <div class="Item_content">
         <div class="Grid_Items" id="rewardsGrid">
-          <!-- Items de recompensa renderizados dinámicamente por rewards.js -->
-          <div class="Card__Item">
-            <img class="Card__Item--image" src="/images/coffe.png" alt="Reward item">
-            <h2 class="Card__Item--title">Coffee</h2>
-            <p class="Card__Item--description">Item description goes here.</p>
-            <div class="Item_Quantity">
-              <p class="Card__Item--price">50 pts</p>
-              <button class="Card__Item--buyButton"><i class="fa-solid fa-pencil"></i></button>
-            </div>
-          </div>
+          <% if (rewards && rewards[0] && rewards[0][0] && rewards[0][0].IDReward) { %>
+            <% rewards[0].forEach(function(reward) { %>
+              <div class="Card__Item">
+                <img class="Card__Item--image" src="<%= reward.image || '/images/coffe.png' %>" alt="Reward item">
+                <h2 class="Card__Item--title"><%= reward.title %></h2>
+                <p class="Card__Item--description"><%= reward.description %></p>
+                <div class="Item_Quantity">
+                  <p class="Card__Item--price"><%= reward.points %> pts</p>
+                  <button class="Card__Item--manageBtn" data-id="<%= reward.IDReward %>">
+                    <i class="fa-solid fa-pencil"></i>
+                  </button>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p style="text-align:center;">No rewards available</p>
+          <% } %>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal dinámico -->
-  <div id="modal-root"></div>
-  <div id="backdrop" class="backdrop"></div>
+  <!-- Modal Rewards -->
+  <div class="modal" id="rewardModal">
+    <div class="modal-inner">
+      <nav>
+        <button id="closeRewardModal" class="fa fa-times"></button>
+      </nav>
+      <h1 class="modal-title">Add Reward</h1>
+      <form id="rewardForm" action="/rewards" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="input-container">
+          <label for="IDReward">ID</label>
+          <input type="number" id="IDReward" name="IDReward" placeholder="ID" required>
+        </div>
+
+        <div class="input-container">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" placeholder="Reward Title" required>
+        </div>
+
+        <div class="input-container">
+          <label for="description">Description</label>
+          <input type="text" id="description" name="description" placeholder="Description" required>
+        </div>
+
+        <div class="input-container">
+          <label for="points">Points</label>
+          <input type="number" id="points" name="points" placeholder="100" required>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="submit" class="submit-btn" id="add-edit-btn">Add</button>
+          <button type="button" class="submit-btn" id="delete-btn" style="background-color:#d35400; color:white; display:none;">Delete</button>
+        </div>
+
+        <span id="id-readonly-msg" style="display:none; color:#888; font-size:12px;">ID no editable en edición</span>
+        <div id="form-message" style="display:none; margin-top:10px;"></div>
+      </form>
+    </div>
+  </div>
 
   <script>
     window.csrfToken = "<%= csrfToken %>";
   </script>
-  <script src="/rewards/rewards.js" defer></script>
+  <script src="/js/rewards/rewards.js" defer></script>
 </body>
 </html>
