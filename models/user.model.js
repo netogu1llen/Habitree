@@ -73,5 +73,13 @@
             [idUsuario]
         );
     }
+
+    // Verificar si el correo existe en otro usuario
+    static async checkEmailExists(email, excludeUserId) {
+        return db.execute(
+            "SELECT IDUser FROM user WHERE email = ? AND deleted = 0 AND IDUser <> ?",
+            [email, excludeUserId]
+        );
+    }
 };
     
