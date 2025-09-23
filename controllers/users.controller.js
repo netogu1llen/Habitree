@@ -56,6 +56,13 @@ exports.editUser = async (req, res) => {
             gender: req.body.gender,
             dateOfBirth: req.body.dateOfBirth
         };
+
+        // Validar si el correo ya existe en otro usuario
+        const [existingEmailRows] = await Usuario.checkEmailExists(data.email, id);
+        if (existingEmailRows.length > 0) {
+            return res.status(400).json({ success: false, message: 'El correo ya existe, elige otro.' });
+        }
+
         const result = await Usuario.update(id, data);
         if (result[0].affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'User not found' });
