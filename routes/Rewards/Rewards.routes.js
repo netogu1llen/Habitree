@@ -12,7 +12,7 @@ router.post("/", RewardController.postRewards);
 router.get("/:id", RewardController.getRewardById);
 
 // Editar recompensa
-router.post("/edit:id", RewardController.editReward);
+router.post("/edit/:id", RewardController.editReward);
 
 // Eliminar recompensa
 router.delete("/:id", RewardController.deleteReward);

@@ -23,15 +23,15 @@ exports.postRewards = async (req, res, next) => {
     try {
         const addReward = new Reward(
             req.body.IDReward,
-            req.body.name,
+            req.body.name,          // ahora sí coincide con form
             req.body.description,
-            req.body.type,        // monetary / nonMonetary
-            req.body.available,   // 0/1
-            req.body.value        // número o código
+            req.body.type || "nonMonetary", // por si no envías
+            req.body.available || 1,       // por defecto disponible
+            req.body.value
         );
 
         await addReward.save();
-        res.redirect('/rewards');
+        res.redirect('/rewards');  // 👈 vuelve a la lista
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: 'Error saving reward' });
@@ -43,15 +43,17 @@ exports.postRewards = async (req, res, next) => {
  */
 exports.getRewardById = async (req, res) => {
     try {
-        const reward = await Reward.fetchById(req.params.id);
-        if (reward[0].length === 0) {
-            return res.status(404).json({ error: 'Reward not found' });
+        const id = req.params.id;
+        const [reward] = await Reward.findById(id);
+        if (!reward || reward.length === 0) {
+            return res.status(404).json({ error: "Reward not found" });
         }
-        res.json(reward[0][0]);
+        res.json(reward[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Error fetching reward' });
+        res.status(500).json({ error: "Error fetching reward" });
     }
 };
+
 
 /**
  * Editar recompensa existente

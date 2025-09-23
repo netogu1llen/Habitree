@@ -10,26 +10,7 @@
 <body>
   <div class="content">
     <!-- Navbar -->
-    <nav class="navbar">
-      <ul>
-        <li class="header--Logo">
-          <i class="fa-solid fa-hand-holding-droplet"></i>
-          <a href="#" class="title">HabiTree</a>
-        </li>
-
-        <li class="navbar-item"><i class="fa-solid fa-user-group navbar--icon"></i>Leagues</li>
-        <li class="navbar-item"><i class="fa-solid fa-circle-question navbar--icon"></i>Quizzes</li>
-        <li class="navbar-item"><i class="fa-solid fa-bell navbar--icon"></i>Notifications</li>
-        <li class="navbar-item"><i class="fa-solid fa-cart-shopping navbar--icon"></i>Store</li>
-        <li class="navbar-item navbar-item__selected"><i class="fa-solid fa-box-archive navbar--icon"></i>Rewards</li>
-        <li class="navbar-item"><i class="fa-solid fa-bullseye navbar--icon"></i>Missions</li>
-        <li class="navbar-item"><i class="fa-solid fa-user navbar--icon"></i>User</li>
-
-        <li class="navbar-item navbar__logout">
-          <i class="fa-solid fa-right-from-bracket navbar--icon"></i>Logout
-        </li>
-      </ul>
-    </nav>
+    <%- include('../partials/navbar') %>
 
     <!-- Contenido principal -->
     <div class="Dashboard_content">
@@ -48,10 +29,10 @@
             <% rewards[0].forEach(function(reward) { %>
               <div class="Card__Item">
                 <img class="Card__Item--image" src="<%= reward.image || '/images/coffe.png' %>" alt="Reward item">
-                <h2 class="Card__Item--title"><%= reward.title %></h2>
+                <h2 class="Card__Item--title"><%= reward.name %></h2>
                 <p class="Card__Item--description"><%= reward.description %></p>
                 <div class="Item_Quantity">
-                  <p class="Card__Item--price"><%= reward.points %> pts</p>
+                  <p class="Card__Item--price"><%= reward.value %> pts</p>
                   <button class="Card__Item--manageBtn" data-id="<%= reward.IDReward %>">
                     <i class="fa-solid fa-pencil"></i>
                   </button>
@@ -77,24 +58,25 @@
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
         <div class="input-container">
-          <label for="IDReward">ID</label>
-          <input type="number" id="IDReward" name="IDReward" placeholder="ID" required>
+            <label for="IDReward">ID</label>
+            <input type="number" id="IDReward" name="IDReward" placeholder="ID" required>
         </div>
 
         <div class="input-container">
-          <label for="title">Title</label>
-          <input type="text" id="title" name="title" placeholder="Reward Title" required>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Reward Name" required>
         </div>
 
         <div class="input-container">
-          <label for="description">Description</label>
-          <input type="text" id="description" name="description" placeholder="Description" required>
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" placeholder="Description" required>
         </div>
 
         <div class="input-container">
-          <label for="points">Points</label>
-          <input type="number" id="points" name="points" placeholder="100" required>
+            <label for="value">Value</label>
+            <input type="text" id="value" name="value" placeholder="35 or CODE" required>
         </div>
+
 
         <div style="display:flex; gap:10px; margin-top:20px;">
           <button type="submit" class="submit-btn" id="add-edit-btn">Add</button>
