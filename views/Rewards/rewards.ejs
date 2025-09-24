@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rewards | HabiTree</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/rewards/rewards.css">
+</head>
+<body>
+  <div class="content">
+    <!-- Navbar -->
+    <%- include('../partials/navbar') %>
+
+    <!-- Contenido principal -->
+    <div class="Dashboard_content">
+      <div class="Dashboard-navbar">
+        <h1 class="Dashboard__title">Rewards</h1>
+        <div class="Dashboard__add">
+          <button id="addRewardBtn" class="Dashboard__addButton">
+             Add
+          </button>
+        </div>
+      </div>
+
+      <div class="Item_content">
+        <div class="Grid_Items" id="rewardsGrid">
+          <% if (rewards && rewards[0] && rewards[0][0] && rewards[0][0].IDReward) { %>
+            <% rewards[0].forEach(function(reward) { %>
+              <div class="Card__Item">
+                <img class="Card__Item--image" src="<%= reward.image || '/images/coffe.png' %>" alt="Reward item">
+                <h2 class="Card__Item--title"><%= reward.name %></h2>
+                <p class="Card__Item--description"><%= reward.description %></p>
+                <div class="Item_Quantity">
+                  <p class="Card__Item--price"><%= reward.value %> pts</p>
+                  <button class="Card__Item--manageBtn" data-id="<%= reward.IDReward %>">
+                    <i class="fa-solid fa-pencil"></i>
+                  </button>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p style="text-align:center;">No rewards available</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Rewards -->
+  <div class="modal" id="rewardModal">
+    <div class="modal-inner">
+      <nav>
+        <button id="closeRewardModal" class="fa fa-times"></button>
+      </nav>
+      <h1 class="modal-title">Add Reward</h1>
+      <form id="rewardForm" action="/rewards" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="input-container">
+            <label for="IDReward">ID</label>
+            <input type="number" id="IDReward" name="IDReward" placeholder="ID" required>
+        </div>
+
+        <div class="input-container">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Reward Name" required>
+        </div>
+
+        <div class="input-container">
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" placeholder="Description" required>
+        </div>
+
+        <div class="input-container">
+            <label for="value">Value</label>
+            <input type="text" id="value" name="value" placeholder="35 or CODE" required>
+        </div>
+
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="submit" class="submit-btn" id="add-edit-btn">Add</button>
+          <button type="button" class="submit-btn" id="delete-btn" >Delete</button>
+        </div>
+
+        <span id="id-readonly-msg" style="display:none; color:#888; font-size:12px;">ID no editable en edición</span>
+        <div id="form-message" style="display:none; margin-top:10px;"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    window.csrfToken = "<%= csrfToken %>";
+  </script>
+  <script src="/js/rewards.js" defer></script>
+</body>
+</html>
+
