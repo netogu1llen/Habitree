@@ -33,7 +33,7 @@ document.addEventListener("click", (event) => {
 
             // Paso 3: Asegúrate de que los elementos se encontraron antes de manipularlos
             if (modal && backdrop) {
-                // Muestra el modal
+                // Muestra el modal con las clases correctas
                 modal.classList.add("active");
                 backdrop.classList.add("active");
 
@@ -54,37 +54,46 @@ document.addEventListener("click", (event) => {
                     }
                 };
                 
+                // También permite cerrar con la tecla Escape
+                document.addEventListener("keydown", function escapeHandler(event) {
+                    if (event.key === "Escape") {
+                        modal.classList.remove("active");
+                        backdrop.classList.remove("active");
+                        document.removeEventListener("keydown", escapeHandler);
+                    }
+                });
+                
             
             const deleteBtn = document.getElementById("delete-btn");
-if (deleteBtn) {
-    deleteBtn.addEventListener("click", () => {
-        // Obtenemos el texto del botón para determinar la acción
-        const actionText = deleteBtn.textContent.trim().toLowerCase();
-        
-        // Creamos el mensaje de confirmación de forma dinámica
-        const confirmationMessage = (actionText === 'deactivate')
-            ? "Are you sure you want to deactivate this notification?"
-            : "Are you sure you want to activate this notification?";
+            if (deleteBtn) {
+                deleteBtn.addEventListener("click", () => {
+                    // Obtenemos el texto del botón para determinar la acción
+                    const actionText = deleteBtn.textContent.trim().toLowerCase();
+                    
+                    // Creamos el mensaje de confirmación de forma dinámica
+                    const confirmationMessage = (actionText === 'deactivate')
+                        ? "Are you sure you want to deactivate this notification?"
+                        : "Are you sure you want to activate this notification?";
 
-        // Mostramos el mensaje de confirmación
-        if (confirm(confirmationMessage)) {
-            const deleteForm = document.getElementById("form-delete-notification");
-            if (deleteForm) {
-                // Obtenemos el estado actual del botón para saber si es 'Activate' o 'Deactivate'
-                const currentState = actionText;
-                
-                // Creamos un campo oculto para enviar el estado actual
-                const stateInput = document.createElement('input');
-                stateInput.type = 'hidden';
-                stateInput.name = 'currentState';
-                stateInput.value = currentState;
-                deleteForm.appendChild(stateInput);
-                
-                deleteForm.submit();
+                    // Mostramos el mensaje de confirmación
+                    if (confirm(confirmationMessage)) {
+                        const deleteForm = document.getElementById("form-delete-notification");
+                        if (deleteForm) {
+                            // Obtenemos el estado actual del botón para saber si es 'Activate' o 'Deactivate'
+                            const currentState = actionText;
+                            
+                            // Creamos un campo oculto para enviar el estado actual
+                            const stateInput = document.createElement('input');
+                            stateInput.type = 'hidden';
+                            stateInput.name = 'currentState';
+                            stateInput.value = currentState;
+                            deleteForm.appendChild(stateInput);
+                            
+                            deleteForm.submit();
+                        }
+                    }
+                });
             }
-        }
-    });
-}
                 
             } else {
                 console.error("Error: Modal o backdrop no encontrados.");
