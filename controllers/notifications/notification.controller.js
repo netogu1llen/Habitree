@@ -1,8 +1,14 @@
 const Notification = require('../../models/notifications/notification.model');
+const { sendNotificationToTopic } = require('../../util/fcm');
+
 
 exports.getNotifications = async (req, res) => {
     const notifications = await Notification.fetchAll();
-    res.render('notifications/notifications', { title: 'Notifications', notifications });
+    res.render('notifications/notifications', { 
+        title: 'Notifications', 
+        notifications,
+        csrfToken: req.csrfToken() // <-- Agrega esto
+    });
 };
 
 exports.getAddNotification = (req, res) => {
@@ -10,6 +16,41 @@ exports.getAddNotification = (req, res) => {
     // Guarda el token generado en la variable csrfToken y se lo pasa a la vista
     res.render('notifications/addNotifications', { csrfToken: req.csrfToken() });
 }
+
+
+// Nuevo endpoint para enviar notificación por canal (topic)
+exports.sendPushNotification = async (req, res) => {
+    const { canal, titulo, mensaje } = req.body;
+    try {
+        // Envía la notificación por FCM topic
+        await sendNotificationToTopic(canal, titulo, mensaje);
+        res.status(200).json({ success: true, message: 'Notificación enviada por canal' });
+    } catch (err) {
+        console.error('Error al enviar push:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+
+// Crear notificación en la base de datos y envia
+exports.createNotification = async (req, res) => {
+    const { canal, titulo, mensaje } = req.body;
+    try {
+        // Guarda la notificación en la base de datos
+        await Notification.create(mensaje, canal);
+        // Envía la notificación 
+        await sendNotificationToTopic(canal, titulo, mensaje);
+        res.status(200).json({ success: true, message: 'Notificación creada y enviada' });
+    } catch (err) {
+        console.error('Error al crear/enviar notificación:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+
+
+
+
 
 exports.getNotificationEditor = async (req, res) => {
     const { id } = req.params; // Este 'id' es el de la URL, el que se usa para buscar en la BD.

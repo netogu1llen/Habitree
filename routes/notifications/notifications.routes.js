@@ -16,4 +16,10 @@ router.post("/add", isAuth, notificationController.postAddNotification);
 router.post("/delete", isAuth, notificationController.postDelete);
 
 router.post("/update", isAuth, notificationController.postUpdate);
+
+router.post("/create", notificationController.createNotification);
+
+
 module.exports = router
+
+
