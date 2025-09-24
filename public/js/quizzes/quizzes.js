@@ -1,54 +1,50 @@
-const openBtn = document.querySelector(".add-button");
+const openBtn = document.getElementById("openModal");
 const closeBtn = document.getElementById("closeModal");
 const modal = document.getElementById("modal");
-const form = modal.querySelector("form");
-const modalTitle = modal.querySelector(".modal-title");
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const form = document.getElementById("quizForm");
+const questionTypeSelect = document.getElementById("questionType");
+const optionsContainer = document.getElementById("optionsContainer");
+const questionInput = document.getElementById("questionText");
 
 // Modal control
 openBtn.addEventListener("click", () => {
-    modal.style.display = "block";
+    console.log("Botón Add clickeado");
+    modal.classList.add("open");
     initializeQuestionType();
 });
 
 closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
+    modal.classList.remove("open");
 });
 
 window.addEventListener("click", (e) => {
     if (e.target === modal) {
-        modal.style.display = "none";
+        modal.classList.remove("open");
     }
 });
 
 // Question type handling
 function initializeQuestionType() {
-    const questionType = document.querySelector('.question-type');
-    const optionsContainer = document.querySelector('.options-container');
-    
-    // Initial options based on default selection
-    updateOptionsContainer(questionType.value);
-
-    questionType.addEventListener('change', (e) => {
+    updateOptionsContainer(questionTypeSelect.value);
+    questionTypeSelect.addEventListener('change', (e) => {
         updateOptionsContainer(e.target.value);
     });
 }
 
 function updateOptionsContainer(selectedType) {
-    const optionsContainer = document.querySelector('.options-container');
     optionsContainer.innerHTML = '';
 
     switch(selectedType) {
         case 'Multiple Choice':
             optionsContainer.innerHTML = `
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" required>
-                    <input type="text" placeholder="Option 1" class="form-control" required>
+                    <input type="radio" name="correct_answer" value="Option 1" required>
+                    <input type="text" placeholder="Option 1" class="smallInput option-text" value="Option 1" required>
                     <button type="button" class="remove-option">×</button>
                 </div>
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" required>
-                    <input type="text" placeholder="Option 2" class="form-control" required>
+                    <input type="radio" name="correct_answer" value="Option 2" required>
+                    <input type="text" placeholder="Option 2" class="smallInput option-text" value="Option 2" required>
                     <button type="button" class="remove-option">×</button>
                 </div>
                 <button type="button" class="add-option-btn">+ Add Option</button>
@@ -65,14 +61,6 @@ function updateOptionsContainer(selectedType) {
                 <div class="option-input-group">
                     <input type="radio" name="correct_answer" value="false" required>
                     <label>False</label>
-                </div>
-            `;
-            break;
-
-        case 'Open Answer':
-            optionsContainer.innerHTML = `
-                <div class="option-input-group">
-                    <textarea class="form-control" placeholder="Write the correct answer here" rows="3" required></textarea>
                 </div>
             `;
             break;
@@ -85,38 +73,46 @@ function setupMultipleChoiceHandlers() {
         addOptionBtn.addEventListener('click', addNewOption);
     }
     setupRemoveOptionListeners();
+    setupOptionTextHandlers();
 }
 
 function addNewOption() {
-    const optionsContainer = document.querySelector('.options-container');
+    const optionCount = optionsContainer.querySelectorAll('.option-input-group').length;
+    const newOptionNumber = optionCount + 1;
+
     const newOption = document.createElement('div');
     newOption.className = 'option-input-group';
     newOption.innerHTML = `
-        <input type="radio" name="correct_answer" required>
-        <input type="text" placeholder="New option" class="form-control" required>
+        <input type="radio" name="correct_answer" value="Option ${newOptionNumber}" required>
+        <input type="text" placeholder="Option ${newOptionNumber}" class="smallInput option-text" value="Option ${newOptionNumber}" required>
         <button type="button" class="remove-option">×</button>
     `;
     const addOptionBtn = optionsContainer.querySelector('.add-option-btn');
     optionsContainer.insertBefore(newOption, addOptionBtn);
     setupRemoveOptionListeners();
+    setupOptionTextHandlers();
 }
 
 function setupRemoveOptionListeners() {
-    const optionsContainer = document.querySelector('.options-container');
     const removeButtons = optionsContainer.querySelectorAll('.remove-option');
-    
     removeButtons.forEach(button => {
-        // Remover event listeners anteriores para evitar duplicados
         button.removeEventListener('click', handleRemoveOption);
-        // Añadir nuevo event listener
         button.addEventListener('click', handleRemoveOption);
     });
 }
 
+function setupOptionTextHandlers() {
+    const optionTexts = optionsContainer.querySelectorAll('.option-text');
+    optionTexts.forEach((input, index) => {
+        input.addEventListener('input', function() {
+            const radio = this.previousElementSibling;
+            radio.value = this.value;
+        });
+    });
+}
+
 function handleRemoveOption(event) {
-    const optionsContainer = document.querySelector('.options-container');
     const optionsCount = optionsContainer.querySelectorAll('.option-input-group').length;
-    
     if (optionsCount > 2) {
         event.target.closest('.option-input-group').remove();
     } else {
@@ -124,158 +120,55 @@ function handleRemoveOption(event) {
     }
 }
 
-function updateOptionsContainer(selectedType) {
-    const optionsContainer = document.querySelector('.options-container');
-    optionsContainer.innerHTML = '';
+// Función para obtener la respuesta correcta seleccionada
+function getCorrectAnswer() {
+    const selectedRadio = optionsContainer.querySelector('input[name="correct_answer"]:checked');
+    return selectedRadio ? selectedRadio.value : null;
+}
 
-    switch(selectedType) {
-        case 'Multiple Choice':
-            optionsContainer.innerHTML = `
-                <div class="option-input-group">
-                    <input type="radio" name="correct_answer" required>
-                    <input type="text" placeholder="Option 1" class="form-control" required>
-                    <button type="button" class="remove-option">×</button>
-                </div>
-                <div class="option-input-group">
-                    <input type="radio" name="correct_answer" required>
-                    <input type="text" placeholder="Option 2" class="form-control" required>
-                    <button type="button" class="remove-option">×</button>
-                </div>
-                <button type="button" class="add-option-btn">+ Add Option</button>
-            `;
-            setupMultipleChoiceHandlers();
-            break;
+// Función para obtener todas las preguntas y respuestas del formulario
+function getQuestionsData() {
+    const questionText = questionInput.value.trim();
+    const questionType = questionTypeSelect.value;
+    const correctAnswer = getCorrectAnswer();
 
-        case 'True/False':
-            optionsContainer.innerHTML = `
-                <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="true" required>
-                    <label>True</label>
-                </div>
-                <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="false" required>
-                    <label>False</label>
-                </div>
-            `;
-            break;
-
-        case 'Open Answer':
-            optionsContainer.innerHTML = `
-                <div class="option-input-group">
-                    <textarea class="form-control" placeholder="Write the correct answer here" rows="3" required></textarea>
-                </div>
-            `;
-            break;
+    if (!questionText || !correctAnswer) {
+        return null;
     }
+
+    return [{
+        question: questionText,
+        answer: correctAnswer
+    }];
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeQuestionType();
 });
-    msgDiv.textContent = msg;
-    msgDiv.style.display = "block";
-    msgDiv.style.color = isError ? "red" : "green";
-    setTimeout(() => { msgDiv.style.display = "none"; }, 3000);
 
-// Modificar el evento DOMContentLoaded
-document.addEventListener('DOMContentLoaded', function() {
-    const questionType = document.querySelector('.question-type');
-    if (!questionType) return;
-
-    function updateOptionsContainer(selectedType) {
-        const optionsContainer = questionType.closest('.question-container').querySelector('.options-container');
-        if (!optionsContainer) return;
-
-        optionsContainer.innerHTML = ''; // Limpiar opciones existentes
-
-        switch(selectedType) {
-            case 'Multiple Choice':
-                optionsContainer.innerHTML = `
-                    <div class="option-input-group">
-                        <input type="radio" name="correct_answer" required>
-                        <input type="text" placeholder="Option 1" class="form-control" required>
-                        <button type="button" class="remove-option">×</button>
-                    </div>
-                    <div class="option-input-group">
-                        <input type="radio" name="correct_answer" required>
-                        <input type="text" placeholder="Option 2" class="form-control" required>
-                        <button type="button" class="remove-option">×</button>
-                    </div>
-                    <button type="button" class="add-option-btn">+ Add Option</button>
-                `;
-
-                const addOptionBtn = optionsContainer.querySelector('.add-option-btn');
-                if (addOptionBtn) {
-                    addOptionBtn.addEventListener('click', () => {
-                        const newOption = document.createElement('div');
-                        newOption.className = 'option-input-group';
-                        newOption.innerHTML = `
-                            <input type="radio" name="correct_answer" required>
-                            <input type="text" placeholder="New option" class="form-control" required>
-                            <button type="button" class="remove-option">×</button>
-                        `;
-                        optionsContainer.insertBefore(newOption, addOptionBtn);
-                        setupRemoveOptionListeners(optionsContainer);
-                    });
-                }
-                break;
-                
-
-            case 'True/False':
-                optionsContainer.innerHTML = `
-                    <div class="option-input-group">
-                        <input type="radio" name="correct_answer" value="true" required>
-                        <label>True</label>
-                    </div>
-                    <div class="option-input-group">
-                        <input type="radio" name="correct_answer" value="false" required>
-                        <label>False</label>
-                    </div>
-                `;
-                break;
-
-            case 'Open Answer':
-                optionsContainer.innerHTML = `
-                    <div class="option-input-group">
-                        <textarea class="form-control" placeholder="Write the correct answer here" rows="3" required></textarea>
-                    </div>
-                `;
-                break;
-        }
-
-        setupRemoveOptionListeners(optionsContainer);
-    }
-
-    // Event listener para el cambio de tipo de pregunta
-    questionType.addEventListener('change', function(e) {
-        updateOptionsContainer(e.target.value);
-    });
-
-    // Inicializar con el tipo seleccionado actualmente
-    updateOptionsContainer(questionType.value);
-});
-
-function setupRemoveOptionListeners(container) {
-    container.querySelectorAll('.remove-option').forEach(button => {
-        button.addEventListener('click', function() {
-            const optionsCount = container.querySelectorAll('.option-input-group').length;
-            if (optionsCount > 2) {
-                this.closest('.option-input-group').remove();
-            }
-        });
-    });
-}
-
+// Form submission
 form.addEventListener("submit", function(e) {
     e.preventDefault();
+
+    const questionsData = getQuestionsData();
+    if (!questionsData) {
+        alert("Please fill in all question fields and select a correct answer");
+        return;
+    }
+
     const formData = new FormData(form);
     const data = {
         category: formData.get('category'),
         description: formData.get('description'),
-        experience: formData.get('experience')
+        experience: parseInt(formData.get('experience')),
+        available: parseInt(formData.get('available')),
+        questions: questionsData
     };
-    
+
+    // Mostrar mensaje de "cargando"
+    alert("Creating quiz... Please wait");
+
     fetch('/quizzes', {
         method: 'POST',
         headers: {
@@ -284,9 +177,29 @@ form.addEventListener("submit", function(e) {
         },
         body: JSON.stringify(data)
     })
-    .then(res => res.json())
-    .catch(error => {
-        showMessage("Error creating quiz", true);
-        console.error(error);
-    });
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Mensaje de éxito
+                alert("Quiz created successfully!");
+
+                // Cerrar modal
+                modal.classList.remove("open");
+
+                // Limpiar formulario
+                form.reset();
+
+                // Recargar página
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+
+            } else {
+                alert("Error creating quiz: " + data.message);
+            }
+        })
+        .catch(error => {
+            alert(" Error creating quiz: " + error.message);
+            console.error(error);
+        });
 });

@@ -1,13 +1,12 @@
 const db = require('../../util/database');
 
 module.exports = class Quiz {
-
     constructor(responseVerification, category, description, dateOfCreation, available, experience) {
-        this.responseVerification = responseVerification || 1; // Valor por defecto 1
+        this.responseVerification = responseVerification || 1;
         this.category = category;
         this.description = description;
         this.dateOfCreation = dateOfCreation;
-        this.available = available || 1; // Valor por defecto 1
+        this.available = available || 1;
         this.experience = experience;
     }
 
@@ -19,37 +18,6 @@ module.exports = class Quiz {
     }
 
     static fetchAll() {
-        return db.execute('SELECT DISTINCT * FROM quiz ORDER BY IDQuiz');
-    }
-}
-
-class Question {
-    constructor(IDQuestion, IDQuiz, question, answer) {
-        this.IDQuestion = IDQuestion;
-        this.IDQuiz = IDQuiz;
-        this.question = question;
-        this.answer = answer;
-    }
-
-    save() {
-        return db.execute(
-            'INSERT INTO question (IDQuiz, question, answer) VALUES (?, ?, ?)',
-            [this.IDQuiz, this.question, this.answer]
-        );
-    }
-
-    static fetchByQuizId(quizId) {
-        return db.execute('SELECT * FROM question WHERE IDQuiz = ?', [quizId]);
-    }
-
-    static update(id, question, answer) {
-        return db.execute(
-            'UPDATE question SET question = ?, answer = ? WHERE IDQuestion = ?',
-            [question, answer, id]
-        );
-    }
-
-    static delete(id) {
-        return db.execute('DELETE FROM question WHERE IDQuestion = ?', [id]);
+        return db.execute('SELECT q.IDQuiz, q.description, q.category, q.available, q.experience, COALESCE(GROUP_CONCAT(ques.question SEPARATOR \', \'), \'No hay preguntas\') AS questions FROM quiz q LEFT JOIN question ques ON q.IDQuiz = ques.IDQuiz GROUP BY q.IDQuiz, q.description, q.category, q.available, q.experience ORDER BY q.IDQuiz');
     }
 }
