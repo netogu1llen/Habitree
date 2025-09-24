@@ -53,6 +53,11 @@ app.get('/shop', (req, res) => {
 const userRoutes = require('./routes/users.routes');
 app.use('/users', userRoutes);
 
+
+
+const rewardsRoutes = require('./routes/Rewards/Rewards.routes');
+app.use('/rewards',rewardsRoutes);
+
 const loginRoutes = require('./routes/login.routes');
 app.use('/login', loginRoutes);
 

@@ -82,7 +82,7 @@ exports.postUsers = async (req, res) => {
         // Hashear
         const hashedPassword = await bcrypt.hash(passwordPlano, 12);
 
-        // Crear usuario en la BD
+        // Crear usuario en la DB
         await Usuario.save({
             name: req.body.name,
             email: req.body.email,
