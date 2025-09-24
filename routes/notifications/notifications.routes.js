@@ -1,18 +1,19 @@
 const express = require("express")
 const router = express.Router()
+const isAuth = require('../../util/is-auth');
 const notificationController = require("../../controllers/notifications/notification.controller")
 
 
 
-router.get("/", notificationController.getNotifications)
+router.get("/", isAuth, notificationController.getNotifications)
 
-router.get("/add-modal", notificationController.getAddNotification);
+router.get("/add-modal", isAuth, notificationController.getAddNotification);
 
-router.get("/edit/:id", notificationController.getNotificationEditor);
+router.get("/edit/:id", isAuth, notificationController.getNotificationEditor);
 
-router.post("/add", notificationController.postAddNotification);
+router.post("/add", isAuth, notificationController.postAddNotification);
 
-router.post("/delete", notificationController.postDelete);
+router.post("/delete", isAuth, notificationController.postDelete);
 
-router.post("/update", notificationController.postUpdate);
+router.post("/update", isAuth, notificationController.postUpdate);
 module.exports = router

@@ -20,6 +20,12 @@
       this.dateOfBirth = my_dateOfBirth;
     }
 
+    static fetchOne(email) {
+        return db.execute("SELECT * FROM user WHERE email=?", [
+            email,
+        ]);
+    }
+
     static async save(data) {
         try {
             const [result] = await db.execute(
