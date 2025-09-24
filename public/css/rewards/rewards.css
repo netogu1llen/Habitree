@@ -497,3 +497,54 @@ input:focus {
 .submit-btn:hover {
     background-color: #3f9342;
 }
+
+#closeRewardModal {
+    background-color: #f4f7f2;
+    color: rgb(77, 76, 76);
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 30px;
+}
+
+/* TABLE */
+
+.table__button {
+    font-size: 12px;
+    border-radius: 10px;
+    background: linear-gradient(to right, #2DA460, #2D9459);
+    color: white;
+    padding: 6px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.table-container {
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 2px solid #0B2F1F;
+    margin: 24px 32px 24px 32px;
+    box-sizing: border-box;
+    padding: 16px;
+}
+
+.table-container table {
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0;
+    table-layout: fixed;
+}
+
+.table-container th,
+.table-container td {
+    padding: 12px 16px;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 12px;
+}
+
+.table-container .actions {
+    text-align: center;
+}
