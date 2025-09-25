@@ -46,4 +46,12 @@ module.exports = class notification {
     static fetchById(id) {
         return db.execute('SELECT * FROM notification WHERE IDNotification = ?',[id]);
     }
+
+    // Método para crear una nueva notificación
+    static create(description, category) {
+        return db.execute(
+            'INSERT INTO notification (description, category, dateCreated, isActive) VALUES (?, ?, NOW(), 1)',
+            [description, category]
+        );
+    }
 }
