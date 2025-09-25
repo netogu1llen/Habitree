@@ -38,9 +38,14 @@ exports.createNotification = async (req, res) => {
     try {
         // Guarda la notificación en la base de datos
         await Notification.create(mensaje, canal);
+        console.log('Success: Notificación creada en la base de datos');
+        
         // Envía la notificación 
         await sendNotificationToTopic(canal, titulo, mensaje);
-        res.status(200).json({ success: true, message: 'Notificación creada y enviada' });
+        console.log('Success: Notificación enviada por FCM');
+        
+        // Redirige a la lista de notificaciones
+        res.redirect('/notifications');
     } catch (err) {
         console.error('Error al crear/enviar notificación:', err);
         res.status(500).json({ success: false, error: err.message });
