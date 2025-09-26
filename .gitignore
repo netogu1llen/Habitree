@@ -1,17 +1,10 @@
 #Archivos de entorno
 .env
 
+
 #Dependencias de Node.js
 node_modules/
 
-#Archivos de compilación
-build/
-dist/
 
-#Archivos de sistema
-.DS_Store
-Thumbs.db
-
-#Archivos de IDE
-.idea/
-.vscode/
+#LLaves de firebase
+/util/serviceAccountKey.json
