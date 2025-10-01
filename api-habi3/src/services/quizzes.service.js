@@ -1,4 +1,4 @@
-const db = require("../../database");
+const db = require("../../../util/database");
 
 const getAllQuizzes = async (userId) => {
   const [rows] = await db.execute(
