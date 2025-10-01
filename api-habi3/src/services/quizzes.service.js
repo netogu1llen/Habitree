@@ -29,7 +29,8 @@ const getAllQuizzes = async (userId) => {
 
         ques.IDQuestion,
         ques.question,
-        ques.answer
+        ques.answer,
+        ques.wrongAnswers
 
     FROM quiz q
     LEFT JOIN userQuizzes uq 
@@ -53,15 +54,11 @@ const getAllQuizzes = async (userId) => {
     [userId]
   );
 
-  console.log('Raw rows from DB:', rows.length); // Debug
-
-  // Objeto para agrupar quizzes
   const quizzesMap = {};
 
   rows.forEach(row => {
     const quizId = row.IDQuiz;
     
-    // Si el quiz no existe, lo creamos
     if (!quizzesMap[quizId]) {
       quizzesMap[quizId] = {
         IDQuiz: row.IDQuiz,
@@ -77,7 +74,6 @@ const getAllQuizzes = async (userId) => {
       };
     }
 
-    // Procesamos rewards que existan (evitando duplicados)
     if (row.IDReward) {
       const existingReward = quizzesMap[quizId].rewards.find(r => r.IDReward === row.IDReward);
       
@@ -109,7 +105,7 @@ const getAllQuizzes = async (userId) => {
       }
     }
 
-    // Procesamos preguntas que existan (evitando duplicados)
+    // Agregar preguntas con wrongAnswers
     if (row.IDQuestion) {
       const existingQuestion = quizzesMap[quizId].questions.find(q => q.IDQuestion === row.IDQuestion);
       
@@ -117,7 +113,8 @@ const getAllQuizzes = async (userId) => {
         const question = {
           IDQuestion: row.IDQuestion,
           question: row.question,
-          answer: row.answer
+          answer: row.answer,
+          wrongAnswers: row.wrongAnswers
         };
 
         quizzesMap[quizId].questions.push(question);
@@ -125,12 +122,8 @@ const getAllQuizzes = async (userId) => {
     }
   });
 
-  const result = Object.values(quizzesMap);
-  
-  return result;
+  return Object.values(quizzesMap);
 };
-
-
 
 // Obtener UN quiz específico con sus preguntas (para resolverlo)
 const getQuizById = async (quizId) => {
@@ -161,7 +154,8 @@ const getQuizById = async (quizId) => {
 
         ques.IDQuestion,
         ques.question,
-        ques.answer
+        ques.answer,
+        ques.wrongAnswers
 
     FROM quiz q
     LEFT JOIN quizRewards qr 
@@ -241,7 +235,8 @@ const getQuizById = async (quizId) => {
         const question = {
           IDQuestion: row.IDQuestion,
           question: row.question,
-          answer: row.answer
+          answer: row.answer,
+          wrongAnswers: row.wrongAnswers
         };
 
         quiz.questions.push(question);
