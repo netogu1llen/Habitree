@@ -52,7 +52,6 @@ module.exports = class Mission{
      * @returns {Promise}
      */
     static update(id, data) {
-        // Si solo se quiere actualizar 'available' (borrado lógico)
         if (Object.keys(data).length === 1 && data.available !== undefined) {
             return db.execute(
                 'UPDATE mission SET available=? WHERE IDMission=?',
