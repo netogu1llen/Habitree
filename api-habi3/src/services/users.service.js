@@ -81,4 +81,37 @@ const postSignupUser = async (name, email, gender, dateOfBirth, coins, password)
     throw new Error(err.message);
   }
 };
-module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser };
+const editUserInfo = async (id, name, email, gender, dateOfBirth) => {
+  try {
+    const [result] = await db.execute(
+      `UPDATE user 
+       SET name = ?, email = ?, gender = ?, dateOfBirth = ? 
+       WHERE IDUser = ?`,
+      [name, email, gender, dateOfBirth, id]
+    );
+
+    return { affectedRows: result.affectedRows }; // Te dice cuántos registros se actualizaron
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const changeUserPassword = async (id, password) => {
+  try {
+    // Hashear nueva contraseña
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Actualizar solo el campo password
+    const [result] = await db.execute(
+      `UPDATE user 
+       SET password = ? 
+       WHERE IDUser = ?`,
+      [hashedPassword, id]
+    );
+
+    return { affectedRows: result.affectedRows }; // 1 si se actualizó, 0 si no encontró el usuario
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser, editUserInfo, changeUserPassword };

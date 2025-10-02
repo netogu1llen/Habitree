@@ -30,9 +30,11 @@ app.use(cookieParser());
 const usersRoutesApi = require("./api-habi3/src/routes/users.routes");
 const missionsRoutesApi = require("./api-habi3/src/routes/mission.routes");
 const quizzesRoutesApi = require("./api-habi3/src/routes/quizzes.routes");
+const shopRoutesApi = require("./api-habi3/src/routes/shop.routes");
 app.use("/api/users", usersRoutesApi);
 app.use("/api/missions", missionsRoutesApi);
 app.use("/api/quizzes", quizzesRoutesApi);
+app.use("/api/shop", shopRoutesApi);
 
 const csrf = require('csurf');
 const csrfProtection = csrf({
