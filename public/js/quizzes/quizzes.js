@@ -6,6 +6,11 @@ const questionTypeSelect = document.getElementById("questionType");
 const optionsContainer = document.getElementById("optionsContainer");
 const questionInput = document.getElementById("questionText");
 
+const manageModal = document.getElementById("manageModal");
+const closeManageBtn = document.getElementById("closeManageModal");
+const manageEditBtn = document.getElementById("manage-edit-btn");
+const manageDeleteBtn = document.getElementById("manage-delete-btn");
+
 // Modal control
 openBtn.addEventListener("click", () => {
     console.log("Botón Add clickeado");
@@ -203,3 +208,59 @@ form.addEventListener("submit", function(e) {
             console.error(error);
         });
 });
+
+// Modal con 2 botones Edit Delete
+let currentQuizId = null;
+
+const manageButtons = document.querySelectorAll(".manage-button");
+
+// Abrir modal en modo edición
+manageButtons.forEach(button => {
+    button.addEventListener("click", (e) => {
+        const row = e.target.closest("tr");
+        currentQuizId = row.querySelector("td:first-child").textContent;
+
+        // Abrir modal de Manage
+        manageModal.classList.add("open");
+    });
+});
+
+closeManageBtn.addEventListener("click", () => {
+    manageModal.classList.remove("open");
+});
+
+// Botón eliminar
+manageDeleteBtn.addEventListener("click", () => {
+    if (!currentQuizId) return;
+
+    if (confirm("Are you sure you want to delete this quiz?")) {
+        fetch(`/quizzes/${currentQuizId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "CSRF-Token": document.querySelector('input[name="_csrf"]').value
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Quiz deleted successfully!");
+                    manageModal.classList.remove("open");
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    alert("Error deleting quiz: " + data.message);
+                }
+            })
+            .catch(err => {
+                alert("Error deleting quiz: " + err.message);
+                console.error(err);
+            });
+    }
+});
+
+
+manageEditBtn.addEventListener("click", () => {
+    alert("Edit clicked for quiz ID: " + currentQuizId);
+
+});
+

@@ -410,9 +410,21 @@ select:focus, input:focus {
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-#delete-btn {
+
+.delete-btn {
     background: linear-gradient(to right, #e74c3c, #c0392b);
+    color: white;
 }
+.close-btn {
+    background: none;
+    color: #5a5a5a;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 5px;
+    margin-left: 15px;
+}
+
 
 #form-message {
     padding: 10px;
