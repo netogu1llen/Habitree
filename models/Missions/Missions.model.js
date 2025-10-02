@@ -32,7 +32,8 @@ module.exports = class Mission{
      * @returns {Promise}
      */
     static fetchAll() {
-        return db.execute('SELECT * FROM mission');
+    // Solo misiones activas (borrado lógico)
+    return db.execute('SELECT * FROM mission WHERE available=1');
     }
 
     /**
@@ -51,6 +52,13 @@ module.exports = class Mission{
      * @returns {Promise}
      */
     static update(id, data) {
+        if (Object.keys(data).length === 1 && data.available !== undefined) {
+            return db.execute(
+                'UPDATE mission SET available=? WHERE IDMission=?',
+                [data.available, id]
+            );
+        }
+        // Actualización normal de misión
         return db.execute(
             'UPDATE mission SET responseVerification=?, category=?, description=?, available=?, experience=? WHERE IDMission=?',
             [
