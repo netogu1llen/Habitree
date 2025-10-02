@@ -69,11 +69,12 @@ exports.editMission = async (req, res) => {
 exports.deleteMission = async (req, res) => {
     try {
         const id = req.params.id;
-        const result = await Mission.deleteMissionById(id);
+        // Borrado lógico: actualizar available a 0
+        const result = await Mission.update(id, { available: 0 });
         if (result[0].affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'Mission not found' });
         }
-        res.json({ success: true, message: 'Mission deleted successfully' });
+        res.json({ success: true, message: 'Mission deleted (logical) successfully' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Error deleting mission' });
     }

@@ -112,10 +112,12 @@ form.addEventListener("submit", function(e) {
 document.getElementById('delete-btn').addEventListener('click', function() {
     if (confirm('¿Seguro que quieres eliminar esta misión?')) {
         const missionId = document.getElementById('id').value;
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
         fetch(`/missions/${missionId}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
             }
         })
         .then(res => res.json())
