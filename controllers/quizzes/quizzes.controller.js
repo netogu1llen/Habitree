@@ -29,7 +29,6 @@ exports.postAddQuiz = async (req, res) => {
         const { category, description, experience, questions } = req.body;
         const dateOfCreation = new Date().toISOString().slice(0, 10);
 
-
         // 1. Crear el quiz
         const [quizResult] = await connection.execute(
             'INSERT INTO quiz (responseVerification, category, description, dateOfCreation, available, experience) VALUES (?, ?, ?, ?, ?, ?)',
@@ -78,5 +77,31 @@ exports.postAddQuiz = async (req, res) => {
             connection.release();
             console.log('Conexión liberada');
         }
+    }
+};
+
+
+exports.deleteQuiz = async (req, res) => {
+    let connection;
+    try {
+        const quizId = req.params.id;
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        // Eliminar primero las preguntas del quiz
+        await connection.execute('DELETE FROM question WHERE IDQuiz = ?', [quizId]);
+
+        // Luego el quiz
+        await connection.execute('DELETE FROM quiz WHERE IDQuiz = ?', [quizId]);
+
+        await connection.commit();
+
+        res.json({ success: true, message: "Quiz deleted successfully" });
+    } catch (error) {
+        if (connection) await connection.rollback();
+        res.status(500).json({ success: false, message: "Error deleting quiz: " + error.message });
+    } finally {
+        if (connection) connection.release();
     }
 };
