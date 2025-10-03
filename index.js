@@ -63,6 +63,10 @@ app.use('/login', loginRoutes);
 const rewardsRoutes = require('./routes/Rewards/Rewards.routes');
 app.use('/rewards',rewardsRoutes);
 
+const ModifyRewardRoutes = require('./routes/Rewards/ModifyReward.routes');
+app.use('/modify-reward', ModifyRewardRoutes);
+
+
 const notificationsRoutes = require('./routes/notifications/notifications.routes');
 app.use('/notifications', notificationsRoutes);
 
