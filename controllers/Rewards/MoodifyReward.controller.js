@@ -31,13 +31,16 @@ exports.editReward = async (req, res) => {
     };
 
     const result = await Reward.update(id, data);
+
     if (result[0].affectedRows === 0) {
-      return res.status(404).json({ success: false, message: 'Reward not found' });
+      return res.status(404).render("error", { message: "Reward not found" });
     }
 
-    res.json({ success: true, message: 'Reward updated successfully' });
+    //  Redirigir directamente a la vista /rewards
+    res.redirect("/rewards");
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: 'Error updating reward' });
+    res.status(500).render("error", { message: "Error updating reward" });
   }
 };

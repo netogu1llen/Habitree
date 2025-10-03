@@ -56,27 +56,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault(); // evita que muestre el JSON crudo
 
-  const formData = new FormData(form);
-
-  try {
-    const response = await fetch(form.action, {
-      method: "POST",
-      body: formData
-    });
-
-    const result = await response.json();
-    if (result.success) {
-      // Redirigir a rewards
-      window.location.href = "/rewards";
-    } else {
-      alert("No se pudo actualizar la recompensa");
-    }
-  } catch (err) {
-    console.error("Error al enviar edición:", err);
-    alert("Error al actualizar la recompensa.");
-  }
-});
 
