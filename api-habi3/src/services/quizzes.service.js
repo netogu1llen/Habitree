@@ -247,7 +247,145 @@ const getQuizById = async (quizId) => {
   return quiz;
 };
 
+const postCompleteQuizUser = async (IDUser, IDQuiz) => {
+  const connection = await db.getConnection();
 
-module.exports = { getAllQuizzes, getQuizById};
+  try {
+    await connection.beginTransaction();
+    console.log(`Starting quiz completion for User: ${IDUser}, Quiz: ${IDQuiz}`);
+
+    // 1. Verificar si el usuario ya completó este quiz
+    const [existingQuiz] = await connection.execute(
+      "SELECT * FROM userQuizzes WHERE IDUser = ? AND IDQuiz = ?",
+      [IDUser, IDQuiz]
+    );
+
+    if (existingQuiz.length > 0) {
+      throw new Error("El usuario ya completó este quiz");
+    }
+    console.log("✅ Quiz not completed before");
+
+    // 2. Verificar que el quiz existe y obtener su experiencia
+    const [quiz] = await connection.execute(
+      "SELECT experience, available FROM quiz WHERE IDQuiz = ?",
+      [IDQuiz]
+    );
+
+    if (quiz.length === 0) {
+      throw new Error("El quiz no existe");
+    }
+
+    if (!quiz[0].available) {
+      throw new Error("El quiz no está disponible");
+    }
+    console.log("✅ Quiz exists and is available");
+
+    // 3. Verificar que el usuario existe
+    const [user] = await connection.execute(
+      "SELECT IDUser FROM user WHERE IDUser = ?",
+      [IDUser]
+    );
+
+    if (user.length === 0) {
+      throw new Error("El usuario no existe");
+    }
+    console.log("✅ User exists");
+
+    // 4. Insertar registro en userQuizzes (status = 1 = completed)
+    const [userQuizResult] = await connection.execute(
+      "INSERT INTO userQuizzes (IDUser, IDQuiz, status) VALUES (?, ?, 1)",
+      [IDUser, IDQuiz]
+    );
+    console.log("✅ UserQuiz inserted with ID:", userQuizResult.insertId);
+
+    // 5. Obtener todas las rewards del quiz
+    const [rewards] = await connection.execute(
+      `SELECT r.IDReward, r.name, r.description, r.type, r.value
+       FROM rewards r
+       INNER JOIN quizRewards qr ON r.IDReward = qr.IDReward
+       WHERE qr.IDQuiz = ? AND r.available = 1`,
+      [IDQuiz]
+    );
+    console.log(`Found ${rewards.length} rewards for quiz ${IDQuiz}`);
+
+    // 6. Insertar rewards en userRewards
+    const userRewards = [];
+    for (const reward of rewards) {
+      try {
+        const [insertResult] = await connection.execute(
+          "INSERT INTO userRewards (IDUser, IDReward) VALUES (?, ?)",
+          [IDUser, reward.IDReward]
+        );
+
+        console.log(`✅ Reward ${reward.IDReward} inserted with ID: ${insertResult.insertId}`);
+
+        userRewards.push({
+          IDUserReward: insertResult.insertId,
+          IDReward: reward.IDReward,
+          name: reward.name,
+          description: reward.description,
+          type: reward.type,
+          value: reward.value
+        });
+      } catch (rewardError) {
+        console.log(`❌ Warning: Could not insert reward ${reward.IDReward} for user ${IDUser}:`, rewardError.message);
+      }
+    }
+
+    // 7. Verificar si el usuario tiene un árbol, si no, crearlo
+    const [existingTree] = await connection.execute(
+      "SELECT IDTree, level FROM tree WHERE IDUser = ?",
+      [IDUser]
+    );
+
+    if (existingTree.length === 0) {
+      // Crear árbol inicial con la experiencia del quiz
+      await connection.execute(
+        "INSERT INTO tree (IDUser, level) VALUES (?, ?)",
+        [IDUser, quiz[0].experience]
+      );
+      console.log("✅ New tree created for user");
+    } else {
+      // 8. Actualizar experiencia del árbol
+      await connection.execute(
+        "UPDATE tree SET level = level + ? WHERE IDUser = ?",
+        [quiz[0].experience, IDUser]
+      );
+      console.log("✅ Tree level updated");
+    }
+
+    // 9. Obtener nuevo nivel del árbol
+    const [updatedTree] = await connection.execute(
+      "SELECT level FROM tree WHERE IDUser = ?",
+      [IDUser]
+    );
+
+    await connection.commit();
+    console.log("✅ Transaction committed successfully");
+
+    return {
+      success: true,
+      message: "Quiz completado exitosamente",
+      data: {
+        IDQuiz,
+        IDUser,
+        experienceGained: quiz[0].experience,
+        newTreeLevel: updatedTree[0].level,
+        rewardsObtained: userRewards,
+        totalRewards: rewards.length
+      }
+    };
+
+  } catch (error) {
+    await connection.rollback();
+    console.log("❌ Transaction rolled back due to error:", error.message);
+    throw error;
+  } finally {
+    connection.release();
+  }
+};
+
+
+module.exports = { getAllQuizzes, getQuizById, postCompleteQuizUser};
 
 
