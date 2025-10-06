@@ -85,10 +85,10 @@ form.addEventListener("submit", async (e) => {
         
         const result = await response.json();
         
-        if (response.ok) {
+        if (result.success) {
             alert('Item agregado exitosamente');
             modal.classList.remove("open");
-            window.location.reload();
+            window.location.href = result.redirect; // redirige al /shop
         } else {
             alert('Error: ' + result.msg);
         }

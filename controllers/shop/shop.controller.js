@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const upload = require('../../config/multer.config');
 const AWS = require('aws-sdk');
+const Item = require('../../models/shop/shop.model');
 
 // Configurar AWS S3
 const AWS_BUCKET = process.env.AWS_BUCKET;
@@ -41,7 +42,7 @@ exports.getBucketFile = async(req, res, next) => {
 
     s3.getObject(opciones, function(err, data) {
         if (err) {
-            console.error('❌ ERROR al obtener archivo de S3:');
+            console.error('ERROR al obtener archivo de S3:');
             console.error('Error Code:', err.code);
             console.error('Error Message:', err.message);
             console.error('Status Code:', err.statusCode);
@@ -53,7 +54,7 @@ exports.getBucketFile = async(req, res, next) => {
             });
         }
         
-        console.log('✅ Archivo obtenido exitosamente');
+        console.log('Archivo obtenido exitosamente');
         console.log('Content-Type:', data.ContentType);
         console.log('Content-Length:', data.ContentLength);
         
@@ -90,69 +91,78 @@ exports.getBucketFileUrl = async(req, res, next) => {
     }
 };
 
-exports.postItem = async(req, res, next) => {
-    console.log("Cargando el archivo");
-    const uploadMiddleware = upload.array('file', 1);
-    
-    uploadMiddleware(req, res, function(err) {
-        if(err) {
-            console.log(err);
-            return res.status(400).json({
-                code: 400, 
-                msg: "Error uploading file."
-            });
-        }
-        
-        console.log('Body:', req.body);
-        console.log('Files:', req.files);
-        
-        if(!req.files || req.files.length === 0) {
-            return res.status(400).json({
-                code: 400, 
-                msg: "No file uploaded"
-            });
-        }
-        
-        fs.readFile(path.join(__dirname, '../../bucket', req.files[0].filename), (err, data) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({
-                    code: 500, 
-                    msg: "Error reading file"
-                });
-            }
-            
-            const base64data = Buffer.from(data, 'binary');
-            const params = {
-                Bucket: AWS_BUCKET,
-                Key: req.files[0].filename,
-                Body: base64data
-            };
-            
-            s3.upload(params, function(s3Err, s3Data) {
-                if (s3Err) {
-                    console.error(s3Err);
-                    return res.status(500).json({
-                        code: 500, 
-                        msg: "Error uploading to S3"
-                    });
-                }
-                
-                console.log(`File uploaded successfully at ${s3Data.Location}`);
-                
-                fs.unlink(path.join(__dirname, '../../bucket', req.files[0].filename), (unlinkErr) => {
-                    if (unlinkErr) {
-                        console.error(unlinkErr);
-                    }
-                    
-                    res.status(200).json({
-                        code: 200, 
-                        msg: "Ok",
-                        location: s3Data.Location,
-                        filename: req.files[0].filename
-                    });
-                });
-            });
-        });
-    });
+exports.postItem = async (req, res, next) => {
+  console.log("Cargando el archivo");
+
+  const uploadMiddleware = upload.array('file', 1);
+
+  uploadMiddleware(req, res, async function (err) {
+    if (err) {
+      console.error("❌ Error en multer:", err);
+      return res.status(400).json({
+        code: 400,
+        msg: "Error uploading file."
+      });
+    }
+
+    console.log('Body:', req.body);
+    console.log('Files:', req.files);
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        code: 400,
+        msg: "No file uploaded"
+      });
+    }
+
+    const filePath = path.join(__dirname, '../../bucket', req.files[0].filename);
+    const fileName = req.files[0].filename;
+
+    try {
+      // Leer el archivo local
+      const fileData = fs.readFileSync(filePath);
+
+      // Subir a S3
+      const params = {
+        Bucket: AWS_BUCKET,
+        Key: fileName,
+        Body: fileData,
+      };
+
+      const s3Result = await s3.upload(params).promise();
+      console.log(`Archivo subido exitosamente a S3: ${s3Result.Location}`);
+
+      // Eliminar el archivo local
+      fs.unlink(filePath, (unlinkErr) => {
+        if (unlinkErr) console.error("No se pudo borrar archivo local:", unlinkErr);
+      });
+
+      // Guardar en la base de datos
+      const addItem = new Item(
+        req.body.name,
+        req.body.state,
+        req.body.category,
+        req.body.price,
+        fileName
+      );
+
+      await addItem.save();
+      console.log("Item guardado en base de datos");
+
+      // Redirigir al finalizar todo
+      return res.json({
+        success: true,
+        msg: "Item agregado exitosamente",
+        redirect: "/shop"
+      });
+
+    } catch (error) {
+      console.error("❌ Error en postItem:", error);
+      return res.status(500).json({
+        code: 500,
+        msg: "Error processing request",
+        error: error.message
+      });
+    }
+  });
 };
