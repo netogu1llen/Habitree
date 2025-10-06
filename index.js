@@ -9,6 +9,7 @@ require('dotenv').config();
 const path = require('path');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+const fs = require('fs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -49,10 +50,25 @@ app.use((req, res, next) => {
 
 app.use(csrfProtection);
 
-// Rutas principales
-app.get('/shop', (req, res) => {
-  res.send();
+
+const AWS_BUCKET = process.env.AWS_BUCKET
+const AWS_ACCESS_KEY_ID     = process.env.AWS_ACCESS_KEY_ID
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY
+const AWS = require('aws-sdk');
+
+AWS.config.update({
+  signatureVersion: 'v4',
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY
 });
+
+const s3 = new AWS.S3();
+
+
+// Rutas principales
+
+const shopRoutes = require('./routes/shop/shop.routes');
+app.use(shopRoutes);
 
 const userRoutes = require('./routes/users.routes');
 app.use('/users', userRoutes);

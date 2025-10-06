@@ -1,0 +1,158 @@
+// controllers/shop/shop.controller.js
+const path = require('path');
+const fs = require('fs');
+const upload = require('../../config/multer.config');
+const AWS = require('aws-sdk');
+
+// Configurar AWS S3
+const AWS_BUCKET = process.env.AWS_BUCKET;
+const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+const AWS_REGION = process.env.AWS_REGION
+
+AWS.config.update({
+    signatureVersion: 'v4',
+    region: AWS_REGION,
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY
+});
+
+const s3 = new AWS.S3();
+
+exports.getItems = async (req, res) => {
+    res.render('../views/shop/shop', { 
+        title: 'Shop', 
+        csrfToken: req.csrfToken()
+    });
+};
+
+exports.getBucketFile = async(req, res, next) => {
+    const filename = req.params.file;
+    console.log('========== GET BUCKET FILE ==========');
+    console.log('Filename solicitado:', filename);
+    console.log('AWS_BUCKET:', AWS_BUCKET);
+    
+    const opciones = {
+        Bucket: AWS_BUCKET,
+        Key: filename,
+    };
+    
+    console.log('Opciones S3:', opciones);
+
+    s3.getObject(opciones, function(err, data) {
+        if (err) {
+            console.error('❌ ERROR al obtener archivo de S3:');
+            console.error('Error Code:', err.code);
+            console.error('Error Message:', err.message);
+            console.error('Status Code:', err.statusCode);
+            return res.status(404).json({
+                code: 404,
+                msg: 'File not found',
+                error: err.message,
+                errorCode: err.code
+            });
+        }
+        
+        console.log('✅ Archivo obtenido exitosamente');
+        console.log('Content-Type:', data.ContentType);
+        console.log('Content-Length:', data.ContentLength);
+        
+        res.setHeader('Content-Type', data.ContentType || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.send(data.Body);
+    });
+};
+
+// Generar URL firmada (signed URL) para acceso temporal
+exports.getBucketFileUrl = async(req, res, next) => {
+    const filename = req.params.file;
+    
+    const params = {
+        Bucket: AWS_BUCKET,
+        Key: filename,
+        Expires: 3600 // URL válida por 1 hora
+    };
+    
+    try {
+        const url = s3.getSignedUrl('getObject', params);
+        res.json({
+            url: url,
+            filename: filename,
+            expiresIn: 3600
+        });
+    } catch (err) {
+        console.error('Error generating signed URL:', err);
+        res.status(500).json({
+            code: 500,
+            msg: 'Error generating URL',
+            error: err.message
+        });
+    }
+};
+
+exports.postItem = async(req, res, next) => {
+    console.log("Cargando el archivo");
+    const uploadMiddleware = upload.array('file', 1);
+    
+    uploadMiddleware(req, res, function(err) {
+        if(err) {
+            console.log(err);
+            return res.status(400).json({
+                code: 400, 
+                msg: "Error uploading file."
+            });
+        }
+        
+        console.log('Body:', req.body);
+        console.log('Files:', req.files);
+        
+        if(!req.files || req.files.length === 0) {
+            return res.status(400).json({
+                code: 400, 
+                msg: "No file uploaded"
+            });
+        }
+        
+        fs.readFile(path.join(__dirname, '../../bucket', req.files[0].filename), (err, data) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    code: 500, 
+                    msg: "Error reading file"
+                });
+            }
+            
+            const base64data = Buffer.from(data, 'binary');
+            const params = {
+                Bucket: AWS_BUCKET,
+                Key: req.files[0].filename,
+                Body: base64data
+            };
+            
+            s3.upload(params, function(s3Err, s3Data) {
+                if (s3Err) {
+                    console.error(s3Err);
+                    return res.status(500).json({
+                        code: 500, 
+                        msg: "Error uploading to S3"
+                    });
+                }
+                
+                console.log(`File uploaded successfully at ${s3Data.Location}`);
+                
+                fs.unlink(path.join(__dirname, '../../bucket', req.files[0].filename), (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error(unlinkErr);
+                    }
+                    
+                    res.status(200).json({
+                        code: 200, 
+                        msg: "Ok",
+                        location: s3Data.Location,
+                        filename: req.files[0].filename
+                    });
+                });
+            });
+        });
+    });
+};
