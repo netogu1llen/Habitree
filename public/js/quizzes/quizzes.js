@@ -244,12 +244,22 @@ manageDeleteBtn.addEventListener("click", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    alert("Quiz deleted successfully!");
+                    if (data.message.includes("desactivado")) {
+                        alert("This quiz cannot be deleted because it's already used, but it has been disabled.");
+                    } else {
+                        alert("Quiz deleted successfully!");
+                    }
                     manageModal.classList.remove("open");
                     setTimeout(() => location.reload(), 1000);
                 } else {
-                    alert("Error deleting quiz: " + data.message);
+                    if (data.message.includes("inactive") || data.message.includes("deleted")) {
+                        alert("This quiz was already deleted previously.");
+                    } else {
+                        alert("Error deleting quiz: " + data.message);
+                    }
                 }
+                manageModal.classList.remove("open");
+                setTimeout(() => location.reload(), 1000);
             })
             .catch(err => {
                 alert("Error deleting quiz: " + err.message);

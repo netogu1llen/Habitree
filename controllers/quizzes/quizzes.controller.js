@@ -87,6 +87,21 @@ exports.deleteQuiz = async (req, res) => {
         const quizId = req.params.id;
 
         connection = await db.getConnection();
+
+
+        const [rows] = await connection.execute('SELECT available FROM quiz WHERE IDQuiz = ?', [quizId]);
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, message: "Quiz not found" });
+        }
+
+        const isAvailable = rows[0].available;
+
+        if (isAvailable === 0) {
+            return res.json({
+                success: false,
+                message: "This quiz has already been deleted or is inactive."
+            });
+        }
         await connection.beginTransaction();
 
         // Eliminar primero las preguntas del quiz
@@ -99,8 +114,23 @@ exports.deleteQuiz = async (req, res) => {
 
         res.json({ success: true, message: "Quiz deleted successfully" });
     } catch (error) {
-        if (connection) await connection.rollback();
-        res.status(500).json({ success: false, message: "Error deleting quiz: " + error.message });
+        if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+            try {
+                console.warn(`Quiz ${req.params.id} it is in use, updating 'available' to 0...`);
+                await connection.execute('UPDATE quiz SET available = 0 WHERE IDQuiz = ?', [req.params.id]);
+                await connection.commit();
+                res.json({
+                    success: true,
+                    message: "Quiz deactivated (cannot be deleted because it is in use)"
+                });
+            } catch (updateError) {
+                if (connection) await connection.rollback();
+                res.status(500).json({ success: false, message: "Error updating quiz availability: " + updateError.message });
+            }
+        } else {
+            if (connection) await connection.rollback();
+            res.status(500).json({ success: false, message: "Error deleting quiz: " + error.message });
+        }
     } finally {
         if (connection) connection.release();
     }
