@@ -42,7 +42,7 @@ exports.getBucketFile = async(req, res, next) => {
 
     s3.getObject(opciones, function(err, data) {
         if (err) {
-            console.error('❌ ERROR al obtener archivo de S3:');
+            console.error('ERROR al obtener archivo de S3:');
             console.error('Error Code:', err.code);
             console.error('Error Message:', err.message);
             console.error('Status Code:', err.statusCode);
@@ -54,7 +54,7 @@ exports.getBucketFile = async(req, res, next) => {
             });
         }
         
-        console.log('✅ Archivo obtenido exitosamente');
+        console.log('Archivo obtenido exitosamente');
         console.log('Content-Type:', data.ContentType);
         console.log('Content-Length:', data.ContentLength);
         
@@ -130,11 +130,11 @@ exports.postItem = async (req, res, next) => {
       };
 
       const s3Result = await s3.upload(params).promise();
-      console.log(`✅ Archivo subido exitosamente a S3: ${s3Result.Location}`);
+      console.log(`Archivo subido exitosamente a S3: ${s3Result.Location}`);
 
       // Eliminar el archivo local
       fs.unlink(filePath, (unlinkErr) => {
-        if (unlinkErr) console.error("⚠️ No se pudo borrar archivo local:", unlinkErr);
+        if (unlinkErr) console.error("No se pudo borrar archivo local:", unlinkErr);
       });
 
       // Guardar en la base de datos
@@ -147,7 +147,7 @@ exports.postItem = async (req, res, next) => {
       );
 
       await addItem.save();
-      console.log("✅ Item guardado en base de datos");
+      console.log("Item guardado en base de datos");
 
       // Redirigir al finalizar todo
       return res.json({
