@@ -213,7 +213,6 @@ document.querySelectorAll('.manage-button').forEach(button => {
                 fillFormWithQuizData(data.quiz);
                 modal.classList.add("open");
                 document.getElementById('add-edit-btn').textContent = 'Update';
-                document.getElementById('delete-btn').style.display = 'block';
                 document.getElementById('id-readonly-msg').style.display = 'block';
             }
         } catch (error) {
