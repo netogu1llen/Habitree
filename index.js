@@ -50,9 +50,8 @@ app.use((req, res, next) => {
 app.use(csrfProtection);
 
 // Rutas principales
-app.get('/shop', (req, res) => {
-  res.send();
-});
+const shopRoutes = require('./routes/Shop/shop.routes');
+app.use('/shop', shopRoutes);
 
 const userRoutes = require('./routes/users.routes');
 app.use('/users', userRoutes);
@@ -79,6 +78,8 @@ app.use(quizzesRoutes);
 // Ruta raíz
 const dashboardRoutes = require ('./routes/dashboard.route');
 app.use('/', dashboardRoutes);
+
+
 // Puerto
 const PORT = 4002;
 app.listen(PORT, () => {
