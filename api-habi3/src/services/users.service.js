@@ -118,4 +118,49 @@ const changeUserPassword = async (id, password) => {
     throw new Error(err.message);
   }
 };
-module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser, editUserInfo, changeUserPassword };
+const getMissionsSummaryByUser = async (id) => {
+  const [rows] = await db.execute(
+    `SELECT 
+        m.category,
+        SUM(m.value) AS total_value
+     FROM userMissions um
+     INNER JOIN mission m ON um.IDMission = m.IDMission
+     WHERE um.IDUser = ? 
+       AND um.status = 1
+       AND m.category IN ('Awareness', 'Consumption', 'Energy', 'Nature', 'Transport', 'Waste', 'Water')
+     GROUP BY m.category
+     ORDER BY m.category`,
+    [id]
+  );
+  
+  // Transformar el resultado en un objeto plano
+  const summary = rows.reduce((acc, row) => {
+    acc[row.category] = row.total_value;
+    return acc;
+  }, {});
+  
+  return summary;
+};
+
+const getUserRewardsById = async (id) => {
+  const [rows] = await db.execute(
+    `SELECT 
+        r.IDReward,
+        r.name,
+        r.description,
+        r.type,
+        r.available,
+        r.value,
+        ur.IDUserReward
+     FROM userRewards ur
+     INNER JOIN rewards r ON ur.IDReward = r.IDReward
+     WHERE ur.IDUser = ? 
+       AND r.type IN ('monetary', 'nonMonetary')
+     ORDER BY ur.IDUserReward DESC`,
+    [id]
+  );
+  return rows;
+};
+
+module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser, editUserInfo, changeUserPassword,  getMissionsSummaryByUser, getUserRewardsById};
+
