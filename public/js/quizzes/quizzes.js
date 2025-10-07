@@ -166,9 +166,6 @@ form.addEventListener("submit", function(e) {
         questions: questionsData
     };
 
-    // Mostrar mensaje de "cargando"
-    alert("Creating quiz... Please wait");
-
     fetch('/quizzes', {
         method: 'POST',
         headers: {
@@ -180,15 +177,8 @@ form.addEventListener("submit", function(e) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Mensaje de éxito
-                alert("Quiz created successfully!");
-
                 // Cerrar modal
                 modal.classList.remove("open");
-
-                // Limpiar formulario
-                form.reset();
-
                 // Recargar página
                 setTimeout(() => {
                     location.reload();
@@ -202,4 +192,122 @@ form.addEventListener("submit", function(e) {
             alert(" Error creating quiz: " + error.message);
             console.error(error);
         });
+});
+
+let isEditing = false;
+let currentQuizId = null;
+
+// Add click handler for manage buttons
+document.querySelectorAll('.manage-button').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        const row = e.target.closest('tr');
+        const quizId = row.cells[0].textContent;
+        currentQuizId = quizId;
+        isEditing = true;
+        
+        try {
+            const response = await fetch(`/quizzes/${quizId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                fillFormWithQuizData(data.quiz);
+                modal.classList.add("open");
+                document.getElementById('add-edit-btn').textContent = 'Update';
+                document.getElementById('delete-btn').style.display = 'block';
+                document.getElementById('id-readonly-msg').style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error fetching quiz details:', error);
+            alert('Error fetching quiz details');
+        }
+    });
+});
+
+function fillFormWithQuizData(quiz) {
+    document.getElementById('category').value = quiz.category;
+    document.getElementById('description').value = quiz.description;
+    document.getElementById('experience').value = quiz.experience;
+    document.getElementById('available').value = quiz.available;
+
+    if (quiz.questions && quiz.questions.length > 0) {
+        const firstQuestion = quiz.questions[0];
+        document.getElementById('questionText').value = firstQuestion.question;
+        
+        // Handle answer options based on the first question
+        const isMultipleChoice = firstQuestion.answer.includes('Option');
+        questionTypeSelect.value = isMultipleChoice ? 'Multiple Choice' : 'True/False';
+        updateOptionsContainer(questionTypeSelect.value);
+        
+        if (isMultipleChoice) {
+            const options = firstQuestion.answer.split(',');
+            options.forEach((option, index) => {
+                if (index >= 2) addNewOption();
+            });
+            
+            const optionInputs = document.querySelectorAll('.option-text');
+            options.forEach((option, index) => {
+                if (optionInputs[index]) {
+                    optionInputs[index].value = option.trim();
+                    const radio = optionInputs[index].previousElementSibling;
+                    radio.value = option.trim();
+                }
+            });
+        }
+    }
+}
+
+// Modify the form submit handler
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const questionsData = getQuestionsData();
+    if (!questionsData) {
+        alert("Please fill in all question fields and select a correct answer");
+        return;
+    }
+
+    const formData = new FormData(form);
+    const data = {
+        category: formData.get('category'),
+        description: formData.get('description'),
+        experience: parseInt(formData.get('experience')),
+        available: parseInt(formData.get('available')),
+        questions: questionsData
+    };
+
+    const url = isEditing ? `/quizzes/${currentQuizId}` : '/quizzes';
+    const method = isEditing ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': formData.get('_csrf')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            modal.classList.remove("open");
+            form.reset();
+            location.reload();
+        } else {
+            alert(isEditing ? "Error updating quiz: " : "Error creating quiz: " + data.message);
+        }
+    })
+    .catch(error => {
+        alert("Error: " + error.message);
+        console.error(error);
+    });
+});
+
+// Reset form state when opening modal for new quiz
+openBtn.addEventListener("click", () => {
+    isEditing = false;
+    currentQuizId = null;
+    form.reset();
+    document.getElementById('add-edit-btn').textContent = 'Add';
+    document.getElementById('delete-btn').style.display = 'none';
+    document.getElementById('id-readonly-msg').style.display = 'none';
 });

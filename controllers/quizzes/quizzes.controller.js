@@ -80,3 +80,61 @@ exports.postAddQuiz = async (req, res) => {
         }
     }
 };
+
+exports.getQuizById = async (req, res) => {
+    try {
+        const [quiz] = await Quiz.findById(req.params.id);
+        if (quiz.length === 0) {
+            return res.status(404).json({ success: false, message: 'Quiz not found' });
+        }
+
+        const formattedQuiz = {
+            ...quiz[0],
+            questions: quiz.map(q => ({
+                id: q.IDQuestion,
+                question: q.question,
+                answer: q.answer
+            })).filter(q => q.id) // Filter out null questions
+        };
+
+        res.json({ success: true, quiz: formattedQuiz });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching quiz details' });
+    }
+};
+
+exports.updateQuiz = async (req, res) => {
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const quizId = req.params.id;
+        const { category, description, experience, available, questions } = req.body;
+
+        await Quiz.update(quizId, { category, description, experience, available });
+
+        if (questions && questions.length > 0) {
+            // Delete existing questions
+            await connection.execute('DELETE FROM question WHERE IDQuiz = ?', [quizId]);
+
+            // Insert new questions
+            for (const questionData of questions) {
+                await connection.execute(
+                    'INSERT INTO question (IDQuiz, question, answer) VALUES (?, ?, ?)',
+                    [quizId, questionData.question, questionData.answer]
+                );
+            }
+        }
+
+        await connection.commit();
+        res.json({ success: true, message: 'Quiz updated successfully' });
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error updating quiz' });
+    } finally {
+        if (connection) connection.release();
+    }
+};
