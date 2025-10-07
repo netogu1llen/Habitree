@@ -548,3 +548,21 @@ input:focus {
 .table-container .actions {
     text-align: center;
 }
+
+
+/* Botón Edit más pequeño */
+.table__button--edit {
+    font-size: 10px; /* más pequeño que el add */
+    border-radius: 8px;
+    background: linear-gradient(to right, #2DA460, #2D9459);
+    color: white;
+    padding: 4px 14px; /* más compacto */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover para feedback */
+.table__button--edit:hover {
+    background: linear-gradient(to right, #228B47, #1f7d4a);
+}

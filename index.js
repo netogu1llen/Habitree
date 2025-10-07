@@ -9,6 +9,7 @@ require('dotenv').config();
 const path = require('path');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+const fs = require('fs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -49,9 +50,14 @@ app.use((req, res, next) => {
 
 app.use(csrfProtection);
 
+
 // Rutas principales
 const shopRoutes = require('./routes/Shop/shop.routes');
 app.use('/shop', shopRoutes);
+
+
+
+// Rutas principales
 
 const userRoutes = require('./routes/users.routes');
 app.use('/users', userRoutes);
@@ -61,6 +67,10 @@ app.use('/login', loginRoutes);
 
 const rewardsRoutes = require('./routes/Rewards/Rewards.routes');
 app.use('/rewards',rewardsRoutes);
+
+const ModifyRewardRoutes = require('./routes/Rewards/ModifyReward.routes');
+app.use('/modify-reward', ModifyRewardRoutes);
+
 
 const notificationsRoutes = require('./routes/notifications/notifications.routes');
 app.use('/notifications', notificationsRoutes);

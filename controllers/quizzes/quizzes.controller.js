@@ -29,7 +29,6 @@ exports.postAddQuiz = async (req, res) => {
         const { category, description, experience, questions } = req.body;
         const dateOfCreation = new Date().toISOString().slice(0, 10);
 
-
         // 1. Crear el quiz
         const [quizResult] = await connection.execute(
             'INSERT INTO quiz (responseVerification, category, description, dateOfCreation, available, experience) VALUES (?, ?, ?, ?, ?, ?)',
@@ -78,5 +77,61 @@ exports.postAddQuiz = async (req, res) => {
             connection.release();
             console.log('Conexión liberada');
         }
+    }
+};
+
+
+exports.deleteQuiz = async (req, res) => {
+    let connection;
+    try {
+        const quizId = req.params.id;
+
+        connection = await db.getConnection();
+
+
+        const [rows] = await connection.execute('SELECT available FROM quiz WHERE IDQuiz = ?', [quizId]);
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, message: "Quiz not found" });
+        }
+
+        const isAvailable = rows[0].available;
+
+        if (isAvailable === 0) {
+            return res.json({
+                success: false,
+                message: "This quiz has already been deleted or is inactive."
+            });
+        }
+        await connection.beginTransaction();
+
+        // Eliminar primero las preguntas del quiz
+        await connection.execute('DELETE FROM question WHERE IDQuiz = ?', [quizId]);
+
+        // Luego el quiz
+        await connection.execute('DELETE FROM quiz WHERE IDQuiz = ?', [quizId]);
+
+        await connection.commit();
+
+        res.json({ success: true, message: "Quiz deleted successfully" });
+    } catch (error) {
+        if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+            try {
+                console.warn(`Quiz ${req.params.id} it is in use, updating 'available' to 0...`);
+                await connection.execute('UPDATE quiz SET available = 0 WHERE IDQuiz = ?', [req.params.id]);
+                await connection.commit();
+                res.json({
+                    success: true,
+                    message: "Quiz deactivated (cannot be deleted because it is in use)"
+                });
+            } catch (updateError) {
+                if (connection) await connection.rollback();
+                res.status(500).json({ success: false, message: "Error updating quiz availability: " + updateError.message });
+            }
+        } else {
+            if (connection) await connection.rollback();
+            res.status(500).json({ success: false, message: "Error deleting quiz: " + error.message });
+        }
+    } finally {
+        if (connection) connection.release();
     }
 };
