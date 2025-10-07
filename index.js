@@ -68,7 +68,7 @@ const s3 = new AWS.S3();
 // Rutas principales
 
 const shopRoutes = require('./routes/shop/shop.routes');
-app.use(shopRoutes);
+app.use('/shop', shopRoutes);
 
 const userRoutes = require('./routes/users.routes');
 app.use('/users', userRoutes);
