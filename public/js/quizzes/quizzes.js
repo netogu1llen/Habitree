@@ -147,52 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeQuestionType();
 });
 
-// Form submission
-form.addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const questionsData = getQuestionsData();
-    if (!questionsData) {
-        alert("Please fill in all question fields and select a correct answer");
-        return;
-    }
-
-    const formData = new FormData(form);
-    const data = {
-        category: formData.get('category'),
-        description: formData.get('description'),
-        experience: parseInt(formData.get('experience')),
-        available: parseInt(formData.get('available')),
-        questions: questionsData
-    };
-
-    fetch('/quizzes', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'CSRF-Token': formData.get('_csrf')
-        },
-        body: JSON.stringify(data)
-    })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Cerrar modal
-                modal.classList.remove("open");
-                // Recargar página
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-
-            } else {
-                alert("Error creating quiz: " + data.message);
-            }
-        })
-        .catch(error => {
-            alert(" Error creating quiz: " + error.message);
-            console.error(error);
-        });
-});
+// Form submission will be handled by the single event listener below
 
 let isEditing = false;
 let currentQuizId = null;
