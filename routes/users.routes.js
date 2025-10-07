@@ -10,5 +10,7 @@ router.post("/", isAuth, usersController.postUsers)
 router.get("/:id", isAuth, usersController.getUserById)
 // Editar usuario
 router.post("/edit/:id", isAuth, usersController.editUser)
+// Borrar usuario
+router.post("/delete/:id", isAuth, usersController.deleteUser)
 
 module.exports = router;
