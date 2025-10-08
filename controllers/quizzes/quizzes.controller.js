@@ -138,3 +138,28 @@ exports.updateQuiz = async (req, res) => {
         if (connection) connection.release();
     }
 };
+
+exports.deleteQuiz = async (req, res) => {
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const quizId = req.params.id;
+
+        // Primero eliminar las preguntas asociadas
+        await connection.execute('DELETE FROM question WHERE IDQuiz = ?', [quizId]);
+        
+        // Luego eliminar el quiz
+        await connection.execute('DELETE FROM quiz WHERE IDQuiz = ?', [quizId]);
+
+        await connection.commit();
+        res.json({ success: true, message: 'Quiz deleted successfully' });
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error deleting quiz' });
+    } finally {
+        if (connection) connection.release();
+    }
+};

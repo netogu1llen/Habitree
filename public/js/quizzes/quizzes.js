@@ -38,13 +38,13 @@ function updateOptionsContainer(selectedType) {
         case 'Multiple Choice':
             optionsContainer.innerHTML = `
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="Option 1" required>
-                    <input type="text" placeholder="Option 1" class="smallInput option-text" value="Option 1" required>
+                    <input type="radio" name="correct_answer" value="Option 1">
+                    <input type="text" placeholder="Option 1" class="smallInput option-text" value="Option 1">
                     <button type="button" class="remove-option">×</button>
                 </div>
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="Option 2" required>
-                    <input type="text" placeholder="Option 2" class="smallInput option-text" value="Option 2" required>
+                    <input type="radio" name="correct_answer" value="Option 2">
+                    <input type="text" placeholder="Option 2" class="smallInput option-text" value="Option 2">
                     <button type="button" class="remove-option">×</button>
                 </div>
                 <button type="button" class="add-option-btn">+ Add Option</button>
@@ -55,16 +55,34 @@ function updateOptionsContainer(selectedType) {
         case 'True/False':
             optionsContainer.innerHTML = `
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="true" required>
+                    <input type="radio" name="correct_answer" value="true">
                     <label>True</label>
                 </div>
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="false" required>
+                    <input type="radio" name="correct_answer" value="false">
                     <label>False</label>
                 </div>
             `;
             break;
     }
+}
+
+// Modificar addNewOption para quitar required
+function addNewOption() {
+    const optionCount = optionsContainer.querySelectorAll('.option-input-group').length;
+    const newOptionNumber = optionCount + 1;
+
+    const newOption = document.createElement('div');
+    newOption.className = 'option-input-group';
+    newOption.innerHTML = `
+        <input type="radio" name="correct_answer" value="Option ${newOptionNumber}">
+        <input type="text" placeholder="Option ${newOptionNumber}" class="smallInput option-text" value="Option ${newOptionNumber}">
+        <button type="button" class="remove-option">×</button>
+    `;
+    const addOptionBtn = optionsContainer.querySelector('.add-option-btn');
+    optionsContainer.insertBefore(newOption, addOptionBtn);
+    setupRemoveOptionListeners();
+    setupOptionTextHandlers();
 }
 
 function setupMultipleChoiceHandlers() {
@@ -83,8 +101,8 @@ function addNewOption() {
     const newOption = document.createElement('div');
     newOption.className = 'option-input-group';
     newOption.innerHTML = `
-        <input type="radio" name="correct_answer" value="Option ${newOptionNumber}" required>
-        <input type="text" placeholder="Option ${newOptionNumber}" class="smallInput option-text" value="Option ${newOptionNumber}" required>
+        <input type="radio" name="correct_answer" value="Option ${newOptionNumber}">
+        <input type="text" placeholder="Option ${newOptionNumber}" class="smallInput option-text" value="Option ${newOptionNumber}">
         <button type="button" class="remove-option">×</button>
     `;
     const addOptionBtn = optionsContainer.querySelector('.add-option-btn');
@@ -213,6 +231,30 @@ function fillFormWithQuizData(quiz) {
 
 // Modificar addQuestionBtn event listener
 addQuestionBtn.addEventListener('click', () => {
+    const questionFormContainer = document.getElementById('questionFormContainer');
+    
+    if (questionFormContainer.style.display === 'none') {
+        // Si el formulario está oculto, mostrarlo
+        questionFormContainer.style.display = 'block';
+        document.getElementById('addQuestionBtn').textContent = 'Save Question';
+        return;
+    }
+
+    // Validación manual
+    const questionText = document.getElementById('questionText').value.trim();
+    const selectedAnswer = document.querySelector('input[name="correct_answer"]:checked');
+    
+    if (!questionText) {
+        alert('Please enter a question');
+        return;
+    }
+    
+    if (!selectedAnswer) {
+        alert('Please select a correct answer');
+        return;
+    }
+
+    // Si el formulario está visible, procesar la pregunta
     const questionData = getQuestionsData();
     if (!questionData || !questionData[0]) {
         alert('Please fill in the current question before adding a new one');
@@ -234,12 +276,14 @@ addQuestionBtn.addEventListener('click', () => {
     savedQuestionsContainer.appendChild(questionDiv);
     questionCounter++;
 
-    // Limpiar el formulario para la siguiente pregunta
+    // Limpiar y ocultar el formulario
     document.getElementById('questionText').value = '';
     const optionInputs = document.querySelectorAll('.option-text');
     optionInputs.forEach(input => input.value = '');
     const radios = document.querySelectorAll('input[name="correct_answer"]');
     radios.forEach(radio => radio.checked = false);
+    questionFormContainer.style.display = 'none';
+    document.getElementById('addQuestionBtn').textContent = 'Add Question';
 });
 
 // Agregar función para remover preguntas
@@ -325,8 +369,26 @@ openBtn.addEventListener("click", () => {
     isEditing = false;
     currentQuizId = null;
     form.reset();
+    questionCounter = 0;
     document.getElementById('add-edit-btn').textContent = 'Add';
     document.getElementById('delete-btn').style.display = 'none';
     document.getElementById('id-readonly-msg').style.display = 'none';
-    document.querySelector('.modal-title').textContent = 'Add New Quiz'; // Añadir esta línea
+    document.querySelector('.modal-title').textContent = 'Add New Quiz';
+    
+    // Limpiar el contenedor de preguntas guardadas
+    const savedQuestionsContainer = document.getElementById('savedQuestionsContainer');
+    if (savedQuestionsContainer) {
+        savedQuestionsContainer.innerHTML = '';
+    }
+
+    // Restablecer el formulario de pregunta
+    document.getElementById('questionText').value = '';
+    document.getElementById('questionType').value = 'Multiple Choice';
+    updateOptionsContainer('Multiple Choice');
+
+    // Limpiar las opciones de respuesta
+    const optionInputs = document.querySelectorAll('.option-text');
+    optionInputs.forEach(input => input.value = '');
+    const radios = document.querySelectorAll('input[name="correct_answer"]');
+    radios.forEach(radio => radio.checked = false);
 });

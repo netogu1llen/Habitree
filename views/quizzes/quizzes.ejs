@@ -90,7 +90,7 @@
 
                         <div class="input-container">
                             <label for="experience">Experience</label>
-                            <input class="smallInput" type="number" id="experience" name="experience" placeholder="100" required>
+                            <input class="smallInput" type="number" id="experience" name="experience" placeholder="100" min="1" max="9999" required>
                         </div>
                     </section>
 
@@ -104,9 +104,9 @@
                         <!-- Contenedor para preguntas guardadas -->
                         <div id="savedQuestionsContainer"></div>
                         
-                        <div class="question-container">
+                        <div class="question-container" id="questionFormContainer" style="display: none;">
                             <div class="question-input-group">
-                                <input type="text" id="questionText" placeholder="What is the climate change?" class="smallInput" required>
+                                <input type="text" id="questionText" placeholder="What is the climate change?" class="smallInput">
                                 <select class="question-type" id="questionType">
                                     <option value="Multiple Choice">Multiple Choice</option>
                                     <option value="True/False">True/False</option>
