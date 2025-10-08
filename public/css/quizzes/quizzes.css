@@ -524,3 +524,14 @@ select:focus, input:focus {
 .loading-content {
     text-align: center;
 }
+
+.question-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.question-form-actions .submit-btn {
+    flex: 1;
+    margin-top: 0;
+}

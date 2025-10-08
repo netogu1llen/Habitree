@@ -257,7 +257,7 @@ function editQuestion(button) {
             addNewOption();
         }
 
-        // Actualizar valores y marcar la respuesta correcta
+        //marcar la respuesta correcta
         document.querySelectorAll('.option-text').forEach((input, index) => {
             if (index < options.length) {
                 input.value = options[index];
@@ -296,17 +296,29 @@ function updateQuestionNumbers() {
     questionCounter = document.querySelectorAll('.saved-question').length;
 }
 
-// Modificar addQuestionBtn event listener para mantener el formato consistente
+// Modificar addQuestionBtn event listener
 addQuestionBtn.addEventListener('click', () => {
     const questionFormContainer = document.getElementById('questionFormContainer');
-    const isEditing = document.getElementById('addQuestionBtn').textContent === 'Update Question';
-    
-    if (questionFormContainer.style.display === 'none') {
-        questionFormContainer.style.display = 'block';
-        document.getElementById('addQuestionBtn').textContent = 'Save Question';
-        return;
-    }
+    questionFormContainer.style.display = 'block';
+    document.getElementById('addQuestionBtn').style.display = 'none';
+});
 
+// Añadir event listener para el botón cancelar
+document.getElementById('cancelQuestionBtn').addEventListener('click', () => {
+    const questionFormContainer = document.getElementById('questionFormContainer');
+    questionFormContainer.style.display = 'none';
+    document.getElementById('addQuestionBtn').style.display = 'block';
+    
+    // Limpiar el formulario
+    document.getElementById('questionText').value = '';
+    const optionInputs = document.querySelectorAll('.option-text');
+    optionInputs.forEach(input => input.value = '');
+    const radios = document.querySelectorAll('input[name="correct_answer"]');
+    radios.forEach(radio => radio.checked = false);
+});
+
+// Añadir event listener para el botón guardar
+document.getElementById('saveQuestionBtn').addEventListener('click', () => {
     // Validación manual
     const questionText = document.getElementById('questionText').value.trim();
     const selectedAnswer = document.querySelector('input[name="correct_answer"]:checked');
@@ -325,7 +337,7 @@ addQuestionBtn.addEventListener('click', () => {
     // Si el formulario está visible, procesar la pregunta
     const questionData = getQuestionsData();
     if (!questionData || !questionData[0]) {
-        alert('Please fill in the current question before adding a new one');
+        alert('Please fill in the current question before saving');
         return;
     }
 
@@ -357,7 +369,7 @@ addQuestionBtn.addEventListener('click', () => {
     const radios = document.querySelectorAll('input[name="correct_answer"]');
     radios.forEach(radio => radio.checked = false);
     questionFormContainer.style.display = 'none';
-    document.getElementById('addQuestionBtn').textContent = 'Add Question';
+    document.getElementById('addQuestionBtn').style.display = 'block';
 });
 
 // Agregar función para remover preguntas
