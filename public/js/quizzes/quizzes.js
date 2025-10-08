@@ -414,6 +414,10 @@ form.addEventListener("submit", function(e) {
     const url = isEditing ? `/quizzes/${currentQuizId}` : '/quizzes';
     const method = isEditing ? 'PUT' : 'POST';
 
+    // Mostrar loading overlay
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    loadingOverlay.style.display = 'flex';
+
     fetch(url, {
         method: method,
         headers: {
@@ -424,6 +428,9 @@ form.addEventListener("submit", function(e) {
     })
     .then(res => res.json())
     .then(data => {
+        // Ocultar loading overlay
+        loadingOverlay.style.display = 'none';
+        
         if (data.success) {
             modal.classList.remove("open");
             form.reset();
@@ -433,6 +440,8 @@ form.addEventListener("submit", function(e) {
         }
     })
     .catch(error => {
+        // Ocultar loading overlay en caso de error
+        loadingOverlay.style.display = 'none';
         alert("Error: " + error.message);
         console.error(error);
     });
