@@ -38,6 +38,26 @@ const getLoginUser = async (email, password) => {
   };
 };
 
+const getLoginUserGoogle = async (email) => {
+  const [rows] = await db.execute(
+    "SELECT IDUser, Name, email, coins FROM user WHERE email = ?",
+    [email]
+  );
+
+  if (rows.length === 0) {
+    throw new Error("Usuario no encontrado");
+  }
+
+  const user = rows[0];
+
+  return {
+    userId: user.IDUser,
+    name: user.Name,
+    email: user.email,
+    coins: user.coins
+  };
+};
+
 const getStatsUser = async (id) => {
   const [rows] = await db.execute(
     `SELECT 
@@ -161,5 +181,5 @@ const getUserRewardsById = async (id) => {
   return rows;
 };
 
-module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser, editUserInfo, changeUserPassword,  getMissionsSummaryByUser, getUserRewardsById};
+module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser, editUserInfo, changeUserPassword,  getMissionsSummaryByUser, getUserRewardsById, getLoginUserGoogle};
 
