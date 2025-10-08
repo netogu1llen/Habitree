@@ -468,3 +468,22 @@ select:focus, input:focus {
     background: #2DA460;
     border-radius: 8px;
 }
+
+.question-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.edit-question {
+    background: none;
+    border: none;
+    color: #2DA460;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.edit-question:hover {
+    color: #1e8449;
+}

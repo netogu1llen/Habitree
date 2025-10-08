@@ -213,10 +213,16 @@ function fillFormWithQuizData(quiz) {
             questionDiv.innerHTML = `
                 <div class="question-header">
                     <h4>Question ${index + 1}</h4>
-                    <button type="button" class="remove-question" onclick="removeQuestion(this)">×</button>
+                    <div class="question-actions">
+                        <button type="button" class="edit-question" onclick="editQuestion(this)">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="remove-question" onclick="removeQuestion(this)">×</button>
+                    </div>
                 </div>
                 <p><strong>Question:</strong> ${question.question}</p>
                 <p><strong>Answer:</strong> ${question.answer}</p>
+                <input type="hidden" class="question-type" value="${question.answer === 'true' || question.answer === 'false' ? 'True/False' : 'Multiple Choice'}">
             `;
             savedQuestionsContainer.appendChild(questionDiv);
         });
@@ -229,12 +235,73 @@ function fillFormWithQuizData(quiz) {
     updateOptionsContainer('Multiple Choice');
 }
 
+// Agregar función para editar pregunta
+function editQuestion(button) {
+    const questionDiv = button.closest('.saved-question');
+    const questionText = questionDiv.querySelector('p:nth-child(2)').textContent.replace('Question: ', '');
+    const answer = questionDiv.querySelector('p:nth-child(3)').textContent.replace('Answer: ', '');
+    const questionType = questionDiv.querySelector('.question-type').value;
+
+    // Llenar el formulario con los datos de la pregunta
+    document.getElementById('questionText').value = questionText;
+    document.getElementById('questionType').value = questionType;
+    updateOptionsContainer(questionType);
+
+    // Si es Multiple Choice, configurar las opciones
+    if (questionType === 'Multiple Choice') {
+        const options = answer.split(',').map(opt => opt.trim());
+        const optionInputs = document.querySelectorAll('.option-text');
+        
+        // Agregar más opciones si es necesario
+        while (optionInputs.length < options.length) {
+            addNewOption();
+        }
+
+        // Actualizar valores y marcar la respuesta correcta
+        document.querySelectorAll('.option-text').forEach((input, index) => {
+            if (index < options.length) {
+                input.value = options[index];
+                const radio = input.previousElementSibling;
+                radio.value = options[index];
+                if (options[index] === answer) {
+                    radio.checked = true;
+                }
+            }
+        });
+    } else {
+        // Para True/False
+        const radios = document.querySelectorAll('input[name="correct_answer"]');
+        radios.forEach(radio => {
+            if (radio.value === answer) {
+                radio.checked = true;
+            }
+        });
+    }
+
+    // Mostrar el formulario y cambiar el texto del botón
+    const questionFormContainer = document.getElementById('questionFormContainer');
+    questionFormContainer.style.display = 'block';
+    document.getElementById('addQuestionBtn').textContent = 'Update Question';
+
+    // Remover la pregunta anterior
+    questionDiv.remove();
+    updateQuestionNumbers();
+}
+
+// Función para actualizar números de preguntas
+function updateQuestionNumbers() {
+    document.querySelectorAll('.saved-question').forEach((q, index) => {
+        q.querySelector('h4').textContent = `Question ${index + 1}`;
+    });
+    questionCounter = document.querySelectorAll('.saved-question').length;
+}
+
 // Modificar addQuestionBtn event listener
 addQuestionBtn.addEventListener('click', () => {
     const questionFormContainer = document.getElementById('questionFormContainer');
+    const isEditing = document.getElementById('addQuestionBtn').textContent === 'Update Question';
     
     if (questionFormContainer.style.display === 'none') {
-        // Si el formulario está oculto, mostrarlo
         questionFormContainer.style.display = 'block';
         document.getElementById('addQuestionBtn').textContent = 'Save Question';
         return;
@@ -267,11 +334,16 @@ addQuestionBtn.addEventListener('click', () => {
     questionDiv.className = 'saved-question';
     questionDiv.innerHTML = `
         <div class="question-header">
-            <h4>Question ${questionCounter + 1}</h4>
-            <button type="button" class="remove-question" onclick="removeQuestion(this)">×</button>
+            <div class="question-actions">
+                <button type="button" class="edit-question" onclick="editQuestion(this)">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="remove-question" onclick="removeQuestion(this)">×</button>
+            </div>
         </div>
         <p><strong>Question:</strong> ${questionData[0].question}</p>
         <p><strong>Answer:</strong> ${questionData[0].answer}</p>
+        <input type="hidden" class="question-type" value="${questionTypeSelect.value}">
     `;
     savedQuestionsContainer.appendChild(questionDiv);
     questionCounter++;
