@@ -6,13 +6,15 @@ const questionTypeSelect = document.getElementById("questionType");
 const optionsContainer = document.getElementById("optionsContainer");
 const questionInput = document.getElementById("questionText");
 
+// Variables globales
+let questionCounter = 0;
+let isEditing = false;
+let currentQuizId = null;
+
 const manageModal = document.getElementById("manageModal");
 const closeManageBtn = document.getElementById("closeManageModal");
 const manageEditBtn = document.getElementById("manage-edit-btn");
 const manageDeleteBtn = document.getElementById("manage-delete-btn");
-
-// Agregar al inicio del archivo, después de las constantes iniciales
-let questionCounter = 0;
 
 // Modal control
 openBtn.addEventListener("click", () => {
@@ -185,11 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeQuestionType();
 });
 
-// Update un sólo event listener
-let isEditing = false;
-let currentQuizId = null;
-
-// Add click handler for manage buttons
+// Reemplazar los event listeners duplicados del botón manage con uno solo
 document.querySelectorAll('.manage-button').forEach(button => {
     button.addEventListener('click', async (e) => {
         const row = e.target.closest('tr');
@@ -202,15 +200,15 @@ document.querySelectorAll('.manage-button').forEach(button => {
             const data = await response.json();
             
             if (data.success) {
+                fillFormWithQuizData(data.quiz);
                 modal.classList.add("open");
                 document.getElementById('add-edit-btn').textContent = 'Update';
+                document.getElementById('delete-btn').style.display = 'block';
                 document.getElementById('id-readonly-msg').style.display = 'block';
                 document.querySelector('.modal-title').textContent = 'Edit Quiz';
-                fillFormWithQuizData(data.quiz);
             }
         } catch (error) {
             console.error('Error fetching quiz details:', error);
-            alert('Error fetching quiz details');
         }
     });
 });
@@ -517,22 +515,6 @@ form.addEventListener("submit", function(e) {
     });
 });
 
-// Modal con 2 botones Edit Delete
-let currentQuizId = null;
-
-const manageButtons = document.querySelectorAll(".manage-button");
-
-// Abrir modal en modo edición
-manageButtons.forEach(button => {
-    button.addEventListener("click", (e) => {
-        const row = e.target.closest("tr");
-        currentQuizId = row.querySelector("td:first-child").textContent;
-
-        // Abrir modal de Manage
-        manageModal.classList.add("open");
-    });
-});
-
 closeManageBtn.addEventListener("click", () => {
     manageModal.classList.remove("open");
 });
@@ -581,7 +563,6 @@ manageEditBtn.addEventListener("click", () => {
     alert("Edit clicked for quiz ID: " + currentQuizId);
 
 });
-
 
 // Reset form state when opening modal for new quiz
 openBtn.addEventListener("click", () => {
