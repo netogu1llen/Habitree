@@ -421,3 +421,50 @@ select:focus, input:focus {
     text-align: center;
     font-weight: 600;
 }
+
+.saved-question {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+#savedQuestionsContainer {
+    margin-bottom: 20px;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.remove-question {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+}
+
+#questionsContainer {
+    margin: 20px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#questionsContainer::-webkit-scrollbar {
+    width: 5px;
+}
+
+#questionsContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#questionsContainer::-webkit-scrollbar-thumb {
+    background: #2DA460;
+    border-radius: 8px;
+}
