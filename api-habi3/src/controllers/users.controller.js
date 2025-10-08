@@ -44,6 +44,45 @@ const getLogin = async (req, res) => {
   }
 };
 
+const getLoginGoogle = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Validar que venga el correo
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Faltan credenciales",
+      });
+    }
+
+    // Llamar al servicio
+    const user = await userService.getLoginUserGoogle(email);
+
+    // Filtrar manualmente los campos que deseas retornar
+    const responseUser = {
+      userId: user.userId,
+      name: user.name,
+      email: user.email,
+      coins: user.coins
+    };
+
+    // Enviar respuesta limpia
+    res.json({
+      success: true,
+      message: "✅ Login exitoso",
+      user: responseUser,
+    });
+
+  } catch (err) {
+    res.status(401).json({
+      success: false,
+      message: "❌ Credenciales inválidas",
+      details: err.message,
+    });
+  }
+};
+
 const getStats = async (req, res) => {
   try {
     const id = req.params.id; 
@@ -124,4 +163,4 @@ const getUserRewards = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getLogin, postSignup, getStats, editUser, changepasswd, getMissionsSummary, getUserRewards};
+module.exports = { getUsers, getLogin, postSignup, getStats, editUser, changepasswd, getMissionsSummary, getUserRewards, getLoginGoogle};

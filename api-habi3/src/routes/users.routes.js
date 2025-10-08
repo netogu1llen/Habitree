@@ -8,10 +8,12 @@ const { editUser } = require("../controllers/users.controller");
 const { changepasswd } = require("../controllers/users.controller");
 const { getMissionsSummary } = require("../controllers/users.controller");
 const { getUserRewards } = require("../controllers/users.controller");
+const { getLoginGoogle } = require("../controllers/users.controller");
 
 // GET /api/users
 router.get("/", getUsers);
 router.post("/login", getLogin);
+router.post("/login/google", getLoginGoogle);
 router.get("/stats/:id", getStats);
 router.post("/signup", postSignup)
 router.put("/edit/:id", editUser);
