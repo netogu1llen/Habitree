@@ -70,6 +70,14 @@
         );
     }
 
+    // Borrado lógico
+    static async softDelete(id) {
+        return db.execute(
+            "UPDATE user SET deleted = 1 WHERE IDUser = ?",
+            [id]
+        );
+    }
+
     static async getRolByUserId(idUsuario) {
         return db.execute(
             `SELECT r.rol
