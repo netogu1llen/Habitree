@@ -14,5 +14,6 @@ router.get('/add-modal', isAuth, leaguesController.getAddLeagueModal);
 
 router.post("/add", isAuth, leaguesController.postAddLeague);
 
+router.post('/delete', isAuth, leaguesController.deleteLeague);
 
 module.exports = router

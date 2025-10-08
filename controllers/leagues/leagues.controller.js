@@ -1,5 +1,6 @@
 const { League, createLeagueViaProcedure } = require('../../models/leagues/leagues.model');
-
+const db = require('../../util/database');
+const {  deleteLeagueByName } = require('../../models/leagues/leagues.model');
 
 exports.getLeagues = async (req, res) => {
     // Ahora llamas a fetchAll() desde la CLASE League desestructurada
@@ -41,3 +42,23 @@ exports.postAddLeague = async (req, res) => {
         return res.status(500).send('Error interno al crear liga (ver logs)');
     }
 };
+
+
+// Eliminar liga
+exports.deleteLeague = async (req, res) => {
+    const { leagueName } = req.body;
+
+    if (!leagueName) {
+        return res.status(400).json({ message: 'League name is required' });
+    }
+
+    try {
+        const result = await deleteLeagueByName(leagueName);
+        res.json(result);
+    } catch (err) {
+        console.error('Error deleting league:', err);
+        res.status(500).json({ success: false, message: 'Error deleting league' });
+    }
+};
+
+
