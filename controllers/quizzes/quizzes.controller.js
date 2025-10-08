@@ -44,8 +44,8 @@ exports.postAddQuiz = async (req, res) => {
 
             for (const questionData of questions) {
                 await connection.execute(
-                    'INSERT INTO question (IDQuiz, question, answer) VALUES (?, ?, ?)',
-                    [newQuizId, questionData.question, questionData.answer]
+                    'INSERT INTO question (IDQuiz, question, answer, wrongAnswers) VALUES (?, ?, ?, ?)',
+                    [newQuizId, questionData.question, questionData.answer, questionData.wrongAnswers || null]
                 );
             }
             console.log('Preguntas guardadas exitosamente');
@@ -93,7 +93,8 @@ exports.getQuizById = async (req, res) => {
             questions: quiz.map(q => ({
                 id: q.IDQuestion,
                 question: q.question,
-                answer: q.answer
+                answer: q.answer,
+                wrongAnswers: q.wrongAnswers // Añadimos wrongAnswers aquí
             })).filter(q => q.id) // Filter out null questions
         };
 
@@ -119,11 +120,11 @@ exports.updateQuiz = async (req, res) => {
             // Delete existing questions
             await connection.execute('DELETE FROM question WHERE IDQuiz = ?', [quizId]);
 
-            // Insert new questions
+            // Insert new questions with wrongAnswers
             for (const questionData of questions) {
                 await connection.execute(
-                    'INSERT INTO question (IDQuiz, question, answer) VALUES (?, ?, ?)',
-                    [quizId, questionData.question, questionData.answer]
+                    'INSERT INTO question (IDQuiz, question, answer, wrongAnswers) VALUES (?, ?, ?, ?)',
+                    [quizId, questionData.question, questionData.answer, questionData.wrongAnswers || null]
                 );
             }
         }

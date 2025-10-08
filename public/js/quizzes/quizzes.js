@@ -149,6 +149,17 @@ function getQuestionsData() {
     const questionText = questionInput.value.trim();
     const questionType = questionTypeSelect.value;
     const correctAnswer = getCorrectAnswer();
+    let wrongAnswers = [];
+
+    if (questionType === 'Multiple Choice') {
+        // Obtener todas las opciones que no son la respuesta correcta
+        const optionTexts = document.querySelectorAll('.option-text');
+        optionTexts.forEach(input => {
+            if (input.value !== correctAnswer) {
+                wrongAnswers.push(input.value);
+            }
+        });
+    }
 
     if (!questionText || !correctAnswer) {
         return null;
@@ -156,7 +167,8 @@ function getQuestionsData() {
 
     return [{
         question: questionText,
-        answer: correctAnswer
+        answer: correctAnswer,
+        wrongAnswers: wrongAnswers.join(',')
     }];
 }
 
@@ -208,6 +220,9 @@ function fillFormWithQuizData(quiz) {
     // Mostrar las preguntas existentes
     if (quiz.questions && quiz.questions.length > 0) {
         quiz.questions.forEach((question, index) => {
+            const wrongAnswersArray = question.wrongAnswers ? question.wrongAnswers.split(',') : [];
+            const allAnswers = [question.answer, ...wrongAnswersArray];
+            
             const questionDiv = document.createElement('div');
             questionDiv.className = 'saved-question';
             questionDiv.innerHTML = `
@@ -221,7 +236,8 @@ function fillFormWithQuizData(quiz) {
                     </div>
                 </div>
                 <p><strong>Question:</strong> ${question.question}</p>
-                <p><strong>Answer:</strong> ${question.answer}</p>
+                <p><strong>Correct Answer:</strong> ${question.answer}</p>
+                <p><strong>Wrong Answers:</strong> ${question.wrongAnswers || 'None'}</p>
                 <input type="hidden" class="question-type" value="${question.answer === 'true' || question.answer === 'false' ? 'True/False' : 'Multiple Choice'}">
             `;
             savedQuestionsContainer.appendChild(questionDiv);
@@ -239,31 +255,32 @@ function fillFormWithQuizData(quiz) {
 function editQuestion(button) {
     const questionDiv = button.closest('.saved-question');
     const questionText = questionDiv.querySelector('p:nth-child(2)').textContent.replace('Question: ', '');
-    const answer = questionDiv.querySelector('p:nth-child(3)').textContent.replace('Answer: ', '');
+    const answer = questionDiv.querySelector('p:nth-child(3)').textContent.replace('Correct Answer: ', '');
+    const wrongAnswersText = questionDiv.querySelector('p:nth-child(4)').textContent.replace('Wrong Answers: ', '');
     const questionType = questionDiv.querySelector('.question-type').value;
 
-    // Llenar el formulario con los datos de la pregunta
+    // Llenar el formulario
     document.getElementById('questionText').value = questionText;
     document.getElementById('questionType').value = questionType;
     updateOptionsContainer(questionType);
 
-    // Si es Multiple Choice, configurar las opciones
     if (questionType === 'Multiple Choice') {
-        const options = answer.split(',').map(opt => opt.trim());
-        const optionInputs = document.querySelectorAll('.option-text');
-        
-        // Agregar más opciones si es necesario
-        while (optionInputs.length < options.length) {
+        // Procesar respuestas incorrectas
+        const wrongAnswers = wrongAnswersText === 'None' ? [] : wrongAnswersText.split(',').map(ans => ans.trim());
+        const allAnswers = [answer, ...wrongAnswers];
+
+        // Agregar opciones necesarias
+        while (document.querySelectorAll('.option-input-group').length < allAnswers.length) {
             addNewOption();
         }
 
-        //marcar la respuesta correcta
+        // Actualizar valores y marcar respuesta correcta
         document.querySelectorAll('.option-text').forEach((input, index) => {
-            if (index < options.length) {
-                input.value = options[index];
+            if (index < allAnswers.length) {
+                input.value = allAnswers[index];
                 const radio = input.previousElementSibling;
-                radio.value = options[index];
-                if (options[index] === answer) {
+                radio.value = allAnswers[index];
+                if (allAnswers[index] === answer) {
                     radio.checked = true;
                 }
             }
@@ -281,7 +298,7 @@ function editQuestion(button) {
     // Mostrar el formulario y cambiar el texto del botón
     const questionFormContainer = document.getElementById('questionFormContainer');
     questionFormContainer.style.display = 'block';
-    document.getElementById('addQuestionBtn').textContent = 'Update Question';
+    document.getElementById('addQuestionBtn').style.display = 'none';
 
     // Remover la pregunta anterior
     questionDiv.remove();
@@ -323,7 +340,17 @@ document.getElementById('saveQuestionBtn').addEventListener('click', () => {
     const questionText = document.getElementById('questionText').value.trim();
     const selectedAnswer = document.querySelector('input[name="correct_answer"]:checked');
     const questionType = document.getElementById('questionType').value;
+    let wrongAnswers = [];
     
+    if (questionType === 'Multiple Choice') {
+        const optionTexts = document.querySelectorAll('.option-text');
+        optionTexts.forEach(input => {
+            if (input.value !== selectedAnswer.value) {
+                wrongAnswers.push(input.value);
+            }
+        });
+    }
+
     if (!questionText) {
         alert('Please enter a question');
         return;
@@ -355,9 +382,11 @@ document.getElementById('saveQuestionBtn').addEventListener('click', () => {
                 <button type="button" class="remove-question" onclick="removeQuestion(this)">×</button>
             </div>
         </div>
-        <p><strong>Question:</strong> ${questionData[0].question}</p>
-        <p><strong>Answer:</strong> ${questionData[0].answer}</p>
+        <p><strong>Question:</strong> ${questionText}</p>
+        <p><strong>Correct Answer:</strong> ${selectedAnswer.value}</p>
+        <p><strong>Wrong Answers:</strong> ${wrongAnswers.join(', ') || 'None'}</p>
         <input type="hidden" class="question-type" value="${questionType}">
+        <input type="hidden" class="wrong-answers" value="${wrongAnswers.join(',')}">
     `;
     savedQuestionsContainer.appendChild(questionDiv);
     questionCounter++;
@@ -390,15 +419,41 @@ function getAllQuestionsData() {
     
     // Obtener preguntas guardadas
     document.querySelectorAll('.saved-question').forEach(questionDiv => {
-        const questionText = questionDiv.querySelector('p:nth-child(2)').textContent.replace('Question: ', '');
-        const answer = questionDiv.querySelector('p:nth-child(3)').textContent.replace('Answer: ', '');
-        questions.push({ question: questionText, answer: answer });
+        const questionText = questionDiv.querySelector('p:nth-child(2)').textContent.replace('Question: ', '').trim();
+        const answer = questionDiv.querySelector('p:nth-child(3)').textContent.replace('Correct Answer: ', '').trim();
+        const wrongAnswers = questionDiv.querySelector('p:nth-child(4)').textContent.replace('Wrong Answers: ', '').trim();
+        
+        questions.push({ 
+            question: questionText, 
+            answer: answer,
+            wrongAnswers: wrongAnswers === 'None' ? '' : wrongAnswers
+        });
     });
 
-    // Obtener pregunta actual si está completa
-    const currentQuestion = getQuestionsData();
-    if (currentQuestion && currentQuestion[0]) {
-        questions.push(currentQuestion[0]);
+    // Obtener pregunta actual si existe
+    const currentQuestionForm = document.getElementById('questionFormContainer');
+    if (currentQuestionForm.style.display !== 'none') {
+        const questionText = document.getElementById('questionText').value.trim();
+        const questionType = document.getElementById('questionType').value;
+        const selectedAnswer = document.querySelector('input[name="correct_answer"]:checked')?.value;
+        
+        if (questionText && selectedAnswer) {
+            let wrongAnswers = [];
+            if (questionType === 'Multiple Choice') {
+                // Recolectar todas las respuestas que no son la correcta
+                document.querySelectorAll('.option-text').forEach(input => {
+                    if (input.value.trim() !== selectedAnswer) {
+                        wrongAnswers.push(input.value.trim());
+                    }
+                });
+            }
+            
+            questions.push({
+                question: questionText,
+                answer: selectedAnswer,
+                wrongAnswers: wrongAnswers.join(',')
+            });
+        }
     }
 
     return questions;
