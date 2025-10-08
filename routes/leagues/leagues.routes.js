@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const isAuth = require('../../util/is-auth');
-const leaguesController = require("../../controllers/Leagues/leagues.controller")
+const leaguesController = require("../../controllers/leagues/leagues.controller")
 
 
 

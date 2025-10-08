@@ -3,42 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    <link rel="stylesheet" href ="/css/missions/missions.css">
-    <title>Ranking</title>
+    <title>Leagues</title>
+    <link rel="stylesheet" href ="/css/leagues/leagues.css">
+    
 </head>
-
-
+</head>
 <body>
     <div class="content">
-        <%- include('../partials/navbar') %>
+    <%- include('../partials/navbar') %>
 
-    <div class="Dashboard_content">
-        <div class = "Dashboard__title-container">
-            <h1 class="Dashboard__title">Ranking</h1>
-        <div class="container__button">
-            <button id= "openModal" class="instrument-sans-bold header__button">Add</button>
+        <div class="Dashboard_content">
+            <div class="Dashboard__title-container">
+                <h1 class="Dashboard__title">Leagues</h1>
+            <div class="container__button">
+                    <button class="instrument-sans-bold header__button">Add League</button>
+            </div>
         </div>
-    </div>
-
     <div class="table-container instrument-sans-regular">
         <table>
             <thead>
                 <tr>
-                    <th>IDRanking</th>
-                    <th>IDTree</th>
-                    <th>League</th>
+                    <th>ID League</th>
+                    <th>Name League</th>
+                    <th>Min Level</th>
                     <th class="actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                                <% if (leagues && leagues[0] && leagues[0][0] && leagues[0][0].IDRanking) { %>
+                                <% if (leagues && leagues[0] && leagues[0][0] && leagues[0][0].ID_league) { %>
                                     <% leagues[0].forEach(function(league) { %>
                                         <tr>
-                                            <td><%= league.IDRanking%></td>
-                                            <td><%= league.IDTree%></td>
-                                            <td><%= league.league %></td>
+                                            <td><%= league.ID_league%></td>
+                                            <td><%= league.league%></td>
+                                            <td><%= league.min_level %></td>
                                             <td class="actions"><button class="table__button">Manage</button></td>
                                         </tr>
                                     <% }) %>
@@ -56,3 +54,12 @@
     <script src ="/js/missions/missions.js"></script>
 </body>
 </html>
+
+            
+        </div>
+    </div>
+
+    <div id="modal-root"></div>
+
+    <div id="backdrop" class="backdrop"></div>
+    <script src="/js/leagues/addLeague.js" defer></script>
