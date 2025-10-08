@@ -296,7 +296,7 @@ function updateQuestionNumbers() {
     questionCounter = document.querySelectorAll('.saved-question').length;
 }
 
-// Modificar addQuestionBtn event listener
+// Modificar addQuestionBtn event listener para mantener el formato consistente
 addQuestionBtn.addEventListener('click', () => {
     const questionFormContainer = document.getElementById('questionFormContainer');
     const isEditing = document.getElementById('addQuestionBtn').textContent === 'Update Question';
@@ -310,6 +310,7 @@ addQuestionBtn.addEventListener('click', () => {
     // Validación manual
     const questionText = document.getElementById('questionText').value.trim();
     const selectedAnswer = document.querySelector('input[name="correct_answer"]:checked');
+    const questionType = document.getElementById('questionType').value;
     
     if (!questionText) {
         alert('Please enter a question');
@@ -334,6 +335,7 @@ addQuestionBtn.addEventListener('click', () => {
     questionDiv.className = 'saved-question';
     questionDiv.innerHTML = `
         <div class="question-header">
+            <h4>Question ${questionCounter + 1}</h4>
             <div class="question-actions">
                 <button type="button" class="edit-question" onclick="editQuestion(this)">
                     <i class="fa fa-edit"></i>
@@ -343,7 +345,7 @@ addQuestionBtn.addEventListener('click', () => {
         </div>
         <p><strong>Question:</strong> ${questionData[0].question}</p>
         <p><strong>Answer:</strong> ${questionData[0].answer}</p>
-        <input type="hidden" class="question-type" value="${questionTypeSelect.value}">
+        <input type="hidden" class="question-type" value="${questionType}">
     `;
     savedQuestionsContainer.appendChild(questionDiv);
     questionCounter++;
