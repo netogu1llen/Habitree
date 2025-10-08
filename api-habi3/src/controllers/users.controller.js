@@ -44,6 +44,45 @@ const getLogin = async (req, res) => {
   }
 };
 
+const getLoginGoogle = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Validar que venga el correo
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Faltan credenciales",
+      });
+    }
+
+    // Llamar al servicio
+    const user = await userService.getLoginUserGoogle(email);
+
+    // Filtrar manualmente los campos que deseas retornar
+    const responseUser = {
+      userId: user.userId,
+      name: user.name,
+      email: user.email,
+      coins: user.coins
+    };
+
+    // Enviar respuesta limpia
+    res.json({
+      success: true,
+      message: "✅ Login exitoso",
+      user: responseUser,
+    });
+
+  } catch (err) {
+    res.status(401).json({
+      success: false,
+      message: "❌ Credenciales inválidas",
+      details: err.message,
+    });
+  }
+};
+
 const getStats = async (req, res) => {
   try {
     const id = req.params.id; 
@@ -98,5 +137,30 @@ const changepasswd = async (req, res) => {
   }
 };
 
+const getMissionsSummary = async (req, res) => {
+  try {
+    const id = req.params.id; 
+    const summary = await userService.getMissionsSummaryByUser(id);
+    res.json(summary);
+  } catch (err) {
+    res.status(500).json({
+      error: "Error obtaining missions summary",
+      details: err.message,
+    });
+  }
+};
 
-module.exports = { getUsers, getLogin, postSignup, getStats, editUser, changepasswd };
+const getUserRewards = async (req, res) => {
+  try {
+    const id = req.params.id; 
+    const rewards = await userService.getUserRewardsById(id);
+    res.json(rewards);
+  } catch (err) {
+    res.status(500).json({
+      error: "Error obtaining user rewards",
+      details: err.message,
+    });
+  }
+};
+
+module.exports = { getUsers, getLogin, postSignup, getStats, editUser, changepasswd, getMissionsSummary, getUserRewards, getLoginGoogle};

@@ -9,4 +9,5 @@ router.post("/quizzes", isAuth, quizzesController.postAddQuiz);
 router.put("/quizzes/:id", isAuth, quizzesController.updateQuiz);
 router.delete("/quizzes/:id", isAuth, quizzesController.deleteQuiz);
 
+
 module.exports = router;

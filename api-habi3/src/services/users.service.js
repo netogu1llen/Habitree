@@ -38,6 +38,26 @@ const getLoginUser = async (email, password) => {
   };
 };
 
+const getLoginUserGoogle = async (email) => {
+  const [rows] = await db.execute(
+    "SELECT IDUser, Name, email, coins FROM user WHERE email = ?",
+    [email]
+  );
+
+  if (rows.length === 0) {
+    throw new Error("Usuario no encontrado");
+  }
+
+  const user = rows[0];
+
+  return {
+    userId: user.IDUser,
+    name: user.Name,
+    email: user.email,
+    coins: user.coins
+  };
+};
+
 const getStatsUser = async (id) => {
   const [rows] = await db.execute(
     `SELECT 
@@ -45,16 +65,15 @@ const getStatsUser = async (id) => {
         u.name,
         u.email,
         u.coins,
-        t.level AS tree_level,
-        r.league AS ranking_league
+        t.level AS tree_level
      FROM user u
      LEFT JOIN tree t ON u.IDUser = t.IDUser
-     LEFT JOIN ranking r ON t.IDTree = r.IDTree
      WHERE u.IDUser = ?`,
     [id]
   );
   return rows;
 };
+
 
 
 const postSignupUser = async (name, email, gender, dateOfBirth, coins, password) => {
@@ -118,4 +137,49 @@ const changeUserPassword = async (id, password) => {
     throw new Error(err.message);
   }
 };
-module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser, editUserInfo, changeUserPassword };
+const getMissionsSummaryByUser = async (id) => {
+  const [rows] = await db.execute(
+    `SELECT 
+        m.category,
+        SUM(m.value) AS total_value
+     FROM userMissions um
+     INNER JOIN mission m ON um.IDMission = m.IDMission
+     WHERE um.IDUser = ? 
+       AND um.status = 1
+       AND m.category IN ('Awareness', 'Consumption', 'Energy', 'Nature', 'Transport', 'Waste', 'Water')
+     GROUP BY m.category
+     ORDER BY m.category`,
+    [id]
+  );
+  
+  // Transformar el resultado en un objeto plano
+  const summary = rows.reduce((acc, row) => {
+    acc[row.category] = row.total_value;
+    return acc;
+  }, {});
+  
+  return summary;
+};
+
+const getUserRewardsById = async (id) => {
+  const [rows] = await db.execute(
+    `SELECT 
+        r.IDReward,
+        r.name,
+        r.description,
+        r.type,
+        r.available,
+        r.value,
+        ur.IDUserReward
+     FROM userRewards ur
+     INNER JOIN rewards r ON ur.IDReward = r.IDReward
+     WHERE ur.IDUser = ? 
+       AND r.type IN ('monetary', 'nonMonetary')
+     ORDER BY ur.IDUserReward DESC`,
+    [id]
+  );
+  return rows;
+};
+
+module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser, editUserInfo, changeUserPassword,  getMissionsSummaryByUser, getUserRewardsById, getLoginUserGoogle};
+
