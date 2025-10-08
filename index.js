@@ -86,7 +86,7 @@ app.use('/modify-reward', ModifyRewardRoutes);
 const notificationsRoutes = require('./routes/notifications/notifications.routes');
 app.use('/notifications', notificationsRoutes);
 
-const leaguesRoutes = require('./routes/leagues/leagues.routes');
+const leaguesRoutes = require('./routes/Leagues/leagues.routes');
 app.use('/leagues', leaguesRoutes)
 
 const missionsRoutes = require('./routes/Missions/missions.routes');
