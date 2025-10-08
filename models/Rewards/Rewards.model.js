@@ -27,7 +27,7 @@ module.exports = class Reward {
      * @returns {Promise}
      */
     static fetchAll() {
-        return db.execute('SELECT * FROM rewards');
+        return db.execute('SELECT * FROM rewards WHERE available = 1'); // Muestra solo las activas
     }
 
     /**
@@ -59,10 +59,4 @@ module.exports = class Reward {
         );
     }
 
-    /**
-     * Elimina una recompensa por su ID
-     */
-    static deleteRewardById(id) {
-        return db.execute('DELETE FROM rewards WHERE IDReward = ?', [id]);
-    }
 };
