@@ -16,10 +16,44 @@
         <div class="Dashboard_content">
             <div class="Dashboard__title-container">
                 <h1 class="Dashboard__title">Leagues</h1>
-                <div class="container__button">
+            <div class="container__button">
                     <button class="instrument-sans-bold header__button">Add League</button>
-                </div>
             </div>
+        </div>
+    <div class="table-container instrument-sans-regular">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID League</th>
+                    <th>Name League</th>
+                    <th>Min Level</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                                <% if (leagues && leagues[0] && leagues[0][0] && leagues[0][0].ID_league) { %>
+                                    <% leagues[0].forEach(function(league) { %>
+                                        <tr>
+                                            <td><%= league.ID_league%></td>
+                                            <td><%= league.league%></td>
+                                            <td><%= league.min_level %></td>
+                                            <td class="actions"><button class="table__button">Manage</button></td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" style="text-align:center;">No notifications available</td>
+                                    </tr>
+                                <% } %>
+            </tbody>
+        </table>
+    </div>
+    
+
+
+    <script src ="/js/missions/missions.js"></script>
+</body>
+</html>
 
             
         </div>

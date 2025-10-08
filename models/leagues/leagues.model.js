@@ -1,26 +1,43 @@
+// leagues.model.js
 // eslint-disable-next-line no-undef
 const db = require('../../util/database');
 
 async function createLeagueViaProcedure({ name, lvl}, connection) {
-  const procName = 'InsertarLiga'; // reemplaza por el nombre real de tu procedure
-  const params = [name, lvl];
-
-  try {
-    if (connection) {
-      // Si el servicio ya tiene una conexión/transaction abierta
-      const [result] = await connection.execute(`CALL ${procName}(?, ?)`, params);
-      return result;
-    } else {
-      // Usar el pool por defecto
-      const [result] = await db.execute(`CALL ${procName}(?, ?)`, params);
-      return result;
+    // ... (Tu código de createLeagueViaProcedure)
+    const procName = 'InsertarLiga'; 
+    const params = [name, lvl];
+    // ... (resto de la lógica)
+    try {
+        if (connection) {
+            const [result] = await connection.execute(`CALL ${procName}(?, ?)`, params);
+            return result;
+        } else {
+            const [result] = await db.execute(`CALL ${procName}(?, ?)`, params);
+            return result;
+        }
+    } catch (err) {
+        throw err;
     }
-  } catch (err) {
-    // Dejar que el service/controller maneje/loguee el error
-    throw err;
-  }
 }
 
+// Renombra la clase a League para mayor claridad
+class League {
+    constructor(ID_league, league, min_level){
+        this.ID_league = ID_league;
+        this.league = league;
+        this.min_level = min_level; 
+    } 
+
+    /**
+     * Devuelve todas las ligas.
+     */
+    static fetchAll() {
+        return db.execute('SELECT * FROM Leagues');
+    }
+}
+
+// 💡 EXPORTACIÓN COMBINADA: Exporta ambas cosas
 module.exports = {
-  createLeagueViaProcedure,
+    League, // Exporta la clase
+    createLeagueViaProcedure, // Exporta la función
 };

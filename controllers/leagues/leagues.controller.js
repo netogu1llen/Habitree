@@ -1,4 +1,12 @@
-const leaguesModel = require('../../models/leagues/leagues.model');
+const { League, createLeagueViaProcedure } = require('../../models/leagues/leagues.model');
+
+
+exports.getLeagues = async (req, res) => {
+    // Ahora llamas a fetchAll() desde la CLASE League desestructurada
+    const leagues = await League.fetchAll(); // ✅ Solución para fetchAll()
+    
+    res.render('../views/Leagues/leagues.ejs', { title: 'Leagues', leagues, csrfToken: req.csrfToken()});
+}
 
 exports.getAddLeague = (req, res) => {
     // Renderizado del formulario de Add League (vista completa)
@@ -25,8 +33,8 @@ exports.postAddLeague = async (req, res) => {
     }
 
     try {
-        // Llamar al procedure a través del model
-        await leaguesModel.createLeagueViaProcedure({ name, lvl: lvlNum });
+        // Ahora llamas a la función createLeagueViaProcedure desestructurada
+        await createLeagueViaProcedure({ name, lvl: lvlNum }); // ✅ Solución para postAddLeague
         return res.redirect('/leagues');
     } catch (err) {
         console.error('Error creando liga via procedure:', err.message || err);

@@ -1,13 +1,11 @@
 const express = require("express")
 const router = express.Router()
 const isAuth = require('../../util/is-auth');
-const leaguesController = require("../../controllers/leagues/leagues.controller")
+const leaguesController = require("../../controllers/Leagues/leagues.controller")
 
 
 
-router.get("/", isAuth, (req, res) => {
-    res.render("./leagues/leagues.ejs")
-})
+router.get("/", isAuth, leaguesController.getLeagues);
 
 router.get("/add-league", isAuth, leaguesController.getAddLeague);
 
