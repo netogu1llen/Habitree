@@ -6,6 +6,9 @@ const questionTypeSelect = document.getElementById("questionType");
 const optionsContainer = document.getElementById("optionsContainer");
 const questionInput = document.getElementById("questionText");
 
+// Agregar al inicio del archivo, después de las constantes iniciales
+let questionCounter = 0;
+
 // Modal control
 openBtn.addEventListener("click", () => {
     console.log("Botón Add clickeado");
@@ -194,11 +197,11 @@ document.querySelectorAll('.manage-button').forEach(button => {
             const data = await response.json();
             
             if (data.success) {
-                fillFormWithQuizData(data.quiz);
                 modal.classList.add("open");
                 document.getElementById('add-edit-btn').textContent = 'Update';
                 document.getElementById('id-readonly-msg').style.display = 'block';
-                document.querySelector('.modal-title').textContent = 'Edit Quiz'; // Añadir esta línea
+                document.querySelector('.modal-title').textContent = 'Edit Quiz';
+                fillFormWithQuizData(data.quiz);
             }
         } catch (error) {
             console.error('Error fetching quiz details:', error);
@@ -336,21 +339,11 @@ document.getElementById('cancelQuestionBtn').addEventListener('click', () => {
 
 // Añadir event listener para el botón guardar
 document.getElementById('saveQuestionBtn').addEventListener('click', () => {
-    // Validación manual
     const questionText = document.getElementById('questionText').value.trim();
     const selectedAnswer = document.querySelector('input[name="correct_answer"]:checked');
     const questionType = document.getElementById('questionType').value;
     let wrongAnswers = [];
     
-    if (questionType === 'Multiple Choice') {
-        const optionTexts = document.querySelectorAll('.option-text');
-        optionTexts.forEach(input => {
-            if (input.value !== selectedAnswer.value) {
-                wrongAnswers.push(input.value);
-            }
-        });
-    }
-
     if (!questionText) {
         alert('Please enter a question');
         return;
@@ -361,11 +354,15 @@ document.getElementById('saveQuestionBtn').addEventListener('click', () => {
         return;
     }
 
-    // Si el formulario está visible, procesar la pregunta
-    const questionData = getQuestionsData();
-    if (!questionData || !questionData[0]) {
-        alert('Please fill in the current question before saving');
-        return;
+    if (questionType === 'Multiple Choice') {
+        // Recolectar todas las respuestas que no son la correcta
+        document.querySelectorAll('.option-text').forEach(input => {
+            const value = input.value.trim();
+            // Verificar que el input tenga un valor antes de procesarlo
+            if (value && value !== selectedAnswer.value) {
+                wrongAnswers.push(value);
+            }
+        });
     }
 
     // Guardar la pregunta en el contenedor de preguntas guardadas
@@ -384,10 +381,11 @@ document.getElementById('saveQuestionBtn').addEventListener('click', () => {
         </div>
         <p><strong>Question:</strong> ${questionText}</p>
         <p><strong>Correct Answer:</strong> ${selectedAnswer.value}</p>
-        <p><strong>Wrong Answers:</strong> ${wrongAnswers.join(', ') || 'None'}</p>
+        <p><strong>Wrong Answers:</strong> ${wrongAnswers.length > 0 ? wrongAnswers.join(', ') : 'None'}</p>
         <input type="hidden" class="question-type" value="${questionType}">
         <input type="hidden" class="wrong-answers" value="${wrongAnswers.join(',')}">
     `;
+    
     savedQuestionsContainer.appendChild(questionDiv);
     questionCounter++;
 
