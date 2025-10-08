@@ -36,8 +36,28 @@ class League {
     }
 }
 
+
+
+async function deleteLeagueByName(leagueName) {
+    try {
+        const [rows] = await db.query(`CALL EliminarLigaCompleta(?)`, [leagueName]);
+
+        if (Array.isArray(rows) && rows[0] && rows[0][0] && rows[0][0].mensaje) {
+            return { success: true, message: rows[0][0].mensaje };
+        }
+
+        return { success: true, message: 'League deleted successfully' };
+    } catch (err) {
+        console.error("Error en deleteLeagueByName:", err);
+        throw err;
+    }
+}
+
+
+
 // 💡 EXPORTACIÓN COMBINADA: Exporta ambas cosas
 module.exports = {
     League, // Exporta la clase
     createLeagueViaProcedure, // Exporta la función
+    deleteLeagueByName,
 };
