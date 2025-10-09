@@ -37,7 +37,13 @@
                                             <td><%= league.ID_league%></td>
                                             <td><%= league.league%></td>
                                             <td><%= league.min_level %></td>
-                                            <td class="actions"><button class="table__button">Manage</button></td>
+                                            <td class="actions">
+                                            <button class="table__button manage-league-btn"
+                                                data-league-name="<%= league.league %>"
+                                                data-league-level="<%= league.min_level %>">
+                                                Manage
+                                            </button>
+                                            </td>                                      
                                         </tr>
                                     <% }) %>
                                 <% } else { %>
@@ -63,3 +69,4 @@
 
     <div id="backdrop" class="backdrop"></div>
     <script src="/js/leagues/addLeague.js" defer></script>
+    <script src="/js/leagues/editLeague.js" defer></script>
