@@ -124,7 +124,6 @@ module.exports = class Item{
     }
 
 
-}
     static getStatus(id) {
         return db.execute('SELECT state FROM shop WHERE IDItem = ?', [id]);
     }
