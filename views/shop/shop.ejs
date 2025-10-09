@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/css/styles.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
         <link rel="stylesheet" href="/css/shop/shop.css">
+        <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
         <title>Shop</title>
     </head>
     <body>
@@ -84,13 +84,13 @@
                                 <div class="product-info">
                                     <div class="product-category"><%= item.category %></div>
                                     <div class="product-name"><%= item.name %></div>
-                                    <div class="review-count">
+                                    <div class="review-count <%= item.state == 1 ? 'active' : 'inactive' %>">
                                         <%= item.state == 1 ? 'Active' : 'Inactive' %>
                                     </div>
                                     
                                     <div class="price-row">
                                         <div><span class="price">$<%= item.price %></span></div>
-                                        <button class="add-to-cart">
+                                        <button class="edit-item-btn">
                                             <svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" 
                                                 width="20" height="20" viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve">
                                             <g>
@@ -103,6 +103,12 @@
                                             </g>
                                             </svg>
                                         </button>
+                                        <div class="change-btn">
+                                            <p>Change State</p>
+                                            <button class=" change-state-btn <%= item.state == 1 ? 'btm--active' : '' %>" data-id="<%= item.IDItem %>">
+                                                <p class="circle <%= item.state == 1 ? 'active' : '' %>"></p>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -122,6 +128,7 @@
                 <form action="/shop" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <div id="form-message" style="display:none;"></div>
+                    <input type="hidden" id="image_name_current" name="image_name_current" value="">
 
                     <section class="inputs-row">
                         <div class="input-container">
@@ -155,13 +162,17 @@
 
                     <button type="submit" class="submit-btn">Add</button>
                     <button type="submit" class="submit-btn" id="edit-btn" style="display:none;">Edit</button>
+                    <input type="hidden" id="image_name_current" name="image_name_current" value="">
                 </form>  
             </div>
         </div>
+        <div id="modal-root"></div>
+        <div id="backdrop" class="backdrop"></div>
     </div>
     <script>
         window.csrfToken = "<%= csrfToken %>";
     </script>
     <script src="/js/shop/shop.js"></script>
+    <script src="/js/shop/editItemShop.js"></script>
 </body>
 </html>

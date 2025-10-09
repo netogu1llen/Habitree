@@ -6,8 +6,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <title>Leagues</title>
     <link rel="stylesheet" href="/css/leagues/leagues.css">
-
-</head>
 </head>
 <body>
 <div class="content">
@@ -38,7 +36,11 @@
                             <td><%= league.league %></td>
                             <td><%= league.min_level %></td>
                             <td class="actions">
-                                <button class="table__button">Manage</button>
+                                <button class="table__button "
+                                    data-league-name="<%= league.league %>"
+                                    data-league-level="<%= league.min_level %>">
+                                    Manage
+                                </button>
                             </td>
                         </tr>
                     <% }) %>
@@ -51,36 +53,30 @@
             </table>
         </div>
 
+        <!-- Modal Eliminar Liga -->
+        <div class="modal" id="manageModal">
+            <div class="modal-inner">
+                <div class="modal-header">
+                    <h1 class="table__button">Manage League</h1>
+                    <button id="closeManageModal" class="fa fa-times"></button>
+                </div>
 
-        <script src="/js/missions/missions.js"></script>
-    </div>
-    <!-- Modal Eliminar Liga -->
-    <div class="modal" id="manageModal">
-        <div class="modal-inner">
-            <div class="modal-header">
-                <h1 class="modal-title">Manage League</h1>
-                <button id="closeManageModal" class="fa fa-times"></button>
-            </div>
-
-            <div class="modal-content">
-                <div class="form-actions" style="display:flex; gap:10px; justify-content:center;">
-                    <button type="button" class="submit-btn" id="manage-delete-btn" style="background: linear-gradient(to right, #e74c3c, #c0392b); color:white;">Delete</button>
-                    <button type="button" class="submit-btn" id="manage-cancel-btn">Cancel</button>
+                <div class="modal-content">
+                    <div class="form-actions" style="display:flex; gap:10px; justify-content:center;">
+                        <button type="button" class="submit-btn" id="manage-delete-btn" style="background: linear-gradient(to right, #e74c3c, #c0392b); color:white;">Delete</button>
+                        <button type="button" class="submit-btn" id="manage-cancel-btn">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-</div>
-<div id="backdrop" class="backdrop"></div>
-<script src="/js/leagues/addLeague.js" defer></script>
-<script src="/js/leagues/manageLeague.js"></script>
-<div id="modal-root"></div>
-<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div id="backdrop" class="backdrop"></div>
+    <div id="modal-root"></div>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    
+    <script src="/js/leagues/addLeague.js" defer></script>
+    <script src="/js/leagues/editLeague.js" defer></script>
+    <script src="/js/leagues/manageLeague.js"></script>
 </body>
 </html>
-
-
-

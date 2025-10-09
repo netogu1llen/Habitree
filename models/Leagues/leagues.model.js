@@ -36,6 +36,13 @@ class League {
     }
 }
 
+async function cambiarNombreLiga(nombre_actual, nombre_nuevo) {
+    return db.execute('CALL CambiarNombreLiga(?, ?)', [nombre_actual, nombre_nuevo]);
+}
+
+async function cambiarMinLevelLiga(nombre_liga, nuevo_min_level) {
+    return db.execute('CALL CambiarMinLevelLiga(?, ?)', [nombre_liga, nuevo_min_level]);
+}
 
 
 async function deleteLeagueByName(leagueName) {
@@ -53,11 +60,11 @@ async function deleteLeagueByName(leagueName) {
     }
 }
 
-
-
-// 💡 EXPORTACIÓN COMBINADA: Exporta ambas cosas
 module.exports = {
-    League, // Exporta la clase
-    createLeagueViaProcedure, // Exporta la función
-    deleteLeagueByName,
+    League,
+    createLeagueViaProcedure,
+    cambiarNombreLiga,
+    cambiarMinLevelLiga,
+    deleteLeagueByName
 };
+
