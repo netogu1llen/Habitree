@@ -105,8 +105,8 @@
                                         </button>
                                         <div class="change-btn">
                                             <p>Change State</p>
-                                            <button class="change-state-btn" data-id="<%= item.IDItem %>">
-                                                <i class="fa-solid fa-circle"></i>
+                                            <button class=" change-state-btn <%= item.state == 1 ? 'btm--active' : '' %>" data-id="<%= item.IDItem %>">
+                                                <p class="circle <%= item.state == 1 ? 'active' : '' %>"></p>
                                             </button>
                                         </div>
                                     </div>
