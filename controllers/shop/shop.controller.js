@@ -262,12 +262,12 @@ exports.toggleItemState = async (req, res) => {
     let result;
     let actionMessage;
 
-    if (currentState === 0) {
+    if (currentState === 1) {
       // Si está activo, desactivarlo
       [result] = await Item.deactivate(Number(id));
       actionMessage = 'Item desactivado correctamente';
     } else {
-      // Si está desactivado, activarlo
+      // Si está inactivo, activarlo
       [result] = await Item.activate(Number(id));
       actionMessage = 'Item activado correctamente';
     }
@@ -285,5 +285,4 @@ exports.toggleItemState = async (req, res) => {
     console.error('Error al cambiar estado del item:', error);
     res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
-  res.render('shop/shop', { title: 'Shop' })
 };

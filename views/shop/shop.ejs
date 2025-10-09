@@ -84,7 +84,7 @@
                                 <div class="product-info">
                                     <div class="product-category"><%= item.category %></div>
                                     <div class="product-name"><%= item.name %></div>
-                                    <div class="review-count">
+                                    <div class="review-count <%= item.state == 1 ? 'active' : 'inactive' %>">
                                         <%= item.state == 1 ? 'Active' : 'Inactive' %>
                                     </div>
                                     
