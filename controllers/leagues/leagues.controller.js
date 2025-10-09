@@ -1,6 +1,6 @@
-const { League, createLeagueViaProcedure } = require('../../models/leagues/leagues.model');
+const { League, createLeagueViaProcedure } = require('../../models/Leagues/leagues.model');
 const db = require('../../util/database');
-const { deleteLeagueByName } = require('../../models/leagues/leagues.model');
+const { deleteLeagueByName } = require('../../models/Leagues/leagues.model');
 
 exports.getLeagues = async (req, res) => {
     const leagues = await League.fetchAll();
@@ -43,7 +43,7 @@ exports.postAddLeague = async (req, res) => {
     }
 };
 
-const leaguesModel = require('../../models/leagues/leagues.model');
+const leaguesModel = require('../../models/Leagues/eagues.model');
 
 exports.postEditLeagueName = async (req, res) => {
     const { nameA, name } = req.body;
