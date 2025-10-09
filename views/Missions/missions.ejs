@@ -92,14 +92,16 @@
 
                 <section class="inputs-row">
                     <div class="input-container">
-                        <label>Mission Type</label>
-                        <div class="type-options">
-                            <% const types = ['awarness','transport','water','waste','energy','consumption','nature']; %>
+                        <label for="category">Mission Type</label>
+                        <select id="category" name="category" required>
+                            <% const types = ['awareness', 'transport', 'water', 'waste', 'energy', 'consumption', 'nature']; %>
                             <% types.forEach(function(t){ %>
-                                <label class="radio-inline"><input type="radio" name="category" value="<%= t %>" required> <%= t.charAt(0).toUpperCase() + t.slice(1) %></label>
+                                <option value="<%= t %>"><%= t.charAt(0).toUpperCase() + t.slice(1) %></option>
                             <% }) %>
-                        </div>
+                        </select>
                     </div>
+
+
 
                     <div class="input-container">
                         <label for="experience">Experience</label>
@@ -122,7 +124,6 @@
                             <input class="smallInput" type="number" id="value" name="value" placeholder="0" step="any">
                             <span id="value-unit">points</span>
                         </div>
-                        <small id="value-help">Units depend on mission type (water=liters, energy=watts, transport=CO2, waste=kg, others=points)</small>
                     </div>
 
                     <div class="input-container">

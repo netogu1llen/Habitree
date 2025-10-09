@@ -164,4 +164,41 @@ document.getElementById('delete-btn').addEventListener('click', function() {
             console.error(err);
         });
     }
+
+    
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const categorySelect = document.getElementById("category");
+    const valueUnit = document.getElementById("value-unit");
+    const valueHelp = document.getElementById("value-help");
+
+    function updateUnit() {
+        const selected = categorySelect.value;
+        let unit = "points";
+
+        switch (selected) {
+            case "water":
+                unit = "lt";
+                break;
+            case "energy":
+                unit = "watts";
+                break;
+            case "waste":
+                unit = "kg";
+                break;
+            case "transport":
+                unit = "CO₂";
+                break;
+            default:
+                unit = "points";
+        }
+
+        valueUnit.textContent = unit;
+        valueHelp.textContent = `Units depend on mission type (water=lt, energy=watts, transport=CO₂, waste=kg, others=points)`;
+    }
+
+    // Actualiza al cargar y cuando cambie el valor
+    categorySelect.addEventListener("change", updateUnit);
+    updateUnit();
 });
