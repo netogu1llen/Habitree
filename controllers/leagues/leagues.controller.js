@@ -1,5 +1,6 @@
 const { League, createLeagueViaProcedure } = require('../../models/leagues/leagues.model');
-
+const db = require('../../util/database');
+const {  deleteLeagueByName } = require('../../models/leagues/leagues.model');
 
 exports.getLeagues = async (req, res) => {
     // Ahora llamas a fetchAll() desde la CLASE League desestructurada
@@ -52,6 +53,7 @@ exports.postAddLeague = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 const leaguesModel = require('../../models/leagues/leagues.model');
 
 exports.postEditLeagueName = async (req, res) => {
@@ -78,3 +80,24 @@ exports.postEditLeagueLevel = async (req, res) => {
         res.status(500).send('Error al cambiar min level de liga');
     }
 };
+=======
+
+// Eliminar liga
+exports.deleteLeague = async (req, res) => {
+    const { leagueName } = req.body;
+
+    if (!leagueName) {
+        return res.status(400).json({ message: 'League name is required' });
+    }
+
+    try {
+        const result = await deleteLeagueByName(leagueName);
+        res.json(result);
+    } catch (err) {
+        console.error('Error deleting league:', err);
+        res.status(500).json({ success: false, message: 'Error deleting league' });
+    }
+};
+
+
+>>>>>>> d1b8c1d7c7139ec53dbe314371171fa7cb12e237

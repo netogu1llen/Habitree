@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("editDescription").value = reward.description ?? "";
       document.getElementById("editType").value = reward.type ?? "";
       // Si tu select espera '1'/'0', conviértelo:
-      document.getElementById("editStatus").value = reward.available ? "1" : "0";
       document.getElementById("editValue").value = reward.value ?? "";
+      document.getElementById("saveChangesBtn");
 
       // Actualizar action del form
       form.action = `/modify-reward/edit/${encodeURIComponent(reward.IDReward ?? id)}`;
@@ -47,6 +47,21 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("No se pudo cargar la recompensa (revisa consola / pestaña Network).");
     }
   });
+
+  // Confirmar desactivación de Reward
+ prevStatus = document.getElementById("editStatus").value; // guarda el previo
+ form.addEventListener("submit", (e) => {
+  if (editStatus.value === "0") {
+    const confirmationMessage = confirm("Are you sure you want to deactivate this reward? It will not be available to user and will be permanently deleted.");
+    if (!confirmationMessage) {
+      e.preventDefault();          //  evita que se envíe el formulario
+      e.stopPropagation();         // evita que se propague el evento
+      editStatus.value = prevStatus;  // restaura el previo
+      return;
+    }
+  }
+  document.getElementById("editStatus").value = reward.available ? "1" : "0";
+});
 
   // Cerrar modal
   closeBtn.addEventListener("click", () => (modal.style.display = "none"));

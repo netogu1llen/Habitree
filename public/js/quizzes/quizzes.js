@@ -6,6 +6,11 @@ const questionTypeSelect = document.getElementById("questionType");
 const optionsContainer = document.getElementById("optionsContainer");
 const questionInput = document.getElementById("questionText");
 
+// Variables globales
+let questionCounter = 0;
+let isEditing = false;
+let currentQuizId = null;
+
 const manageModal = document.getElementById("manageModal");
 const closeManageBtn = document.getElementById("closeManageModal");
 const manageEditBtn = document.getElementById("manage-edit-btn");
@@ -43,13 +48,13 @@ function updateOptionsContainer(selectedType) {
         case 'Multiple Choice':
             optionsContainer.innerHTML = `
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="Option 1" required>
-                    <input type="text" placeholder="Option 1" class="smallInput option-text" value="Option 1" required>
+                    <input type="radio" name="correct_answer" value="Option 1">
+                    <input type="text" placeholder="Option 1" class="smallInput option-text" value="Option 1">
                     <button type="button" class="remove-option">×</button>
                 </div>
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="Option 2" required>
-                    <input type="text" placeholder="Option 2" class="smallInput option-text" value="Option 2" required>
+                    <input type="radio" name="correct_answer" value="Option 2">
+                    <input type="text" placeholder="Option 2" class="smallInput option-text" value="Option 2">
                     <button type="button" class="remove-option">×</button>
                 </div>
                 <button type="button" class="add-option-btn">+ Add Option</button>
@@ -60,16 +65,34 @@ function updateOptionsContainer(selectedType) {
         case 'True/False':
             optionsContainer.innerHTML = `
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="true" required>
+                    <input type="radio" name="correct_answer" value="true">
                     <label>True</label>
                 </div>
                 <div class="option-input-group">
-                    <input type="radio" name="correct_answer" value="false" required>
+                    <input type="radio" name="correct_answer" value="false">
                     <label>False</label>
                 </div>
             `;
             break;
     }
+}
+
+// Modificar addNewOption para quitar required
+function addNewOption() {
+    const optionCount = optionsContainer.querySelectorAll('.option-input-group').length;
+    const newOptionNumber = optionCount + 1;
+
+    const newOption = document.createElement('div');
+    newOption.className = 'option-input-group';
+    newOption.innerHTML = `
+        <input type="radio" name="correct_answer" value="Option ${newOptionNumber}">
+        <input type="text" placeholder="Option ${newOptionNumber}" class="smallInput option-text" value="Option ${newOptionNumber}">
+        <button type="button" class="remove-option">×</button>
+    `;
+    const addOptionBtn = optionsContainer.querySelector('.add-option-btn');
+    optionsContainer.insertBefore(newOption, addOptionBtn);
+    setupRemoveOptionListeners();
+    setupOptionTextHandlers();
 }
 
 function setupMultipleChoiceHandlers() {
@@ -88,8 +111,8 @@ function addNewOption() {
     const newOption = document.createElement('div');
     newOption.className = 'option-input-group';
     newOption.innerHTML = `
-        <input type="radio" name="correct_answer" value="Option ${newOptionNumber}" required>
-        <input type="text" placeholder="Option ${newOptionNumber}" class="smallInput option-text" value="Option ${newOptionNumber}" required>
+        <input type="radio" name="correct_answer" value="Option ${newOptionNumber}">
+        <input type="text" placeholder="Option ${newOptionNumber}" class="smallInput option-text" value="Option ${newOptionNumber}">
         <button type="button" class="remove-option">×</button>
     `;
     const addOptionBtn = optionsContainer.querySelector('.add-option-btn');
@@ -136,6 +159,17 @@ function getQuestionsData() {
     const questionText = questionInput.value.trim();
     const questionType = questionTypeSelect.value;
     const correctAnswer = getCorrectAnswer();
+    let wrongAnswers = [];
+
+    if (questionType === 'Multiple Choice') {
+        // Obtener todas las opciones que no son la respuesta correcta
+        const optionTexts = document.querySelectorAll('.option-text');
+        optionTexts.forEach(input => {
+            if (input.value !== correctAnswer) {
+                wrongAnswers.push(input.value);
+            }
+        });
+    }
 
     if (!questionText || !correctAnswer) {
         return null;
@@ -143,7 +177,8 @@ function getQuestionsData() {
 
     return [{
         question: questionText,
-        answer: correctAnswer
+        answer: correctAnswer,
+        wrongAnswers: wrongAnswers.join(',')
     }];
 }
 
@@ -152,13 +187,286 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeQuestionType();
 });
 
-// Form submission
+// Reemplazar los event listeners duplicados del botón manage con uno solo
+document.querySelectorAll('.manage-button').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        const row = e.target.closest('tr');
+        const quizId = row.cells[0].textContent;
+        currentQuizId = quizId;
+        isEditing = true;
+        
+        try {
+            const response = await fetch(`/quizzes/${quizId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                fillFormWithQuizData(data.quiz);
+                modal.classList.add("open");
+                document.getElementById('add-edit-btn').textContent = 'Update';
+                document.getElementById('delete-btn').style.display = 'block';
+                document.getElementById('id-readonly-msg').style.display = 'block';
+                document.querySelector('.modal-title').textContent = 'Edit Quiz';
+            }
+        } catch (error) {
+            console.error('Error fetching quiz details:', error);
+        }
+    });
+});
+
+function fillFormWithQuizData(quiz) {
+    document.getElementById('category').value = quiz.category;
+    document.getElementById('description').value = quiz.description;
+    document.getElementById('experience').value = quiz.experience;
+    document.getElementById('available').value = quiz.available;
+
+    // Limpiar el contenedor de preguntas guardadas
+    const savedQuestionsContainer = document.getElementById('savedQuestionsContainer');
+    savedQuestionsContainer.innerHTML = '';
+
+    // Mostrar las preguntas existentes
+    if (quiz.questions && quiz.questions.length > 0) {
+        quiz.questions.forEach((question, index) => {
+            const wrongAnswersArray = question.wrongAnswers ? question.wrongAnswers.split(',') : [];
+            const allAnswers = [question.answer, ...wrongAnswersArray];
+            
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'saved-question';
+            questionDiv.innerHTML = `
+                <div class="question-header">
+                    <h4>Question ${index + 1}</h4>
+                    <div class="question-actions">
+                        <button type="button" class="edit-question" onclick="editQuestion(this)">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="remove-question" onclick="removeQuestion(this)">×</button>
+                    </div>
+                </div>
+                <p><strong>Question:</strong> ${question.question}</p>
+                <p><strong>Correct Answer:</strong> ${question.answer}</p>
+                <p><strong>Wrong Answers:</strong> ${question.wrongAnswers || 'None'}</p>
+                <input type="hidden" class="question-type" value="${question.answer === 'true' || question.answer === 'false' ? 'True/False' : 'Multiple Choice'}">
+            `;
+            savedQuestionsContainer.appendChild(questionDiv);
+        });
+        questionCounter = quiz.questions.length;
+    }
+
+    // Limpiar el formulario de nueva pregunta
+    document.getElementById('questionText').value = '';
+    document.getElementById('questionType').value = 'Multiple Choice';
+    updateOptionsContainer('Multiple Choice');
+}
+
+// Agregar función para editar pregunta
+function editQuestion(button) {
+    const questionDiv = button.closest('.saved-question');
+    const questionText = questionDiv.querySelector('p:nth-child(2)').textContent.replace('Question: ', '');
+    const answer = questionDiv.querySelector('p:nth-child(3)').textContent.replace('Correct Answer: ', '');
+    const wrongAnswersText = questionDiv.querySelector('p:nth-child(4)').textContent.replace('Wrong Answers: ', '');
+    const questionType = questionDiv.querySelector('.question-type').value;
+
+    // Llenar el formulario
+    document.getElementById('questionText').value = questionText;
+    document.getElementById('questionType').value = questionType;
+    updateOptionsContainer(questionType);
+
+    if (questionType === 'Multiple Choice') {
+        // Procesar respuestas incorrectas
+        const wrongAnswers = wrongAnswersText === 'None' ? [] : wrongAnswersText.split(',').map(ans => ans.trim());
+        const allAnswers = [answer, ...wrongAnswers];
+
+        // Agregar opciones necesarias
+        while (document.querySelectorAll('.option-input-group').length < allAnswers.length) {
+            addNewOption();
+        }
+
+        // Actualizar valores y marcar respuesta correcta
+        document.querySelectorAll('.option-text').forEach((input, index) => {
+            if (index < allAnswers.length) {
+                input.value = allAnswers[index];
+                const radio = input.previousElementSibling;
+                radio.value = allAnswers[index];
+                if (allAnswers[index] === answer) {
+                    radio.checked = true;
+                }
+            }
+        });
+    } else {
+        // Para True/False
+        const radios = document.querySelectorAll('input[name="correct_answer"]');
+        radios.forEach(radio => {
+            if (radio.value === answer) {
+                radio.checked = true;
+            }
+        });
+    }
+
+    // Mostrar el formulario y cambiar el texto del botón
+    const questionFormContainer = document.getElementById('questionFormContainer');
+    questionFormContainer.style.display = 'block';
+    document.getElementById('addQuestionBtn').style.display = 'none';
+
+    // Remover la pregunta anterior
+    questionDiv.remove();
+    updateQuestionNumbers();
+}
+
+// Función para actualizar números de preguntas
+function updateQuestionNumbers() {
+    document.querySelectorAll('.saved-question').forEach((q, index) => {
+        q.querySelector('h4').textContent = `Question ${index + 1}`;
+    });
+    questionCounter = document.querySelectorAll('.saved-question').length;
+}
+
+// Modificar addQuestionBtn event listener
+addQuestionBtn.addEventListener('click', () => {
+    const questionFormContainer = document.getElementById('questionFormContainer');
+    questionFormContainer.style.display = 'block';
+    document.getElementById('addQuestionBtn').style.display = 'none';
+});
+
+// Añadir event listener para el botón cancelar
+document.getElementById('cancelQuestionBtn').addEventListener('click', () => {
+    const questionFormContainer = document.getElementById('questionFormContainer');
+    questionFormContainer.style.display = 'none';
+    document.getElementById('addQuestionBtn').style.display = 'block';
+    
+    // Limpiar el formulario
+    document.getElementById('questionText').value = '';
+    const optionInputs = document.querySelectorAll('.option-text');
+    optionInputs.forEach(input => input.value = '');
+    const radios = document.querySelectorAll('input[name="correct_answer"]');
+    radios.forEach(radio => radio.checked = false);
+});
+
+// Añadir event listener para el botón guardar
+document.getElementById('saveQuestionBtn').addEventListener('click', () => {
+    const questionText = document.getElementById('questionText').value.trim();
+    const selectedAnswer = document.querySelector('input[name="correct_answer"]:checked');
+    const questionType = document.getElementById('questionType').value;
+    let wrongAnswers = [];
+    
+    if (!questionText) {
+        alert('Please enter a question');
+        return;
+    }
+    
+    if (!selectedAnswer) {
+        alert('Please select a correct answer');
+        return;
+    }
+
+    if (questionType === 'Multiple Choice') {
+        // Recolectar todas las respuestas que no son la correcta
+        document.querySelectorAll('.option-text').forEach(input => {
+            const value = input.value.trim();
+            // Verificar que el input tenga un valor antes de procesarlo
+            if (value && value !== selectedAnswer.value) {
+                wrongAnswers.push(value);
+            }
+        });
+    }
+
+    // Guardar la pregunta en el contenedor de preguntas guardadas
+    const savedQuestionsContainer = document.getElementById('savedQuestionsContainer');
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'saved-question';
+    questionDiv.innerHTML = `
+        <div class="question-header">
+            <h4>Question ${questionCounter + 1}</h4>
+            <div class="question-actions">
+                <button type="button" class="edit-question" onclick="editQuestion(this)">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="remove-question" onclick="removeQuestion(this)">×</button>
+            </div>
+        </div>
+        <p><strong>Question:</strong> ${questionText}</p>
+        <p><strong>Correct Answer:</strong> ${selectedAnswer.value}</p>
+        <p><strong>Wrong Answers:</strong> ${wrongAnswers.length > 0 ? wrongAnswers.join(', ') : 'None'}</p>
+        <input type="hidden" class="question-type" value="${questionType}">
+        <input type="hidden" class="wrong-answers" value="${wrongAnswers.join(',')}">
+    `;
+    
+    savedQuestionsContainer.appendChild(questionDiv);
+    questionCounter++;
+
+    // Limpiar y ocultar el formulario
+    document.getElementById('questionText').value = '';
+    const optionInputs = document.querySelectorAll('.option-text');
+    optionInputs.forEach(input => input.value = '');
+    const radios = document.querySelectorAll('input[name="correct_answer"]');
+    radios.forEach(radio => radio.checked = false);
+    questionFormContainer.style.display = 'none';
+    document.getElementById('addQuestionBtn').style.display = 'block';
+});
+
+// Agregar función para remover preguntas
+function removeQuestion(button) {
+    const questionDiv = button.closest('.saved-question');
+    questionDiv.remove();
+    // Actualizar los números de las preguntas restantes
+    const questions = document.querySelectorAll('.saved-question');
+    questions.forEach((q, index) => {
+        q.querySelector('h4').textContent = `Question ${index + 1}`;
+    });
+    questionCounter--;
+}
+
+// Modificar getAllQuestionsData para incluir las preguntas guardadas
+function getAllQuestionsData() {
+    const questions = [];
+    
+    // Obtener preguntas guardadas
+    document.querySelectorAll('.saved-question').forEach(questionDiv => {
+        const questionText = questionDiv.querySelector('p:nth-child(2)').textContent.replace('Question: ', '').trim();
+        const answer = questionDiv.querySelector('p:nth-child(3)').textContent.replace('Correct Answer: ', '').trim();
+        const wrongAnswers = questionDiv.querySelector('p:nth-child(4)').textContent.replace('Wrong Answers: ', '').trim();
+        
+        questions.push({ 
+            question: questionText, 
+            answer: answer,
+            wrongAnswers: wrongAnswers === 'None' ? '' : wrongAnswers
+        });
+    });
+
+    // Obtener pregunta actual si existe
+    const currentQuestionForm = document.getElementById('questionFormContainer');
+    if (currentQuestionForm.style.display !== 'none') {
+        const questionText = document.getElementById('questionText').value.trim();
+        const questionType = document.getElementById('questionType').value;
+        const selectedAnswer = document.querySelector('input[name="correct_answer"]:checked')?.value;
+        
+        if (questionText && selectedAnswer) {
+            let wrongAnswers = [];
+            if (questionType === 'Multiple Choice') {
+                // Recolectar todas las respuestas que no son la correcta
+                document.querySelectorAll('.option-text').forEach(input => {
+                    if (input.value.trim() !== selectedAnswer) {
+                        wrongAnswers.push(input.value.trim());
+                    }
+                });
+            }
+            
+            questions.push({
+                question: questionText,
+                answer: selectedAnswer,
+                wrongAnswers: wrongAnswers.join(',')
+            });
+        }
+    }
+
+    return questions;
+}
+
+// Modificar el event listener del formulario
 form.addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const questionsData = getQuestionsData();
-    if (!questionsData) {
-        alert("Please fill in all question fields and select a correct answer");
+    const questionsData = getAllQuestionsData();
+    if (questionsData.length === 0) {
+        alert("Please add at least one question");
         return;
     }
 
@@ -171,57 +479,39 @@ form.addEventListener("submit", function(e) {
         questions: questionsData
     };
 
-    // Mostrar mensaje de "cargando"
-    alert("Creating quiz... Please wait");
+    const url = isEditing ? `/quizzes/${currentQuizId}` : '/quizzes';
+    const method = isEditing ? 'PUT' : 'POST';
 
-    fetch('/quizzes', {
-        method: 'POST',
+    // Mostrar loading overlay
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    loadingOverlay.style.display = 'flex';
+
+    fetch(url, {
+        method: method,
         headers: {
             'Content-Type': 'application/json',
             'CSRF-Token': formData.get('_csrf')
         },
         body: JSON.stringify(data)
     })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Mensaje de éxito
-                alert("Quiz created successfully!");
-
-                // Cerrar modal
-                modal.classList.remove("open");
-
-                // Limpiar formulario
-                form.reset();
-
-                // Recargar página
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-
-            } else {
-                alert("Error creating quiz: " + data.message);
-            }
-        })
-        .catch(error => {
-            alert(" Error creating quiz: " + error.message);
-            console.error(error);
-        });
-});
-
-// Modal con 2 botones Edit Delete
-let currentQuizId = null;
-
-const manageButtons = document.querySelectorAll(".manage-button");
-
-// Abrir modal en modo edición
-manageButtons.forEach(button => {
-    button.addEventListener("click", (e) => {
-        const row = e.target.closest("tr");
-        currentQuizId = row.querySelector("td:first-child").textContent;
-
-        // Abrir modal de Manage
-        manageModal.classList.add("open");
+    .then(res => res.json())
+    .then(data => {
+        // Ocultar loading overlay
+        loadingOverlay.style.display = 'none';
+        
+        if (data.success) {
+            modal.classList.remove("open");
+            form.reset();
+            location.reload();
+        } else {
+            alert(isEditing ? "Error updating quiz: " : "Error creating quiz: " + data.message);
+        }
+    })
+    .catch(error => {
+        // Ocultar loading overlay en caso de error
+        loadingOverlay.style.display = 'none';
+        alert("Error: " + error.message);
+        console.error(error);
     });
 });
 
@@ -274,3 +564,31 @@ manageEditBtn.addEventListener("click", () => {
 
 });
 
+// Reset form state when opening modal for new quiz
+openBtn.addEventListener("click", () => {
+    isEditing = false;
+    currentQuizId = null;
+    form.reset();
+    questionCounter = 0;
+    document.getElementById('add-edit-btn').textContent = 'Add';
+    document.getElementById('delete-btn').style.display = 'none';
+    document.getElementById('id-readonly-msg').style.display = 'none';
+    document.querySelector('.modal-title').textContent = 'Add New Quiz';
+    
+    // Limpiar el contenedor de preguntas guardadas
+    const savedQuestionsContainer = document.getElementById('savedQuestionsContainer');
+    if (savedQuestionsContainer) {
+        savedQuestionsContainer.innerHTML = '';
+    }
+
+    // Restablecer el formulario de pregunta
+    document.getElementById('questionText').value = '';
+    document.getElementById('questionType').value = 'Multiple Choice';
+    updateOptionsContainer('Multiple Choice');
+
+    // Limpiar las opciones de respuesta
+    const optionInputs = document.querySelectorAll('.option-text');
+    optionInputs.forEach(input => input.value = '');
+    const radios = document.querySelectorAll('input[name="correct_answer"]');
+    radios.forEach(radio => radio.checked = false);
+});
