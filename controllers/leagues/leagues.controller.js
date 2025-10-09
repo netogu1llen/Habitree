@@ -43,7 +43,7 @@ exports.postAddLeague = async (req, res) => {
     }
 };
 
-const leaguesModel = require('../../models/Leagues/eagues.model');
+const leaguesModel = require('../../models/Leagues/leagues.model');
 
 exports.postEditLeagueName = async (req, res) => {
     const { nameA, name } = req.body;
