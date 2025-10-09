@@ -1038,9 +1038,14 @@ select:focus, input:focus {
     transform: translateY(0);
 }
 
-.review-count {
+.review-count.active {
       font-size: 12px;
       color: #2DA460;
+}
+
+.review-count.inactive {
+      font-size: 12px;
+       color: #e74c3c;
 }
 
 .filter-and-add {
