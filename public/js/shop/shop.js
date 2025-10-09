@@ -336,4 +336,40 @@ function filterUsers() {
     }
 }
 
-searchInput.addEventListener("input", filterUsers);
+document.addEventListener('DOMContentLoaded', () => {
+  const productGrid = document.getElementById('productGrid');
+
+  if (productGrid) {
+    productGrid.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.change-state-btn');
+      if (!btn) return;
+
+      const id = btn.getAttribute('data-id');
+
+      if (!confirm('¿Deseas cambiar el estado de este producto?')) return;
+
+      try {
+        const res = await fetch('/shop/toggle', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': window.csrfToken
+          },
+          body: JSON.stringify({ id })
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          alert(result.message);
+          window.location.reload(); // <-- Esta línea recarga la página
+        } else {
+          alert(result.message || 'Error al cambiar el estado');
+        }
+      } catch (error) {
+        console.error('Error al cambiar estado:', error);
+        alert('Error de conexión o del servidor');
+      }
+    });
+  }
+});

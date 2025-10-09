@@ -1038,9 +1038,14 @@ select:focus, input:focus {
     transform: translateY(0);
 }
 
-.review-count {
+.review-count.active {
       font-size: 12px;
       color: #2DA460;
+}
+
+.review-count.inactive {
+      font-size: 12px;
+       color: #e74c3c;
 }
 
 .filter-and-add {
@@ -1709,3 +1714,89 @@ input:focus {
     background-color: #3f9342;
 
 }
+.btm--active{
+
+    cursor: pointer;
+    background-color: #8bc565;
+    border-radius: 50em;
+    border: 3px solid #cdf4b3;
+    display: flex;
+    align-items: center;    /* Centra verticalmente */
+    padding: 1.5%;
+
+}
+
+
+.price-row .change-btn {
+    cursor: pointer;
+     text-align: right;
+    justify-items: center;
+    align-items: center;    /* Centra verticalmente */
+    padding: 1.5%;
+
+}
+.price-row .change-btn p{
+    font-size: small;
+    padding-bottom: 7%;
+
+}
+.price-row .change-btn .change-state-btn {
+    cursor: pointer;
+    width: 90%;
+    text-align: left;
+    background-color: #a1a1a1;
+    border-radius: 50em;
+    border: 3px solid #7f7f7f;
+    display: flex;
+   
+    align-items: center;    /* Centra verticalmente */
+    padding: 1.5%;
+
+}
+
+
+.price-row .change-btn .change-state-btn.btm--active{
+    justify-content:right ;
+    cursor: pointer;
+    background-color: #ade18b;
+    border-radius: 50em;
+    border: 3px solid #85c15e;
+    display: flex;
+    align-items: center;    /* Centra verticalmente */
+    padding: 1.5%;
+
+}
+.price-row .change-btn button .circle{
+   
+    /* 1. Definir un tamaño cuadrado */
+    width: 2em;
+    height:2em;
+    
+    
+    /* 2. Aplicar el borde redondeado para hacerlo un círculo */
+    border-radius: 50%;
+    background-color: #959595;
+    border: 3px solid #7f7f7f;
+    /* 3. Darle color para que sea visible */
+   
+    /* Opcional: Agregar un borde */
+    /* border: 5px solid #2980b9; */
+}
+
+.price-row .change-btn button .circle.active{
+   
+    /* 1. Definir un tamaño cuadrado */
+    width: 2em;
+    height:2em;
+    
+    background-color: #90d165;
+    /* 2. Aplicar el borde redondeado para hacerlo un círculo */
+    border-radius: 50%;
+    border: 3px solid #85c15e;
+    /* 3. Darle color para que sea visible */
+   
+    /* Opcional: Agregar un borde */
+    /* border: 5px solid #2980b9; */
+}
+
+

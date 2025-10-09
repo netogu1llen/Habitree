@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/css/styles.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
         <link rel="stylesheet" href="/css/shop/shop.css">
+        <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
         <title>Shop</title>
     </head>
     <body>
@@ -84,7 +84,7 @@
                                 <div class="product-info">
                                     <div class="product-category"><%= item.category %></div>
                                     <div class="product-name"><%= item.name %></div>
-                                    <div class="review-count">
+                                    <div class="review-count <%= item.state == 1 ? 'active' : 'inactive' %>">
                                         <%= item.state == 1 ? 'Active' : 'Inactive' %>
                                     </div>
                                     
@@ -103,6 +103,12 @@
                                             </g>
                                             </svg>
                                         </button>
+                                        <div class="change-btn">
+                                            <p>Change State</p>
+                                            <button class=" change-state-btn <%= item.state == 1 ? 'btm--active' : '' %>" data-id="<%= item.IDItem %>">
+                                                <p class="circle <%= item.state == 1 ? 'active' : '' %>"></p>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -158,10 +164,13 @@
                 </form>  
             </div>
         </div>
+        <div id="modal-root"></div>
+        <div id="backdrop" class="backdrop"></div>
     </div>
     <script>
         window.csrfToken = "<%= csrfToken %>";
     </script>
     <script src="/js/shop/shop.js"></script>
+    <script src="/js/shop/editItemShop.js"></script>
 </body>
 </html>
