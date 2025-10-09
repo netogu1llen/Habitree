@@ -36,7 +36,7 @@
                             <td><%= league.league %></td>
                             <td><%= league.min_level %></td>
                             <td class="actions">
-                                <button class="table__button manage-league-btn"
+                                <button class="table__button "
                                     data-league-name="<%= league.league %>"
                                     data-league-level="<%= league.min_level %>">
                                     Manage
@@ -57,7 +57,7 @@
         <div class="modal" id="manageModal">
             <div class="modal-inner">
                 <div class="modal-header">
-                    <h1 class="modal-title">Manage League</h1>
+                    <h1 class="table__button">Manage League</h1>
                     <button id="closeManageModal" class="fa fa-times"></button>
                 </div>
 
