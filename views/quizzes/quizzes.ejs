@@ -10,6 +10,7 @@
 </head>
 
 <body>
+<!-- Página y tabla principal-->
 <div class="content">
     <%- include('../partials/navbar') %>
 
@@ -89,7 +90,7 @@
 
                         <div class="input-container">
                             <label for="experience">Experience</label>
-                            <input class="smallInput" type="number" id="experience" name="experience" placeholder="100" required>
+                            <input class="smallInput" type="number" id="experience" name="experience" placeholder="100" min="1" max="9999" required>
                         </div>
                     </section>
 
@@ -100,9 +101,12 @@
 
                     <section>
                         <label>Questions</label>
-                        <div class="question-container">
+                        <!-- Contenedor para preguntas guardadas -->
+                        <div id="savedQuestionsContainer"></div>
+                        
+                        <div class="question-container" id="questionFormContainer" style="display: none;">
                             <div class="question-input-group">
-                                <input type="text" id="questionText" placeholder="What is the climate change?" class="smallInput" required>
+                                <input type="text" id="questionText" placeholder="What is the climate change?" class="smallInput">
                                 <select class="question-type" id="questionType">
                                     <option value="Multiple Choice">Multiple Choice</option>
                                     <option value="True/False">True/False</option>
@@ -110,16 +114,22 @@
                             </div>
                             <div class="options-container" id="optionsContainer">
                             </div>
+                            <div class="question-form-actions">
+                                <button type="button" id="saveQuestionBtn" class="submit-btn">Save Question</button>
+                                <button type="button" id="cancelQuestionBtn" class="submit-btn" style="background: #6c757d;">Cancel</button>
+                            </div>
                         </div>
                     </section>
+
+                    <div class="form-actions">
+                        <button type="button" id="addQuestionBtn" class="submit-btn margin-top" style="background-color: #27ae60; color: white;">Add Question</button>
                 </div>
 
                 <div class="form-actions">
                     <div style="display: flex; gap: 10px;">
                         <button type="submit" class="submit-btn" id="add-edit-btn">Add</button>
-                        <button type="button" class="submit-btn" id="delete-btn" style="background-color: #d35400; color: white; display: none;">Delete</button>
                     </div>
-                    <span id="id-readonly-msg" style="display:none; color: #888; font-size: 12px;">ID no editable en edición</span>
+                    <span id="id-readonly-msg" style="display:none; color: #888; font-size: 12px;">ID no editable</span>
                     <div id="form-message" style="display:none; margin-top:10px;"></div>
                 </div>
             </form>
@@ -127,22 +137,15 @@
     </div>
 </div>
 
-<!-- POP UP PARA MANAGE QUIZ -->
-<div class="modal" id="manageModal">
-    <div class="modal-inner">
-        <div class="modal-header">
-            <h1 class="modal-title">Edit Quiz</h1>
-            <button id="closeManageModal" class="fa fa-times close-btn"></button>
-        </div>
-
-        <div class="modal-content">
-            <div class="form-actions" style="display:flex; gap:10px; justify-content:center;">
-                <button type="button" class="submit-btn" id="manage-edit-btn">Edit</button>
-                <button type="button" class="submit-btn delete-btn" id="manage-delete-btn" style="background-color:#bd1e03; color:white;">Delete</button>
-            </div>
-        </div>
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Updating quiz...</div>
     </div>
 </div>
+
+<!-- Pop up para agregar preguntas -->
 <script src="/js/quizzes/quizzes.js"></script>
 </body>
 </html>

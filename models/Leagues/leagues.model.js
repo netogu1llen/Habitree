@@ -36,8 +36,35 @@ class League {
     }
 }
 
-// 💡 EXPORTACIÓN COMBINADA: Exporta ambas cosas
+async function cambiarNombreLiga(nombre_actual, nombre_nuevo) {
+    return db.execute('CALL CambiarNombreLiga(?, ?)', [nombre_actual, nombre_nuevo]);
+}
+
+async function cambiarMinLevelLiga(nombre_liga, nuevo_min_level) {
+    return db.execute('CALL CambiarMinLevelLiga(?, ?)', [nombre_liga, nuevo_min_level]);
+}
+
+
+async function deleteLeagueByName(leagueName) {
+    try {
+        const [rows] = await db.query(`CALL EliminarLigaCompleta(?)`, [leagueName]);
+
+        if (Array.isArray(rows) && rows[0] && rows[0][0] && rows[0][0].mensaje) {
+            return { success: true, message: rows[0][0].mensaje };
+        }
+
+        return { success: true, message: 'League deleted successfully' };
+    } catch (err) {
+        console.error("Error en deleteLeagueByName:", err);
+        throw err;
+    }
+}
+
 module.exports = {
-    League, // Exporta la clase
-    createLeagueViaProcedure, // Exporta la función
+    League,
+    createLeagueViaProcedure,
+    cambiarNombreLiga,
+    cambiarMinLevelLiga,
+    deleteLeagueByName
 };
+

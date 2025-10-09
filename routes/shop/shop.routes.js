@@ -18,6 +18,9 @@ router.get("/get_bucket_url/:file", shopController.getBucketFileUrl )
 router.get("/edit/:id", isAuth, shopController.editItem);
 
 router.post("/update/:id", isAuth, shopController.postUpdateItem);
+//router.get('/edit/:id', shopController.getEditItemModal);
+
+router.post('/toggle', shopController.toggleItemState);
 
 module.exports = router
 

@@ -397,3 +397,43 @@ exports.postUpdateItem = async (req, res) => {
     }
   });
 };
+exports.toggleItemState = async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    // Obtener el estado actual del item
+    const [rows] = await Item.getStatus(Number(id));
+
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Item no encontrado' });
+    }
+
+    const currentState = Number(rows[0].state);
+    console.log('Estado actual del item:', currentState);
+    let result;
+    let actionMessage;
+
+    if (currentState === 1) {
+      // Si está activo, desactivarlo
+      [result] = await Item.deactivate(Number(id));
+      actionMessage = 'Item desactivado correctamente';
+    } else {
+      // Si está inactivo, activarlo
+      [result] = await Item.activate(Number(id));
+      actionMessage = 'Item activado correctamente';
+    }
+
+    if (result.affectedRows > 0) {
+      return res.status(200).json({
+        success: true,
+        message: actionMessage
+      });
+    } else {
+      return res.status(404).json({ success: false, message: 'No se pudo actualizar el estado del item' });
+    }
+
+  } catch (error) {
+    console.error('Error al cambiar estado del item:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+};
