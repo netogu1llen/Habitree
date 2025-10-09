@@ -99,6 +99,31 @@ module.exports = class Item{
         );
     }
 
+    // Obtener un item por ID
+    static fetchById(id) {
+    return db.execute('SELECT * FROM shop WHERE IDItem = ?', [id]); 
+  }
+
+    static update(id, { name, state, category, price, image_name }) {
+        return db.execute(
+        `UPDATE shop
+            SET name = ?, state = ?, category = ?, price = ?, image_name = ?
+        WHERE IDItem = ?`,
+        [name, state, category, price, image_name, id]
+        );
+    }
+
+    // Para que no cambie el image_name si no se sube nueva imagen
+    static updateWithoutImage(id, { name, state, category, price }) {
+    return db.execute(
+        `UPDATE shop
+        SET name = ?, state = ?, category = ?, price = ?
+        WHERE IDItem = ?`,
+        [name, state, category, price, id]
+    );
+    }
+
+
     static getStatus(id) {
         return db.execute('SELECT state FROM shop WHERE IDItem = ?', [id]);
     }

@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
 
+
 /* Eliminar por completo los botones de flecha del scrollbar webkit */
 .Dashboard_content::-webkit-scrollbar-button:single-button,
 .Dashboard_content::-webkit-scrollbar-button:increment,
@@ -962,7 +963,7 @@ select:focus, input:focus {
     margin-left: 6px;
 }
 
-.add-to-cart {
+.edit-item-btn {
     background-color: #2DA460;
     color:#ffffff;
     border: none;
