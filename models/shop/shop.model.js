@@ -104,10 +104,10 @@ module.exports = class Item{
     }
 
     static activate(id) {
-        return db.execute('UPDATE shop SET state = 0 WHERE IDItem = ?', [id]);
+        return db.execute('UPDATE shop SET state = 1 WHERE IDItem = ?', [id]);
     }
 
     static deactivate(id) {
-        return db.execute('UPDATE shop SET state = 1 WHERE IDItem = ?', [id]);
+        return db.execute('UPDATE shop SET state = 0 WHERE IDItem = ?', [id]);
     }
 }

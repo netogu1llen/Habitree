@@ -362,8 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (result.success) {
           alert(result.message);
-          // 🔄 Actualiza el texto del botón sin recargar
-          btn.textContent = result.newState === 1 ? 'Deactivate' : 'Activate';
+          window.location.reload(); // <-- Esta línea recarga la página
         } else {
           alert(result.message || 'Error al cambiar el estado');
         }
