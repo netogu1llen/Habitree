@@ -37,24 +37,24 @@
                 </tr>
             </thead>
             <tbody>
-                                <% if (missions && missions[0] && missions[0][0] && missions[0][0].IDMission) { %>
-                                    <% missions[0].forEach(function(mission) { %>
-                                        <tr>
-                                            <td><%= mission.IDMission%></td>
-                                            <td><%= mission.responseVerification? 'Yes' : 'No' %></td>
-                                            <td><%= mission.category %></td>
-                                            <td><%= mission.description %></td>
-                                            <td><%= mission.dateOfCreation %></td>
-                                            <td><%= mission.available ? 'Yes' : 'No' %></td>
-                                            <td><%= mission.experience %></td>
-                                            <td class="actions"><button class="table__button">Manage</button></td>
-                                        </tr>
-                                    <% }) %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="6" style="text-align:center;">No notifications available</td>
-                                    </tr>
-                                <% } %>
+                <% if (missions && missions.length) { %>
+                    <% missions.forEach(function(mission) { %>
+                        <tr>
+                            <td><%= mission.IDMission%></td>
+                            <td><%= mission.responseVerification? 'Yes' : 'No' %></td>
+                            <td><%= mission.category %></td>
+                            <td><%= mission.description %></td>
+                            <td><%= mission.dateOfCreation %></td>
+                            <td><%= mission.available ? 'Yes' : 'No' %></td>
+                            <td><%= mission.experience %></td>
+                            <td class="actions"><button class="table__button">Manage</button></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="8" style="text-align:center;">No missions available</td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     </div>
@@ -76,28 +76,31 @@
 
                 
                 <section class="inputs-row">
-                    
                     <div class="input-container">
                         <label for="id">ID</label>
                         <input class="smallInput" type="number" id="id" name="IDMission" placeholder="ID" required>
                     </div>
 
                     <div class="input-container">
-                    <label for="status">Status</label>
-                    <select id="status" name="available" required>
-                        <option value=1>Available</option>
-                        <option value=0>Unavailable</option>
-                </select>
-                </div>
-
+                        <label for="status">Status</label>
+                        <select id="status" name="available" required>
+                            <option value=1>Available</option>
+                            <option value=0>Unavailable</option>
+                        </select>
+                    </div>
                 </section>
 
                 <section class="inputs-row">
-                    
                     <div class="input-container">
-                        <label for="type">Type</label>
-                        <input class="smallInput" type="text" id="type" name="category" placeholder="Water" required>
+                        <label>Mission Type</label>
+                        <div class="type-options">
+                            <% const types = ['awarness','transport','water','waste','energy','consumption','nature']; %>
+                            <% types.forEach(function(t){ %>
+                                <label class="radio-inline"><input type="radio" name="category" value="<%= t %>" required> <%= t.charAt(0).toUpperCase() + t.slice(1) %></label>
+                            <% }) %>
+                        </div>
                     </div>
+
                     <div class="input-container">
                         <label for="experience">Experience</label>
                         <input class="smallInput" type="number" id="experience" name="experience" placeholder="100" required>
@@ -110,7 +113,29 @@
                             <option value=0>No</option>
                         </select>
                     </div>
+                </section>
 
+                <section class="inputs-row">
+                    <div class="input-container">
+                        <label for="value">Value</label>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <input class="smallInput" type="number" id="value" name="value" placeholder="0" step="any">
+                            <span id="value-unit">points</span>
+                        </div>
+                        <small id="value-help">Units depend on mission type (water=liters, energy=watts, transport=CO2, waste=kg, others=points)</small>
+                    </div>
+
+                    <div class="input-container">
+                        <label for="reward">Assign Reward</label>
+                        <select id="reward" name="reward">
+                            <option value="">-- None --</option>
+                            <% if (typeof rewards !== 'undefined' && rewards && rewards.length) { %>
+                                <% rewards.forEach(function(r){ %>
+                                    <option value="<%= r.IDReward %>"><%= r.name %> - <%= r.type %></option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
                 </section>
                 
                 <section>
