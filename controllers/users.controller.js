@@ -122,3 +122,19 @@ exports.postUsers = async (req, res) => {
         res.status(500).send("Error creating user");
     }
 };
+
+// Borrar usuario (borrado lógico)
+exports.deleteUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const result = await Usuario.softDelete(id);
+        const affected = result && result[0] && result[0].affectedRows !== undefined ? result[0].affectedRows : (result && result.affectedRows) || 0;
+        if (affected === 0) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.json({ success: true, message: 'User deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Error deleting user' });
+    }
+};

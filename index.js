@@ -9,6 +9,7 @@ require('dotenv').config();
 const path = require('path');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+const fs = require('fs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -29,8 +30,12 @@ app.use(cookieParser());
 
 const usersRoutesApi = require("./api-habi3/src/routes/users.routes");
 const missionsRoutesApi = require("./api-habi3/src/routes/mission.routes");
+const quizzesRoutesApi = require("./api-habi3/src/routes/quizzes.routes");
+const shopRoutesApi = require("./api-habi3/src/routes/shop.routes");
 app.use("/api/users", usersRoutesApi);
 app.use("/api/missions", missionsRoutesApi);
+app.use("/api/quizzes", quizzesRoutesApi);
+app.use("/api/shop", shopRoutesApi);
 
 const csrf = require('csurf');
 const csrfProtection = csrf({
@@ -45,10 +50,25 @@ app.use((req, res, next) => {
 
 app.use(csrfProtection);
 
-// Rutas principales
-app.get('/shop', (req, res) => {
-  res.send();
+
+const AWS_BUCKET = process.env.AWS_BUCKET
+const AWS_ACCESS_KEY_ID     = process.env.AWS_ACCESS_KEY_ID
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY
+const AWS = require('aws-sdk');
+
+AWS.config.update({
+  signatureVersion: 'v4',
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY
 });
+
+const s3 = new AWS.S3();
+
+
+// Rutas principales
+
+const shopRoutes = require('./routes/shop/shop.routes');
+app.use('/shop', shopRoutes);
 
 const userRoutes = require('./routes/users.routes');
 app.use('/users', userRoutes);
@@ -59,12 +79,15 @@ app.use('/login', loginRoutes);
 const rewardsRoutes = require('./routes/Rewards/Rewards.routes');
 app.use('/rewards',rewardsRoutes);
 
+const ModifyRewardRoutes = require('./routes/Rewards/ModifyReward.routes');
+app.use('/modify-reward', ModifyRewardRoutes);
+
+
 const notificationsRoutes = require('./routes/notifications/notifications.routes');
 app.use('/notifications', notificationsRoutes);
 
-app.get('/leagues', (req, res) => {
-  res.send('Leagues route');
-});
+const leaguesRoutes = require('./routes/Leagues/leagues.routes');
+app.use('/leagues', leaguesRoutes)
 
 const missionsRoutes = require('./routes/Missions/missions.routes');
 app.use(missionsRoutes);

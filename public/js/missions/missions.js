@@ -8,6 +8,29 @@ const modalTitle = modal.querySelector(".modal-title");
 let editMode = false;
 let currentMissionId = null;
 
+const valueInput = document.getElementById('value');
+const valueUnit = document.getElementById('value-unit');
+const rewardSelect = document.getElementById('reward');
+
+function updateUnitForCategory(cat) {
+    switch(cat) {
+        case 'water':
+            valueUnit.textContent = 'liters';
+            break;
+        case 'energy':
+            valueUnit.textContent = 'watts';
+            break;
+        case 'transport':
+            valueUnit.textContent = 'CO2';
+            break;
+        case 'waste':
+            valueUnit.textContent = 'kg';
+            break;
+        default:
+            valueUnit.textContent = 'points';
+    }
+}
+
 openBtn.addEventListener("click", () => {
     modal.classList.add("open");
     modalTitle.textContent = "Add Mission";
@@ -19,6 +42,8 @@ openBtn.addEventListener("click", () => {
     document.getElementById("id-readonly-msg").style.display = "none";
     document.getElementById("delete-btn").style.display = "none";
     document.getElementById("add-edit-btn").textContent = "Add";
+    // reset unit
+    updateUnitForCategory('');
 });
 
 closeBtn.addEventListener("click", () => {
@@ -44,10 +69,16 @@ document.querySelectorAll(".table__button").forEach(btn => {
             .then(mission => {
                 form.IDMission.value = mission.IDMission;
                 form.responseVerification.value = mission.responseVerification;
-                form.category.value = mission.category;
+                const radios = document.querySelectorAll('input[name="category"]');
+                radios.forEach(r => { r.checked = (r.value === mission.category); });
                 form.description.value = mission.description;
                 form.available.value = mission.available;
                 form.experience.value = mission.experience;
+                form.value.value = mission.value || '';
+                if (mission.assignedReward) {
+                    try { rewardSelect.value = mission.assignedReward; } catch(e){}
+                } else { rewardSelect.value = '' }
+                updateUnitForCategory(mission.category);
                 modalTitle.textContent = "Edit Mission";
                 form.action = `/missions/edit/${mission.IDMission}`;
                 modal.classList.add("open");
@@ -84,6 +115,9 @@ form.addEventListener("submit", function(e) {
             available: form.available.value,
             experience: form.experience.value
         };
+        // incluye reward si existe
+        data.value = form.value ? form.value.value : 0;
+        data.reward = form.reward ? form.reward.value : null;
         fetch(`/missions/edit/${currentMissionId}`, {
             method: "POST",
             headers: {
@@ -112,10 +146,12 @@ form.addEventListener("submit", function(e) {
 document.getElementById('delete-btn').addEventListener('click', function() {
     if (confirm('¿Seguro que quieres eliminar esta misión?')) {
         const missionId = document.getElementById('id').value;
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
         fetch(`/missions/${missionId}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
             }
         })
         .then(res => res.json())
@@ -128,4 +164,41 @@ document.getElementById('delete-btn').addEventListener('click', function() {
             console.error(err);
         });
     }
+
+    
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const categorySelect = document.getElementById("category");
+    const valueUnit = document.getElementById("value-unit");
+    const valueHelp = document.getElementById("value-help");
+
+    function updateUnit() {
+        const selected = categorySelect.value;
+        let unit = "points";
+
+        switch (selected) {
+            case "water":
+                unit = "lt";
+                break;
+            case "energy":
+                unit = "watts";
+                break;
+            case "waste":
+                unit = "kg";
+                break;
+            case "transport":
+                unit = "CO₂";
+                break;
+            default:
+                unit = "points";
+        }
+
+        valueUnit.textContent = unit;
+        valueHelp.textContent = `Units depend on mission type (water=lt, energy=watts, transport=CO₂, waste=kg, others=points)`;
+    }
+
+    // Actualiza al cargar y cuando cambie el valor
+    categorySelect.addEventListener("change", updateUnit);
+    updateUnit();
 });

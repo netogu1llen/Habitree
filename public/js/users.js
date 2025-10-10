@@ -14,8 +14,9 @@ openBtn.addEventListener("click", () => {
     editMode = false;
     currentUserId = null;
     form.email.removeAttribute("readonly");
-    document.querySelector(".submit-btn").style.display = "inline-block";
-    document.getElementById("edit-btn").style.display = "none";
+    document.getElementById("id-readonly-msg").style.display = "none";
+    document.getElementById("delete-btn").style.display = "none";
+    document.getElementById("add-edit-btn").textContent = "Add";
 });
 
 closeBtn.addEventListener("click", () => {
@@ -56,12 +57,43 @@ document.querySelectorAll(".manage-user-btn").forEach(btn => {
                 editMode = true;
                 currentUserId = userId;
                 form.email.removeAttribute("readonly");
-                document.querySelector(".submit-btn").style.display = "none";
-                document.getElementById("edit-btn").style.display = "inline-block";
+                document.getElementById("id-readonly-msg").style.display = "inline";
+                document.getElementById("delete-btn").style.display = "inline-block";
+                document.getElementById("add-edit-btn").textContent = "Edit";
+                // Mostrar el botón de borrar dentro del modal
+                const deleteBtn = document.getElementById("delete-btn");
+                deleteBtn.style.display = "inline-block";
+                deleteBtn.dataset.userId = userId;
+                deleteBtn.dataset.userName = user.name || row.getAttribute("data-name");
             })
             .catch(() => {
                 showMessage("Error loading user data", true);
             });
+    });
+});
+
+//Eliminar usuario 
+document.getElementById('delete-btn').addEventListener('click', function() {
+    if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
+    const userId = this.dataset.userId || currentUserId;
+    const csrfToken = document.querySelector('input[name="_csrf"]') ? document.querySelector('input[name="_csrf"]').value : (document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '');
+
+    // users route expects POST /users/delete/:id
++    fetch(`/users/delete/${userId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        showMessage(data.message || 'Usuario eliminado');
+        setTimeout(() => { window.location.reload(); }, 1200);
+    })
+    .catch(err => {
+        showMessage('Error eliminando usuario', true);
+        console.error(err);
     });
 });
 
