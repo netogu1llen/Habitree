@@ -1,5 +1,6 @@
 const db = require("../../../util/database");
 const bcrypt = require("bcrypt");
+const AWS = require("aws-sdk");
 
 const AWS_BUCKET = process.env.AWS_BUCKET;
 const AWS_REGION = process.env.AWS_REGION;
