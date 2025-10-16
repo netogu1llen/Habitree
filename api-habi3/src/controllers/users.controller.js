@@ -61,7 +61,7 @@ const getLoginGoogle = async (req, res) => {
 
     // Filtrar manualmente los campos que deseas retornar
     const responseUser = {
-      userId: user.userId,
+      id: user.id,
       name: user.name,
       email: user.email,
       coins: user.coins
