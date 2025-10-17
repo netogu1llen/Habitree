@@ -76,6 +76,9 @@ app.use(missionsRoutes);
 const quizzesRoutes = require ('./routes/quizzes/quizzes.routes');
 app.use(quizzesRoutes);
 
+const indicatorsRoutes = require('./routes/indicators/indicators.routes');
+app.use('/indicators', indicatorsRoutes);
+
 // Ruta raíz
 const dashboardRoutes = require ('./routes/dashboard.route');
 app.use('/', dashboardRoutes);
