@@ -77,6 +77,20 @@ exports.postUsers = async (req, res) => {
     console.log("Datos recibidos en POST /users:", req.body);
 
     try {
+        const email = String(req.body.email || '').trim().toLowerCase();
+
+        const [rows] = await Usuario.fetchOne(email);
+        const existsAndActive = rows && rows.length > 0 && rows[0].deleted === 0;
+        if (existsAndActive) {
+            const usuarios = await Usuario.fetchAll();
+            return res.status(400).render('../views/users', {
+                title: 'Users',
+                usuarios,
+                csrfToken: req.csrfToken(),
+                alertMessage: 'This email is already registered. Please use a different one.'
+            });
+        }
+
         // Generar contraseña aleatoria o usar la del body
         const passwordPlano = generateRandomPassword(12);
         // Hashear
@@ -119,6 +133,19 @@ exports.postUsers = async (req, res) => {
         res.redirect('/users');
     } catch (err) {
         console.error(err);
+        if (err.code === 'DUPLICATE_EMAIL' || err.code === 'ER_DUP_ENTRY') {
+            try {
+                const usuarios = await Usuario.fetchAll();
+                return res.status(400).render('../views/users', {
+                    title: 'Users',
+                    usuarios,
+                    csrfToken: req.csrfToken(),
+                    alertMessage: 'This email is already registered. Please use a different one.'
+                });
+            } catch (inner) {
+                console.error(inner);
+            }
+        }
         res.status(500).send("Error creating user");
     }
 };
