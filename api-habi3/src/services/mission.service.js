@@ -160,7 +160,7 @@ const getUserMissions = async (userId) => {
     JOIN notification n ON um.IDNotification = n.IDNotification
     LEFT JOIN missionRewards mr ON m.IDMission = mr.IDMission
     LEFT JOIN rewards r ON mr.IDReward = r.IDReward
-    WHERE u.IDUser = ?;
+    WHERE u.IDUser = ? AND m.available = 1;
     `,
     [userId]
   );
