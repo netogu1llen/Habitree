@@ -127,14 +127,76 @@ exports.postUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const id = req.params.id;
-        const result = await Usuario.softDelete(id);
-        const affected = result && result[0] && result[0].affectedRows !== undefined ? result[0].affectedRows : (result && result.affectedRows) || 0;
+        const [result] = await Usuario.softDelete(id);
+        const affected = result && result.affectedRows ? result.affectedRows : 0;
+        console.log(`deleteUser called for id=${id}, affectedRows=${affected}`);
         if (affected === 0) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
+        // Invalidate any active sessions for this user
+        try {
+            const sessionStore = req.sessionStore;
+            if (sessionStore && typeof sessionStore.all === 'function') {
+                sessionStore.all((err, sessions) => {
+                    if (err) {
+                        console.error('Error listing sessions:', err);
+                    } else if (sessions) {
+                        // sessions may be an object map (sid -> session) or an array depending on store
+                        const iterate = (entries) => {
+                            for (const sid in entries) {
+                                if (!Object.prototype.hasOwnProperty.call(entries, sid)) continue;
+                                let sess = entries[sid];
+                                try {
+                                    // Some stores return the session as a JSON string
+                                    if (typeof sess === 'string') sess = JSON.parse(sess);
+                                } catch (parseErr) {
+                                    // ignore parse error and continue
+                                }
+                                if (sess && String(sess.idUsuario) === String(id)) {
+                                    sessionStore.destroy(sid, (destroyErr) => {
+                                        if (destroyErr) console.error('Error destroying session', sid, destroyErr);
+                                    });
+                                }
+                            }
+                        };
+
+                        if (Array.isArray(sessions)) {
+                            // convert array to map-like object
+                            sessions.forEach((sessObj, index) => {
+                                const sid = sessObj && sessObj.id ? sessObj.id : String(index);
+                                iterate({ [sid]: sessObj });
+                            });
+                        } else {
+                            iterate(sessions);
+                        }
+                    }
+                });
+            }
+        } catch (sessionErr) {
+            console.error('Session invalidation error:', sessionErr);
+        }
+
         res.json({ success: true, message: 'User deleted successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: 'Error deleting user' });
+    }
+};
+
+// Logout handler: destroy current session and redirect to login
+exports.logout = (req, res) => {
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error destroying session during logout:', err);
+                return res.status(500).send('Error logging out');
+            }
+            // Clear the cookie and redirect
+            res.clearCookie('connect.sid');
+            res.redirect('/login');
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+        res.status(500).send('Error logging out');
     }
 };
