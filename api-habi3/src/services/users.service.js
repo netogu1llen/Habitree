@@ -307,8 +307,27 @@ const useItemByUser = async (idUser, idItem) => {
   return { idUser, idItem, imageName };
 };
 
+const getActiveItemByUser = async (idUser) => {
+  const [rows] = await db.execute(
+    `SELECT item FROM user WHERE IDUser = ? AND deleted = 0`,
+    [idUser]
+  );
+
+  if (rows.length === 0 || !rows[0].item) return null;
+
+  const imageName = rows[0].item;
+
+  // Generar signed URL
+  const params = { Bucket: AWS_BUCKET, Key: imageName, Expires: 3600 };
+  const signedUrl = s3.getSignedUrl("getObject", params);
+
+  return {
+    image_name: imageName,
+    signedUrl
+  };
+};
 
 module.exports = { getAllUsers, getLoginUser, postSignupUser, getStatsUser, 
                   editUserInfo, changeUserPassword,  getMissionsSummaryByUser, 
                   getUserRewardsById, getLoginUserGoogle, getLeaderboardS, getInventoryByUser,
-                  useItemByUser};
+                  useItemByUser, getActiveItemByUser};
