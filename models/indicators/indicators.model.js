@@ -79,4 +79,78 @@ module.exports = class Indicator {
 
         return Object.values(usersMap);
     }
+
+    /**
+ * Devuelve totales globales por categoría (todos los usuarios sumados)
+ * @returns {Promise}
+ */
+static async fetchGlobalTotals() {
+    const [rows] = await db.execute(
+        `
+        SELECT 
+            m.category,
+            COUNT(um.IDMission) AS totalMissions,
+            SUM(m.value) AS totalValue,
+            SUM(m.experience) AS totalExperience
+        FROM 
+            mission m
+        INNER JOIN 
+            userMissions um ON m.IDMission = um.IDMission
+        INNER JOIN 
+            user u ON um.IDUser = u.IDUser
+        WHERE 
+            um.status = 1
+            AND u.deleted = 0
+            AND m.available = 1
+        GROUP BY 
+            m.category
+        ORDER BY 
+            m.category
+        `
+    );
+
+    return rows.map(row => ({
+        category: row.category,
+        totalMissions: parseInt(row.totalMissions) || 0,
+        totalValue: parseInt(row.totalValue) || 0,
+        totalExperience: parseInt(row.totalExperience) || 0
+    }));
+}
+
+/**
+ * Obtener métricas de impacto para gráfica de radar
+ * @returns {Promise}
+ */
+static async fetchImpactMetrics() {
+    const [rows] = await db.execute(
+        `
+        SELECT 
+            m.category,
+            COUNT(DISTINCT um.IDUser) AS uniqueUsers,
+            COUNT(um.IDMission) AS totalMissions,
+            AVG(m.experience) AS avgExperience
+        FROM 
+            mission m
+        INNER JOIN 
+            userMissions um ON m.IDMission = um.IDMission
+        INNER JOIN 
+            user u ON um.IDUser = u.IDUser
+        WHERE 
+            um.status = 1
+            AND u.deleted = 0
+            AND m.available = 1
+        GROUP BY 
+            m.category
+        ORDER BY 
+            m.category
+        `
+    );
+
+    return rows.map(row => ({
+        category: row.category,
+        uniqueUsers: parseInt(row.uniqueUsers) || 0,
+        totalMissions: parseInt(row.totalMissions) || 0,
+        avgExperience: parseFloat(row.avgExperience) || 0
+    }));
+}
 };
