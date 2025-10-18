@@ -1,0 +1,187 @@
+/* CSS específico para indicators - sin estilos del navbar */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    min-height: 100vh;
+    min-width: 100vw;
+    font-family: 'Instrument Sans', sans-serif;
+    background-color: #f4f7f2;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.content{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.Dashboard_content {
+    flex-basis: 70%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.Dashboard_content::-webkit-scrollbar-thumb {
+    background: #2DA460;
+    border-radius: 8px;
+}
+
+.Dashboard_content::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    border-radius: 8px;
+}
+
+.Dashboard_content::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+    background: transparent;
+}
+
+.Dashboard__title {
+    margin-top: 10px;
+    font-size: 32px;
+    padding: 20px;
+    width: 100%;
+    color: #0b2f1f;
+}
+
+.Dashboard__title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.Dashboard-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.Dashboard__gridContent {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+    min-height: 0;
+    height: 70%;
+    justify-items: center;
+    align-items: center;
+}
+
+.Dashboard__gridItem {
+    border: 2px solid #0b2f1f;
+    border-radius: 16px;
+    padding: 16px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.Dashboard__gridItem:hover {
+    border: 2px solid #2DA460;
+    cursor: pointer;
+}
+
+.Dashboard__gridItemIcon__text {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #626262;
+    margin-bottom: 50px;
+}
+
+.Dashboard__gridItemIcon {
+    background-color: #2ecc702a;
+    border-radius: 8px;
+    padding: 12px;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Dashboard__gridItemIcon__icon {
+    color: #2DA460;
+    font-size: 24px;
+    margin-top: 12px;
+}
+
+i {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.table__button {
+    font-size: 12px;
+    border-radius: 10px;
+    background: linear-gradient(to right, #2DA460, #2D9459);
+    color: white;
+    padding: 6px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.table-container {
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 2px solid #0B2F1F;
+    margin: 24px 32px 24px 32px;
+    box-sizing: border-box;
+    padding: 16px;
+}
+
+.table-container table {
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0;
+    table-layout: fixed;
+}
+
+.table-container th,
+.table-container td {
+    padding: 12px 16px;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 12px;
+}
+
+.table-container .actions {
+    text-align: center;
+}
+
+/* Estilos específicos para la fila de TOTAL */
+.total-row {
+    background-color: #f0f8f4;
+    font-weight: bold;
+    border-top: 2px solid #2DA460;
+}
+
+.total-row td {
+    color: #0b2f1f;
+    font-size: 13px;
+}
+
+.table-container tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.table-container tbody .total-row:hover {
+    background-color: #e8f5e9;
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indicators | HabiTree</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/indicators/indicators.css">
+</head>
+<body>
+  <div class="content">
+    <!-- Navbar -->
+    <%- include('../partials/navbar') %>
+
+    <!-- Contenido principal -->
+    <div class="Dashboard_content">
+      <div class="Dashboard-navbar">
+        <h1 class="Dashboard__title">Sustainability Indicators</h1>
+      </div>
+
+      <div class="table-container instrument-sans-regular">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Category</th>
+              <th>Missions Completed</th>
+              <th>Total Value</th>
+              <th>Total Experience</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (indicators && indicators.length > 0) { %>
+              <% indicators.forEach(function(user) { %>
+                <% if (user.categories && user.categories.length > 0) { %>
+                  <% user.categories.forEach(function(category, index) { %>
+                    <tr>
+                      <% if (index === 0) { %>
+                        <td rowspan="<%= user.categories.length + 1 %>"><%= user.userName %></td>
+                        <td rowspan="<%= user.categories.length + 1 %>"><%= user.email %></td>
+                      <% } %>
+                      <td><%= category.category %></td>
+                      <td><%= category.missionCount %></td>
+                      <td><%= category.totalValue %></td>
+                      <td><%= category.totalExperience %></td>
+                    </tr>
+                  <% }) %>
+                  <tr class="total-row">
+                    <td><strong>TOTAL</strong></td>
+                    <td><strong><%= user.totals.totalMissions %></strong></td>
+                    <td><strong><%= user.totals.totalValue %></strong></td>
+                    <td><strong><%= user.totals.totalExperience %></strong></td>
+                  </tr>
+                <% } %>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="6" style="text-align:center;">No indicators available</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
